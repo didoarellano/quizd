@@ -5,6 +5,7 @@ import { JoinGame } from "@/app/pages/JoinGame";
 import { PlayerGameScreen } from "@/app/pages/PlayerGameScreen";
 import { QuizEditor } from "@/app/pages/QuizEditor";
 import { QuizList } from "@/app/pages/QuizList";
+import { Button } from "@/components/ui/button";
 import { UserRoles } from "@/services/auth";
 import { useAuth } from "@/utils/AuthContext";
 import { PrivateRoute } from "@/utils/PrivateRoute";
@@ -32,7 +33,7 @@ export function AppRouter() {
             {!user ? (
               <>
                 <li>
-                  <button onClick={signin}>Sign In</button>
+                  <Button onClick={signin}>Sign In</Button>
                 </li>
                 <li>
                   <button onClick={signinAnonymously}>
@@ -42,7 +43,7 @@ export function AppRouter() {
               </>
             ) : (
               <li>
-                <button onClick={signout}>Sign Out</button>
+                <Button onClick={signout}>Sign Out</Button>
               </li>
             )}
           </ul>
