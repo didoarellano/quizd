@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link, Route, Router, Switch } from "wouter";
-import { signin, signout, onAuthChange } from "./services/auth";
+import {
+  signin,
+  signout,
+  onAuthChange,
+  signinAnonymously,
+} from "./services/auth";
 import type { User } from "firebase/auth";
 import { PrivateRoute } from "./components/PrivateRoute";
 
@@ -28,16 +33,25 @@ function App() {
             <li>
               <Link href="/play">Play</Link>
             </li>
-            <li>
-              {!user ? (
-                <button onClick={signin}>Sign In</button>
-              ) : (
+            {!user ? (
+              <>
+                <li>
+                  <button onClick={signin}>Sign In</button>
+                </li>
+                <li>
+                  <button onClick={signinAnonymously}>
+                    Sign In Anonymously
+                  </button>
+                </li>
+              </>
+            ) : (
+              <li>
                 <button onClick={signout}>Sign Out</button>
-              )}
-            </li>
+              </li>
+            )}
           </ul>
         </nav>
-        {user && <h3>Hello {user.displayName}</h3>}
+        {user && <h3>Hello {user.displayName ?? "Anon"}</h3>}
       </header>
 
       <Switch>

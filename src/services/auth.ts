@@ -2,6 +2,7 @@ import {
   getAuth,
   GoogleAuthProvider,
   onAuthStateChanged,
+  signInAnonymously,
   signInWithPopup,
   signOut,
 } from "firebase/auth";
@@ -22,6 +23,10 @@ export async function isUserWhitelisted(email: string): Promise<boolean> {
 export async function signin() {
   const { user } = await signInWithPopup(auth, provider);
   return user;
+}
+
+export function signinAnonymously() {
+  return signInAnonymously(auth);
 }
 
 export function signout() {
