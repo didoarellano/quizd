@@ -1,26 +1,9 @@
-import { useState, useEffect } from "react";
 import { Link, Route, Router, Switch } from "wouter";
-import {
-  signin,
-  signout,
-  onAuthChange,
-  signinAnonymously,
-} from "./services/auth";
-import type { User } from "firebase/auth";
 import { PrivateRoute } from "./components/PrivateRoute";
+import { useAuth } from "./contexts/AuthContext";
 
 function App() {
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const unsubscribeAuth = onAuthChange((user: User | null) => {
-      setUser(user);
-    });
-
-    return () => {
-      unsubscribeAuth();
-    };
-  }, []);
+  const { user, signin, signinAnonymously, signout } = useAuth();
 
   return (
     <Router base={import.meta.env.VITE_BASE_URL}>
