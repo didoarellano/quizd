@@ -18,7 +18,7 @@ function App() {
   }, []);
 
   return (
-    <Router base="/haderach">
+    <Router base={import.meta.env.VITE_BASE_URL}>
       <header>
         <nav>
           <ul>
