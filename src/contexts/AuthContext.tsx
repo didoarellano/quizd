@@ -4,11 +4,19 @@ import type { User } from "firebase/auth";
 
 import * as auth from "../services/auth";
 
-const AuthContext = createContext({});
-
-export const useAuth = () => {
-  return useContext(AuthContext);
+type AuthContextObject = {
+  user: User | null;
+  isLoadingUser: boolean;
+  signin: () => void;
+  signinAnonymously: () => void;
+  signout: () => void;
 };
+
+const AuthContext = createContext<AuthContextObject | {}>({});
+
+export function useAuth(): AuthContextObject | {} {
+  return useContext(AuthContext);
+}
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<User | null>(null);
@@ -35,11 +43,13 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     auth.signout();
   }
 
-  return (
-    <AuthContext.Provider
-      value={{ user, isLoadingUser, signin, signinAnonymously, signout }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  const value: AuthContextObject = {
+    user,
+    isLoadingUser,
+    signin,
+    signinAnonymously,
+    signout,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
