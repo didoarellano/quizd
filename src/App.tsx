@@ -1,75 +1,66 @@
 import { useState, useEffect } from "react";
-import { onSnapshot, addDoc, collection } from "firebase/firestore";
-import { db } from "./services/firebase";
+import { Link, Route, Router, Switch } from "wouter";
 import { signin, signout, onAuthChange } from "./services/auth";
 import type { User } from "firebase/auth";
-
-type Bleh = {
-  id: string;
-  timestamp: string;
-};
-
-async function addBleh() {
-  try {
-    await addDoc(collection(db, "bleh"), {
-      timestamp: Date.now(),
-    });
-  } catch (e) {
-    console.error(e);
-  }
-}
+import { PrivateRoute } from "./components/PrivateRoute";
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
-  const [blehs, setBlehs] = useState<Bleh[] | []>([]);
 
   useEffect(() => {
-    const unsubscribeBleh = onSnapshot(collection(db, "bleh"), (snapshot) => {
-      let docs: Bleh[] = [];
-      snapshot.forEach((doc) => {
-        let _bleh: Bleh = {
-          id: doc.id,
-          timestamp: doc.data().timestamp,
-        };
-        docs.push(_bleh);
-      });
-      setBlehs(docs);
-    });
-
     const unsubscribeAuth = onAuthChange((user: User | null) => {
       setUser(user);
     });
 
     return () => {
-      unsubscribeBleh();
       unsubscribeAuth();
     };
   }, []);
 
   return (
-    <>
-      {!user ? (
-        <button onClick={signin}>Sign In</button>
-      ) : (
-        <div>
-          <p>Hello {user.displayName}</p>
-          <button onClick={signout}>Sign Out</button>
-        </div>
-      )}
+    <Router base="/haderach">
+      <header>
+        <nav>
+          <ul>
+            <li>
+              <Link href="/quiz/new">Create a Quiz</Link>
+            </li>
+            <li>
+              <Link href="/play">Play</Link>
+            </li>
+            <li>
+              {!user ? (
+                <button onClick={signin}>Sign In</button>
+              ) : (
+                <button onClick={signout}>Sign Out</button>
+              )}
+            </li>
+          </ul>
+        </nav>
+        {user && <h3>Hello {user.displayName}</h3>}
+      </header>
 
-      <hr />
+      <Switch>
+        <PrivateRoute
+          path="/quiz"
+          nest={true}
+          isAllowed={true}
+          redirectTo="/play"
+          replace={true}
+        >
+          <Switch>
+            <Route path="/new">{<h1>Create a new Quiz</h1>}</Route>
+            <Route path="/:id">
+              {(params) => <h1>Edit Quiz ID: {params.id}</h1>}
+            </Route>
+          </Switch>
+        </PrivateRoute>
 
-      {user && (
-        <>
-          <button onClick={addBleh}>bleh</button>
-          <ol>
-            {blehs.map((bleh) => {
-              return <li key={bleh.id}>{bleh.timestamp}</li>;
-            })}
-          </ol>
-        </>
-      )}
-    </>
+        <Route path="/play">
+          <h1>Play</h1>
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 
