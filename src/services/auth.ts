@@ -7,6 +7,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
+import type { Unsubscribe, User } from "firebase/auth";
 
 import { app, db } from "./firebase";
 
@@ -20,20 +21,21 @@ export async function isUserWhitelisted(email: string): Promise<boolean> {
   return docSnap.exists();
 }
 
-export async function signin() {
+export async function signin(): Promise<User> {
   const { user } = await signInWithPopup(auth, provider);
   return user;
 }
 
-export function signinAnonymously() {
-  return signInAnonymously(auth);
+export async function signinAnonymously(): Promise<User> {
+  const { user } = await signInAnonymously(auth);
+  return user;
 }
 
-export function signout() {
+export function signout(): Promise<void> {
   return signOut(auth);
 }
 
-export function onAuthChange(cb: Function) {
+export function onAuthChange(cb: Function): Unsubscribe {
   return onAuthStateChanged(auth, async (user) => {
     if (!user) return cb(null);
 
