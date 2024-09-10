@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import type { PropsWithChildren } from "react";
-import type { User } from "firebase/auth";
 
 import * as auth from "../services/auth";
+import type { User } from "../services/auth";
 
 type AuthContextObject = {
   user: User | null;
