@@ -2,6 +2,8 @@ import { Link, Route, Router, Switch } from "wouter";
 import { PrivateRoute } from "./components/PrivateRoute";
 import { useAuth } from "./contexts/AuthContext";
 
+import { UserRoles } from "./services/auth";
+
 function App() {
   const { user, signin, signinAnonymously, signout } = useAuth();
 
@@ -41,7 +43,7 @@ function App() {
         <PrivateRoute
           path="/quiz"
           nest={true}
-          isAllowed={true}
+          isAllowed={user?.role === UserRoles.Teacher}
           redirectTo="/play"
           replace={true}
         >
