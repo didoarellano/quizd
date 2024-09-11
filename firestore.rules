@@ -1,0 +1,43 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /quizzes/{quizID} {
+      // Both teachers and students can read quizzes
+      allow read: if request.auth != null;
+
+      // Only teachers can write to quizzes
+      allow create, update, delete: if request.auth != null && exists(/databases/$(database)/documents/teachers/$(request.auth.uid));
+    }
+
+    match /answers/{answerID} {
+      // Both teachers and students can read answers
+      allow read: if request.auth != null;
+
+      // Allow students to submit answers
+      allow create: if request.auth != null && request.auth.token.firebase.sign_in_provider == 'anonymous';
+    }
+
+    match /teachers/{userID} {
+      // Only allow teachers to read their own data
+      // Authed users can check if they're in the "teachers" collection but not read data
+      allow read: if request.auth != null && request.auth.uid == userID;
+
+      // Allow creating a new teacher if not yet in "teachers" and email is whitelisted
+      allow create: if request.auth != null &&
+      !exists(/databases/$(database)/documents/teachers/$(request.auth.uid)) &&
+      exists(/databases/$(database)/documents/whitelist/$(request.auth.token.email));
+
+      // Allow teachers to update their own data
+      allow update: if request.auth != null &&
+      request.auth.uid == userID &&
+      exists(/databases/$(database)/documents/whitelist/$(request.auth.token.email));
+    }
+
+    match /whitelist/{email} {
+      allow read: if request.auth != null && request.auth.token.email == email;
+      allow write: if false;
+    }
+  }
+}
