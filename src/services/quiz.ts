@@ -1,3 +1,14 @@
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  DocumentReference,
+  DocumentSnapshot,
+  getDoc,
+  updateDoc,
+} from "firebase/firestore";
+import { db } from "./firebase";
 import type { Teacher } from "./auth";
 
 type Option = {
@@ -28,3 +39,27 @@ type Quiz = {
   description?: string;
   questions: Question[];
 };
+
+export function getQuiz(quizID: string): Promise<DocumentSnapshot> {
+  const docRef = doc(db, "quizzes", quizID);
+  return getDoc(docRef);
+}
+
+export function saveNewQuiz(
+  teacher: Teacher,
+  quizData: Partial<Quiz>
+): Promise<DocumentReference> {
+  quizData.teacherID = teacher.id;
+  return addDoc(collection(db, "quizzes"), quizData);
+}
+
+export function updateQuiz(
+  quizRef: DocumentReference,
+  quizData: Partial<Quiz>
+): Promise<void> {
+  return updateDoc(quizRef, quizData);
+}
+
+export function deleteQuiz(quizRef: DocumentReference): Promise<void> {
+  return deleteDoc(quizRef);
+}
