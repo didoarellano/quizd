@@ -14,7 +14,9 @@ export function QuizEditor({
 }: QuizEditorProps) {
   const [formValues, setFormValues] = useState<Partial<Quiz>>(quizData);
 
-  async function onChange(e: ChangeEvent<HTMLTextAreaElement>) {
+  async function onChange(
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
     const { name, value } = e.target;
     setFormValues({
       ...formValues,
@@ -30,12 +32,18 @@ export function QuizEditor({
 
   return (
     <form onSubmit={onSubmit}>
-      <textarea
+      <input
+        type="text"
         value={formValues?.title}
         onChange={onChange}
         name="title"
-      ></textarea>
+      />
       <br />
+      <textarea
+        value={formValues?.description}
+        onChange={onChange}
+        name="description"
+      ></textarea>
       <button type="submit">Save</button>
     </form>
   );
