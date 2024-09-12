@@ -53,7 +53,7 @@ function App() {
               <CreateQuiz />
             </Route>
             <Route path="/:id">
-              {(params) => <h1>Edit Quiz ID: {params.id}</h1>}
+              {(params) => <CreateQuiz key={params.id} quizID={params.id} />}
             </Route>
           </Switch>
         </PrivateRoute>
