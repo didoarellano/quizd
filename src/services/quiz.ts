@@ -11,19 +11,19 @@ import {
 import { db } from "./firebase";
 import type { Teacher } from "./auth";
 
-type Option = {
+export type Option = {
   id: string;
   text: string;
 };
 
-const QuestionTypes = {
+export const QuestionTypes = {
   Multi: "multiple-choice",
   Text: "text",
 } as const;
 
 type QuestionTypeKeys = (typeof QuestionTypes)[keyof typeof QuestionTypes];
 
-type Question = {
+export type Question = {
   id: string;
   type: QuestionTypeKeys;
   heading: string;
@@ -32,7 +32,7 @@ type Question = {
   answers: Option["id"][];
 };
 
-type Quiz = {
+export type Quiz = {
   id?: string;
   teacherID: Teacher["id"];
   title: string;
