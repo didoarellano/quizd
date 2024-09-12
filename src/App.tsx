@@ -3,6 +3,7 @@ import { PrivateRoute } from "./components/PrivateRoute";
 import { useAuth } from "./contexts/AuthContext";
 
 import { UserRoles } from "./services/auth";
+import { CreateQuiz } from "./pages/CreateQuiz";
 
 function App() {
   const { user, signin, signinAnonymously, signout } = useAuth();
@@ -48,7 +49,9 @@ function App() {
           replace={true}
         >
           <Switch>
-            <Route path="/new">{<h1>Create a new Quiz</h1>}</Route>
+            <Route path="/new">
+              <CreateQuiz />
+            </Route>
             <Route path="/:id">
               {(params) => <h1>Edit Quiz ID: {params.id}</h1>}
             </Route>
