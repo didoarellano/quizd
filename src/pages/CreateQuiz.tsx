@@ -1,16 +1,11 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  type ChangeEvent,
-  type FormEvent,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 import type { DocumentData, DocumentSnapshot } from "firebase/firestore";
 import { useLocation, useRouter } from "wouter";
 
 import { getQuiz, saveNewQuiz, updateQuiz } from "../services/quiz";
 import { useAuth } from "../contexts/AuthContext";
 import { Teacher, UserRoles } from "../services/auth";
+import { QuizEditor } from "../components/QuizEditor";
 
 type CreateQuizProps = {
   quizID?: string;
@@ -19,9 +14,9 @@ type CreateQuizProps = {
 let initialQuizData = {};
 
 export function CreateQuiz({ quizID }: CreateQuizProps) {
-  const titleRef = useRef<HTMLTextAreaElement | null>(null);
   const quizSnap = useRef<DocumentSnapshot | null>(null);
   const [quizData, setQuizData] = useState<DocumentData>(initialQuizData);
+  const [isLoadingQuiz, setIsLoadingQuiz] = useState(false);
   const [, setLocation] = useLocation();
   const { base } = useRouter();
   const { user } = useAuth();
@@ -35,52 +30,42 @@ export function CreateQuiz({ quizID }: CreateQuizProps) {
         quizSnap.current = _quizSnap;
         setQuizData(_quizSnap.data());
       }
+      setIsLoadingQuiz(false);
     }
 
-    if (quizID) loadQuiz(quizID);
+    if (!quizID) return setIsLoadingQuiz(false);
+
+    if (quizID) {
+      setIsLoadingQuiz(true);
+      loadQuiz(quizID);
+    }
   }, []);
 
-  async function onSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (quizData === initialQuizData) return;
-
+  async function handleSubmit(formValues: {}) {
     if (!quizID) {
-      const quizDocRef = await saveNewQuiz(user as Teacher, quizData);
+      const quizDocRef = await saveNewQuiz(user as Teacher, formValues);
       const loc = `~${base}/${quizDocRef.id}`;
       setLocation(loc, { replace: true });
       return;
     }
 
     if (quizSnap?.current?.ref) {
-      updateQuiz(quizSnap.current.ref, quizData);
+      updateQuiz(quizSnap.current.ref, formValues);
+      setQuizData(formValues);
     }
-  }
-
-  async function onChange(e: ChangeEvent<HTMLTextAreaElement>) {
-    const { name, value } = e.target;
-    setQuizData({
-      ...quizData,
-      [name]: value,
-    });
   }
 
   return (
     <>
       <h1>
-        {!quizID
-          ? "Create Quiz"
-          : `Editing Quiz: ${quizData?.title ? quizData.title : quizID}`}
+        {!quizID ? "Create Quiz" : `Editing Quiz: ${quizData?.title ?? ""}`}
       </h1>
-      <form onSubmit={onSubmit}>
-        <textarea
-          value={quizData?.title}
-          onChange={onChange}
-          name="title"
-          ref={titleRef}
-        ></textarea>
-        <br />
-        <button type="submit">Save</button>
-      </form>
+
+      {isLoadingQuiz ? (
+        <p>...</p>
+      ) : (
+        <QuizEditor quizData={quizData} handleSubmit={handleSubmit} />
+      )}
     </>
   );
 }
