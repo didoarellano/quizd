@@ -11,12 +11,10 @@ type CreateQuizProps = {
   quizID?: string;
 };
 
-let initialQuizData = {};
-
 export function CreateQuiz({ quizID }: CreateQuizProps) {
   const quizSnap = useRef<DocumentSnapshot | null>(null);
-  const [quizData, setQuizData] = useState<DocumentData>(initialQuizData);
-  const [isLoadingQuiz, setIsLoadingQuiz] = useState(false);
+  const [quizData, setQuizData] = useState<DocumentData | null>(null);
+  const [isLoadingQuiz, setIsLoadingQuiz] = useState(true);
   const [, setLocation] = useLocation();
   const { base } = useRouter();
   const { user } = useAuth();
