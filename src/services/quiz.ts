@@ -63,3 +63,7 @@ export function updateQuiz(
 export function deleteQuiz(quizRef: DocumentReference): Promise<void> {
   return deleteDoc(quizRef);
 }
+
+export function generateID(): string {
+  return doc(collection(db, "dummy")).id;
+}
