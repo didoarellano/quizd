@@ -1,5 +1,5 @@
 import { useState, type FormEvent, type ChangeEvent } from "react";
-import { type Quiz } from "../services/quiz";
+import { generateID, type Quiz } from "../services/quiz";
 
 type QuizEditorProps = {
   handleSubmit: (formValues: {}) => void;
@@ -13,6 +13,7 @@ export function QuizEditor({
   quizData = initialQuizData,
 }: QuizEditorProps) {
   const [formValues, setFormValues] = useState<Partial<Quiz>>(quizData);
+  const [questions, setQuestions] = useState(quizData.questions);
 
   async function onChange(
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -27,23 +28,73 @@ export function QuizEditor({
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (formValues === initialQuizData) return;
+    const formData = new FormData(e.currentTarget);
+    const qs = questions.map(({ id }) => {
+      return {
+        heading: formData.get(`${id}-heading`),
+        body: formData.get(`${id}-body`),
+      };
+    });
+    formValues.questions = qs;
     handleSubmit(formValues);
   }
 
   return (
     <form onSubmit={onSubmit}>
-      <input
-        type="text"
-        value={formValues?.title}
-        onChange={onChange}
-        name="title"
-      />
+      <input type="text" defaultValue={quizData?.title} name="title" />
       <br />
       <textarea
-        value={formValues?.description}
-        onChange={onChange}
+        defaultValue={quizData?.description}
         name="description"
       ></textarea>
+
+      <br />
+
+      <div>
+        <h3>Questions</h3>
+
+        <div>
+          {questions.map(({ id, heading, body }, i) => {
+            return (
+              <div key={id}>
+                <span>
+                  {i + 1} <sup>{id}</sup>{" "}
+                </span>
+                <p>
+                  <label htmlFor={`${id}-heading`}>Heading</label>
+                  <input
+                    id={`${id}-heading`}
+                    name={`${id}-heading`}
+                    type="text"
+                    defaultValue={heading}
+                  />
+                </p>
+                <p>
+                  <label htmlFor={`${id}-body`}>Body</label>
+                  <textarea
+                    id={`${id}-body`}
+                    name={`${id}-body`}
+                    defaultValue={body}
+                  ></textarea>
+                </p>
+              </div>
+            );
+          })}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            setQuestions((prev) => {
+              return [...prev, { id: generateID(), heading: "", body: "" }];
+            });
+          }}
+        >
+          Add question
+        </button>
+      </div>
+
+      <br />
       <button type="submit">Save</button>
     </form>
   );
