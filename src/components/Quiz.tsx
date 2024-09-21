@@ -1,5 +1,6 @@
-import { Markdown } from "./Markdown";
 import { type Quiz as QuizType } from "../services/quiz";
+import { QuestionText } from "./QuestionText";
+import { Option } from "./Option";
 
 type QuizProps = {
   quiz: QuizType;
@@ -13,23 +14,11 @@ export function Quiz({ quiz }: QuizProps) {
         {quiz.questions.map((question) => {
           return (
             <li key={question.id}>
-              <Markdown>{question.heading}</Markdown>
-              <Markdown>{question.body}</Markdown>
+              <QuestionText heading={question.heading} body={question.body} />
               <div>
-                {question.options.map((option) => {
-                  return (
-                    <div
-                      key={option.id}
-                      style={{
-                        padding: "10px 20px",
-                        border: "1px solid #333",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <Markdown>{option.text}</Markdown>
-                    </div>
-                  );
-                })}
+                {question.options.map((option) => (
+                  <Option key={option.id} text={option.text} />
+                ))}
               </div>
             </li>
           );
