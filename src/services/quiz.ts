@@ -36,6 +36,7 @@ export type Question = {
 
 export type Quiz = {
   id?: string;
+  _rawMD: string;
   teacherID: Teacher["id"];
   title: string;
   description?: string;

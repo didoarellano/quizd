@@ -1,100 +1,31 @@
 import { useState, type FormEvent, type ChangeEvent } from "react";
-import { generateID, type Quiz } from "../services/quiz";
+import CodeEditor from "@uiw/react-textarea-code-editor";
 
 type QuizEditorProps = {
-  handleSubmit: (formValues: {}) => void;
-  quizData: {};
+  handleSave: (mdText: string) => void;
+  initialMDText: string;
 };
 
-let initialQuizData = {};
-
 export function QuizEditor({
-  handleSubmit,
-  quizData = initialQuizData,
+  handleSave,
+  initialMDText = "",
 }: QuizEditorProps) {
-  const [formValues, setFormValues] = useState<Partial<Quiz>>(quizData);
-  const [questions, setQuestions] = useState(quizData.questions);
+  const [mdText, setMDText] = useState(initialMDText);
 
-  async function onChange(
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) {
-    const { name, value } = e.target;
-    setFormValues({
-      ...formValues,
-      [name]: value,
-    });
-  }
-
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
+  function handleSubmit(e) {
     e.preventDefault();
-    if (formValues === initialQuizData) return;
-    const formData = new FormData(e.currentTarget);
-    const qs = questions.map(({ id }) => {
-      return {
-        heading: formData.get(`${id}-heading`),
-        body: formData.get(`${id}-body`),
-      };
-    });
-    formValues.questions = qs;
-    handleSubmit(formValues);
+    handleSave(mdText);
   }
 
   return (
-    <form onSubmit={onSubmit}>
-      <input type="text" defaultValue={quizData?.title} name="title" />
-      <br />
-      <textarea
-        defaultValue={quizData?.description}
-        name="description"
-      ></textarea>
-
-      <br />
-
-      <div>
-        <h3>Questions</h3>
-
-        <div>
-          {questions.map(({ id, heading, body }, i) => {
-            return (
-              <div key={id}>
-                <span>
-                  {i + 1} <sup>{id}</sup>{" "}
-                </span>
-                <p>
-                  <label htmlFor={`${id}-heading`}>Heading</label>
-                  <input
-                    id={`${id}-heading`}
-                    name={`${id}-heading`}
-                    type="text"
-                    defaultValue={heading}
-                  />
-                </p>
-                <p>
-                  <label htmlFor={`${id}-body`}>Body</label>
-                  <textarea
-                    id={`${id}-body`}
-                    name={`${id}-body`}
-                    defaultValue={body}
-                  ></textarea>
-                </p>
-              </div>
-            );
-          })}
-        </div>
-
-        <button
-          type="button"
-          onClick={() => {
-            setQuestions((prev) => {
-              return [...prev, { id: generateID(), heading: "", body: "" }];
-            });
-          }}
-        >
-          Add question
-        </button>
-      </div>
-
-      <br />
+    <form onSubmit={handleSubmit}>
+      <CodeEditor
+        value={mdText}
+        onChange={(e) => setMDText(e.target.value)}
+        language="md"
+        minHeight={480}
+        style={{ backgroundColor: "#f5f5f5" }}
+      />
       <button type="submit">Save</button>
     </form>
   );
