@@ -1,6 +1,4 @@
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-
+import { Markdown } from "./Markdown";
 import { type Quiz as QuizType } from "../services/quiz";
 
 type QuizProps = {
@@ -15,10 +13,8 @@ export function Quiz({ quiz }: QuizProps) {
         {quiz.questions.map((question) => {
           return (
             <li key={question.id}>
-              <Markdown remarkPlugins={[remarkGfm]}>
-                {question.heading}
-              </Markdown>
-              <Markdown remarkPlugins={[remarkGfm]}>{question.body}</Markdown>
+              <Markdown>{question.heading}</Markdown>
+              <Markdown>{question.body}</Markdown>
               <div>
                 {question.options.map((option) => {
                   return (
@@ -30,9 +26,7 @@ export function Quiz({ quiz }: QuizProps) {
                         cursor: "pointer",
                       }}
                     >
-                      <Markdown remarkPlugins={[remarkGfm]}>
-                        {option.text}
-                      </Markdown>
+                      <Markdown>{option.text}</Markdown>
                     </div>
                   );
                 })}
