@@ -9,6 +9,8 @@ import { gfmFromMarkdown, gfmToMarkdown } from "mdast-util-gfm";
 
 import { Answer, Option, Question, Quiz } from "../services/quiz";
 
+type idGenerator = () => string;
+
 const toMDAST = (mdText: string): Root =>
   fromMarkdown(mdText, {
     extensions: [frontmatter(["yaml"]), gfm()],
@@ -23,13 +25,13 @@ const toMD = (nodes: RootContent[]) =>
 
 function parseOptions(
   optionNodes: any[],
-  questionID: string
+  generateID: idGenerator
 ): { options: Option[]; answers: Answer[] } {
   let answers: Answer[] = [];
   const options: Option[] = optionNodes
     .filter((o) => o.type === "listItem")
     .map((optionNode, i) => {
-      const optionID = `${questionID}-o${i}`;
+      const optionID = generateID();
       const text = toMD(optionNode.children);
 
       if (optionNode.checked) {
@@ -42,8 +44,13 @@ function parseOptions(
   return { options, answers };
 }
 
-function parseQuestion(node: Parent, i: number, tree: Root): Question {
-  const questionID = `q${i}`;
+function parseQuestion(
+  node: Parent,
+  i: number,
+  tree: Root,
+  generateID: idGenerator
+): Question {
+  const questionID = generateID();
   const heading = toMD(node.children);
 
   let j = i + 1;
@@ -60,7 +67,7 @@ function parseQuestion(node: Parent, i: number, tree: Root): Question {
   let options: Option[] = [];
   let answers: Answer[] = [];
   if (nextNode.type === "list") {
-    ({ options, answers } = parseOptions(nextNode.children, questionID));
+    ({ options, answers } = parseOptions(nextNode.children, generateID));
   }
 
   return {
@@ -72,7 +79,7 @@ function parseQuestion(node: Parent, i: number, tree: Root): Question {
   };
 }
 
-export function parseQuiz(mdText: string): Quiz {
+export function parseQuiz(generateID: idGenerator, mdText: string): Quiz {
   const tree = toMDAST(mdText);
   return tree.children.reduce((quiz, node, i) => {
     // YAML frontmatter
@@ -82,7 +89,7 @@ export function parseQuiz(mdText: string): Quiz {
 
     // Questions
     if (node.type === "heading" && node.depth === 2) {
-      let question = parseQuestion(node, i, tree);
+      let question = parseQuestion(node, i, tree, generateID);
       quiz.questions = quiz.questions ?? [];
       quiz.questions.push(question);
     }
