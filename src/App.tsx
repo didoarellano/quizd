@@ -4,6 +4,7 @@ import { useAuth } from "./contexts/AuthContext";
 
 import { UserRoles } from "./services/auth";
 import { CreateQuiz } from "./pages/CreateQuiz";
+import { PlayQuiz } from "./pages/PlayQuiz";
 
 function App() {
   const { user, signin, signinAnonymously, signout } = useAuth();
@@ -17,7 +18,7 @@ function App() {
               <Link href="/quiz/new">Create a Quiz</Link>
             </li>
             <li>
-              <Link href="/play">Play</Link>
+              <Link href="/play/jj8MgM10ezL8zCPKQ39A">Play</Link>
             </li>
             {!user ? (
               <>
@@ -58,8 +59,8 @@ function App() {
           </Switch>
         </PrivateRoute>
 
-        <Route path="/play">
-          <h1>Play</h1>
+        <Route path="/play/:id">
+          {(params) => <PlayQuiz key={params.id} quizID={params.id} />}
         </Route>
       </Switch>
     </Router>
