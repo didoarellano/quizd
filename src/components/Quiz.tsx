@@ -15,6 +15,20 @@ export function Quiz({ quiz }: QuizProps) {
     <>
       <h2>{quiz.title}</h2>
 
+      {/* TEMPORARY */}
+      {!(quiz.questions.length - 1 === currentQuestionIndex) && (
+        <button
+          onClick={() => {
+            setCurrentQuestionIndex((prevIndex) => {
+              return prevIndex + 1;
+            });
+          }}
+        >
+          Next
+        </button>
+      )}
+      {/* TEMPORARY */}
+
       <div>
         <QuestionText
           heading={currentQuestion.heading}
