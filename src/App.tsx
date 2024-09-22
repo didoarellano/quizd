@@ -5,6 +5,7 @@ import { useAuth } from "./contexts/AuthContext";
 import { UserRoles } from "./services/auth";
 import { CreateQuiz } from "./pages/CreateQuiz";
 import { PlayQuiz } from "./pages/PlayQuiz";
+import { HostQuiz } from "./pages/HostQuiz";
 
 function App() {
   const { user, signin, signinAnonymously, signout } = useAuth();
@@ -55,6 +56,9 @@ function App() {
             </Route>
             <Route path="/:id">
               {(params) => <CreateQuiz key={params.id} quizID={params.id} />}
+            </Route>
+            <Route path="/:id/host">
+              {(params) => <HostQuiz key={params.id} quizID={params.id} />}
             </Route>
           </Switch>
         </PrivateRoute>

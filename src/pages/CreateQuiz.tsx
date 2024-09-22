@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { DocumentData, DocumentSnapshot } from "firebase/firestore";
-import { useLocation, useRouter } from "wouter";
+import { Link, useLocation, useRouter } from "wouter";
 
 import { generateID, getQuiz, saveNewQuiz, updateQuiz } from "../services/quiz";
 import { useAuth } from "../contexts/AuthContext";
@@ -16,7 +16,7 @@ export function CreateQuiz({ quizID }: CreateQuizProps) {
   const quizSnap = useRef<DocumentSnapshot | null>(null);
   const [quizData, setQuizData] = useState<DocumentData | null>(null);
   const [isLoadingQuiz, setIsLoadingQuiz] = useState(true);
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const { base } = useRouter();
   const { user } = useAuth();
 
@@ -61,13 +61,16 @@ export function CreateQuiz({ quizID }: CreateQuizProps) {
         {!quizID ? "Create Quiz" : `Editing Quiz: ${quizData?.title ?? ""}`}
       </h1>
 
-      {isLoadingQuiz ? (
+      {isLoadingQuiz || !quizData ? (
         <p>...</p>
       ) : (
-        <QuizEditor
-          initialMDText={quizData?._rawMD ?? ""}
-          handleSave={handleSave}
-        />
+        <>
+          <Link href={`${location}/host`}>Host Game</Link>
+          <QuizEditor
+            initialMDText={quizData._rawMD ?? ""}
+            handleSave={handleSave}
+          />
+        </>
       )}
     </>
   );
