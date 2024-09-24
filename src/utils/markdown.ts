@@ -30,7 +30,7 @@ function parseOptions(
   let answers: Answer[] = [];
   const options: Option[] = optionNodes
     .filter((o) => o.type === "listItem")
-    .map((optionNode, i) => {
+    .map((optionNode) => {
       const optionID = generateID();
       const text = toMD(optionNode.children);
 

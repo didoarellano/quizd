@@ -27,7 +27,7 @@ type QuestionTypeKeys = (typeof QuestionTypes)[keyof typeof QuestionTypes];
 
 export type Question = {
   id: string;
-  // type: QuestionTypeKeys;
+  type?: QuestionTypeKeys;
   heading: string;
   body: string;
   options: Option[];

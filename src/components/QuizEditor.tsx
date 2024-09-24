@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ChangeEvent } from "react";
+import { useState, type FormEvent } from "react";
 import CodeEditor from "@uiw/react-textarea-code-editor";
 
 type QuizEditorProps = {
@@ -12,7 +12,7 @@ export function QuizEditor({
 }: QuizEditorProps) {
   const [mdText, setMDText] = useState(initialMDText);
 
-  function handleSubmit(e) {
+  function handleSubmit(e: FormEvent) {
     e.preventDefault();
     handleSave(mdText);
   }
