@@ -1,5 +1,4 @@
 import {
-  getAuth,
   GoogleAuthProvider,
   onAuthStateChanged,
   signInAnonymously,
@@ -9,11 +8,9 @@ import {
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import type { Unsubscribe, User as FirebaseUser } from "firebase/auth";
 
-import { app, db } from "./firebase";
+import { auth, db } from "./firebase";
 
 const provider = new GoogleAuthProvider();
-
-export const auth = getAuth(app);
 
 export async function isUserWhitelisted(email: string): Promise<boolean> {
   const docRef = doc(db, "whitelist", email);
