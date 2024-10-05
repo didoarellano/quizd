@@ -1,15 +1,15 @@
 import { useState, type FormEvent } from "react";
 import CodeEditor from "@uiw/react-textarea-code-editor";
 
-type QuizEditorProps = {
+type MarkdownEditorProps = {
   handleSave: (mdText: string) => void;
   initialMDText: string;
 };
 
-export function QuizEditor({
+export function MarkdownEditor({
   handleSave,
   initialMDText = "",
-}: QuizEditorProps) {
+}: MarkdownEditorProps) {
   const [mdText, setMDText] = useState(initialMDText);
 
   function handleSubmit(e: FormEvent) {

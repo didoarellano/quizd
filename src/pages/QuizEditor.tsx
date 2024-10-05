@@ -5,14 +5,14 @@ import { Link, useLocation, useRouter } from "wouter";
 import { generateID, getQuiz, saveNewQuiz, updateQuiz } from "../services/quiz";
 import { useAuth } from "../contexts/AuthContext";
 import { Teacher, UserRoles } from "../services/auth";
-import { QuizEditor } from "../components/QuizEditor";
+import { MarkdownEditor } from "../components/MarkdownEditor";
 import { parseQuiz } from "../utils/markdown";
 
-type CreateQuizProps = {
+type QuizEditorProps = {
   quizID?: string;
 };
 
-export function CreateQuiz({ quizID }: CreateQuizProps) {
+export function QuizEditor({ quizID }: QuizEditorProps) {
   const quizSnap = useRef<DocumentSnapshot | null>(null);
   const [quizData, setQuizData] = useState<DocumentData | null>(null);
   const [isLoadingQuiz, setIsLoadingQuiz] = useState(true);
@@ -61,13 +61,14 @@ export function CreateQuiz({ quizID }: CreateQuizProps) {
         {!quizID ? "Create Quiz" : `Editing Quiz: ${quizData?.title ?? ""}`}
       </h1>
 
-      {isLoadingQuiz || !quizData ? (
+      {quizID && <Link href={`${location}/host`}>Host Game</Link>}
+
+      {isLoadingQuiz ? (
         <p>...</p>
       ) : (
         <>
-          <Link href={`${location}/host`}>Host Game</Link>
-          <QuizEditor
-            initialMDText={quizData._rawMD ?? ""}
+          <MarkdownEditor
+            initialMDText={quizData?._rawMD ?? ""}
             handleSave={handleSave}
           />
         </>

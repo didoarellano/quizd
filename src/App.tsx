@@ -4,8 +4,8 @@ import { PrivateRoute } from "./components/PrivateRoute";
 import { useAuth } from "./contexts/AuthContext";
 
 import { UserRoles } from "./services/auth";
-import { CreateQuiz } from "./pages/CreateQuiz";
 import { PlayQuiz } from "./pages/PlayQuiz";
+import { QuizEditor } from "./pages/QuizEditor";
 import { HostQuiz } from "./pages/HostQuiz";
 import { functions } from "./services/firebase";
 import { httpsCallable } from "firebase/functions";
@@ -70,10 +70,10 @@ function App() {
         >
           <Switch>
             <Route path="/new">
-              <CreateQuiz />
+              <QuizEditor />
             </Route>
             <Route path="/:id">
-              {(params) => <CreateQuiz key={params.id} quizID={params.id} />}
+              {(params) => <QuizEditor key={params.id} quizID={params.id} />}
             </Route>
             <Route path="/:id/host">
               {(params) => <HostQuiz key={params.id} quizID={params.id} />}
