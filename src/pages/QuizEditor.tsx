@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { DocumentData, DocumentSnapshot } from "firebase/firestore";
-import { Link, useLocation, useRouter } from "wouter";
+import { Link, useLocation, useRouter, type RouteComponentProps } from "wouter";
 
 import { generateID, getQuiz, saveNewQuiz, updateQuiz } from "../services/quiz";
 import { useAuth } from "../contexts/AuthContext";
@@ -10,7 +10,7 @@ import { parseQuiz } from "../utils/markdown";
 
 type QuizEditorProps = {
   quizID?: string;
-};
+} & Partial<RouteComponentProps>;
 
 export function QuizEditor({ quizID }: QuizEditorProps) {
   const quizSnap = useRef<DocumentSnapshot | null>(null);

@@ -69,9 +69,7 @@ function App() {
           replace={true}
         >
           <Switch>
-            <Route path="/new">
-              <QuizEditor />
-            </Route>
+            <Route path="/new" component={QuizEditor} />
             <Route path="/:id">
               {(params) => <QuizEditor key={params.id} quizID={params.id} />}
             </Route>
