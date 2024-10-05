@@ -7,8 +7,13 @@ service cloud.firestore {
       // Both teachers and students can read quizzes
       allow read: if request.auth != null;
 
-      // Only teachers can write to quizzes
-      allow create, update, delete: if request.auth != null && exists(/databases/$(database)/documents/teachers/$(request.auth.uid));
+      // Only teachers can create quizzes
+      allow create: if request.auth != null && exists(/databases/$(database)/documents/teachers/$(request.auth.uid));
+
+      // Only the teacher who created the quiz can update or delete it
+      allow update, delete: if request.auth != null &&
+      exists(/databases/$(database)/documents/teachers/$(request.auth.uid)) &&
+      resource.data.teacherID == request.auth.uid;
     }
 
     match /answers/{answerID} {
