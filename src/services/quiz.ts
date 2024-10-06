@@ -4,12 +4,14 @@ import {
   deleteDoc,
   doc,
   DocumentReference,
-  DocumentSnapshot,
   getDoc,
+  getDocs,
+  query,
   updateDoc,
+  where,
 } from "firebase/firestore";
-import { db } from "./firebase";
 import type { Teacher } from "./auth";
+import { db } from "./firebase";
 
 export type Option = {
   id: string;
@@ -46,6 +48,21 @@ export type Quiz = {
 export function getQuiz(quizID: string): Promise<DocumentSnapshot> {
   const docRef = doc(db, "quizzes", quizID);
   return getDoc(docRef);
+
+export async function getQuizzes(teacherID: string): Promise<Quiz[]> {
+  const q = query(
+    collection(db, "quizzes"),
+    where("teacherID", "==", teacherID),
+  );
+  const querySnapshot = await getDocs(q);
+  const quizzes: Quiz[] = querySnapshot.docs.map((doc) => {
+    return {
+      id: doc.id,
+      ...doc.data(),
+    } as Quiz;
+  });
+
+  return quizzes;
 }
 
 export function saveNewQuiz(

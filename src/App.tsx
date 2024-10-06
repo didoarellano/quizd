@@ -11,6 +11,7 @@ import { functions } from "./services/firebase";
 import { httpsCallable } from "firebase/functions";
 
 const ping = httpsCallable(functions, "ping");
+import { QuizList } from "./pages/QuizList";
 
 function App() {
   const { user, signin, signinAnonymously, signout } = useAuth();
@@ -21,6 +22,9 @@ function App() {
       <header>
         <nav>
           <ul>
+            <li>
+              <Link href="/quiz/">My Quizzes</Link>
+            </li>
             <li>
               <Link href="/quiz/new">Create a Quiz</Link>
             </li>
@@ -69,6 +73,7 @@ function App() {
           replace={true}
         >
           <Switch>
+            <Route path="/" component={QuizList} />
             <Route path="/new" component={QuizEditor} />
             <Route path="/:id">
               {(params) => <QuizEditor key={params.id} quizID={params.id} />}
