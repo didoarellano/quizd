@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link, Route, Router, Switch } from "wouter";
 import { PrivateRoute } from "./components/PrivateRoute";
 import { useAuth } from "./contexts/AuthContext";
@@ -7,21 +6,19 @@ import { UserRoles } from "./services/auth";
 import { PlayQuiz } from "./pages/PlayQuiz";
 import { QuizEditor } from "./pages/QuizEditor";
 import { HostQuiz } from "./pages/HostQuiz";
-import { functions } from "./services/firebase";
-import { httpsCallable } from "firebase/functions";
-
-const ping = httpsCallable(functions, "ping");
 import { QuizList } from "./pages/QuizList";
 
 function App() {
   const { user, signin, signinAnonymously, signout } = useAuth();
-  const [hits, setHits] = useState(0);
 
   return (
     <Router base={import.meta.env.VITE_BASE_URL}>
       <header>
         <nav>
           <ul>
+            <li>
+              <Link href="/">Home</Link>
+            </li>
             <li>
               <Link href="/quiz/">My Quizzes</Link>
             </li>
@@ -49,20 +46,8 @@ function App() {
             )}
           </ul>
         </nav>
-        {user && <h3>Hello {user.displayName ?? "Anon"}</h3>}
+        {user && <h3>Hello {user.displayName}</h3>}
       </header>
-
-      <div>
-        <button
-          onClick={async () => {
-            const result = await ping();
-            setHits(result.data.hits);
-          }}
-        >
-          Hit
-        </button>
-        <p>{hits}</p>
-      </div>
 
       <Switch>
         <PrivateRoute
