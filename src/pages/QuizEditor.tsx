@@ -3,6 +3,7 @@ import type { DocumentData, DocumentSnapshot } from "firebase/firestore";
 import { Link, useLocation, useRouter, type RouteComponentProps } from "wouter";
 
 import { generateID, getQuiz, saveNewQuiz, updateQuiz } from "../services/quiz";
+import { QuizPreview } from "../components/QuizPreview";
 import { useAuth } from "../contexts/AuthContext";
 import { Teacher, UserRoles } from "../services/auth";
 import { MarkdownEditor } from "../components/MarkdownEditor";
@@ -71,6 +72,10 @@ export function QuizEditor({ quizID }: QuizEditorProps) {
             initialMDText={quizData?._rawMD ?? ""}
             handleSave={handleSave}
           />
+
+          <hr />
+
+          {quizData && <QuizPreview quiz={quizData} />}
         </>
       )}
     </>
