@@ -4,9 +4,12 @@ import {
   deleteDoc,
   doc,
   DocumentReference,
+  FieldValue,
   getDoc,
   getDocs,
+  orderBy,
   query,
+  serverTimestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -43,6 +46,7 @@ export type Quiz = {
   title: string;
   description?: string;
   questions: Question[];
+  createdAt: FieldValue;
 };
 
 export async function getQuiz(quizID: string, teacherID: string) {
@@ -50,15 +54,20 @@ export async function getQuiz(quizID: string, teacherID: string) {
   const docSnap = await getDoc(docRef);
   const quizData = docSnap?.data();
 
-export async function getQuizzes(teacherID: string): Promise<Quiz[]> {
   if (!docSnap.exists() || quizData?.teacherID !== teacherID) {
     throw new Error("No matching quiz found or teacherID mismatch.");
   }
 
   return { docSnap, quizData };
 }
+
+export async function getQuizzes(
+  teacherID: string,
+  sort: "asc" | "desc" = "desc",
+): Promise<Quiz[]> {
   const q = query(
     collection(db, "quizzes"),
+    orderBy("createdAt", sort),
     where("teacherID", "==", teacherID),
   );
   const querySnapshot = await getDocs(q);
@@ -77,6 +86,7 @@ export function saveNewQuiz(
   quizData: Partial<Quiz>
 ): Promise<DocumentReference> {
   quizData.teacherID = teacher.id;
+  quizData.createdAt = serverTimestamp();
   return addDoc(collection(db, "quizzes"), quizData);
 }
 
