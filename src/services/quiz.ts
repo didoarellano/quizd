@@ -45,11 +45,18 @@ export type Quiz = {
   questions: Question[];
 };
 
-export function getQuiz(quizID: string): Promise<DocumentSnapshot> {
+export async function getQuiz(quizID: string, teacherID: string) {
   const docRef = doc(db, "quizzes", quizID);
-  return getDoc(docRef);
+  const docSnap = await getDoc(docRef);
+  const quizData = docSnap?.data();
 
 export async function getQuizzes(teacherID: string): Promise<Quiz[]> {
+  if (!docSnap.exists() || quizData?.teacherID !== teacherID) {
+    throw new Error("No matching quiz found or teacherID mismatch.");
+  }
+
+  return { docSnap, quizData };
+}
   const q = query(
     collection(db, "quizzes"),
     where("teacherID", "==", teacherID),

@@ -22,23 +22,19 @@ export function QuizEditor({ quizID }: QuizEditorProps) {
   const { user } = useAuth();
 
   useEffect(() => {
-    async function loadQuiz(quizID: string) {
-      if (!user?.id || user?.role !== UserRoles.Teacher) return;
-      const _quizSnap = await getQuiz(quizID);
-
-      if (_quizSnap.exists()) {
-        quizSnap.current = _quizSnap;
-        setQuizData(_quizSnap.data());
-      }
-      setIsLoadingQuiz(false);
-    }
-
+    if (!user?.id || user?.role !== UserRoles.Teacher) return;
     if (!quizID) return setIsLoadingQuiz(false);
-
-    if (quizID) {
-      setIsLoadingQuiz(true);
-      loadQuiz(quizID);
-    }
+    setIsLoadingQuiz(true);
+    getQuiz(quizID, user.id)
+      .then(({ docSnap, quizData: data }) => {
+        quizSnap.current = docSnap;
+        setQuizData(data);
+      })
+      .catch((e) => {
+        // TODO: Flash message
+        setLocation(`~${base}`);
+      })
+      .finally(() => setIsLoadingQuiz(false));
   }, []);
 
   async function handleSave(mdText: string) {
