@@ -3,9 +3,9 @@ import { PrivateRoute } from "./components/PrivateRoute";
 import { useAuth } from "./contexts/AuthContext";
 
 import { UserRoles } from "./services/auth";
+import { ActiveGame } from "./pages/ActiveGame";
 import { PlayQuiz } from "./pages/PlayQuiz";
 import { QuizEditor } from "./pages/QuizEditor";
-import { HostQuiz } from "./pages/HostQuiz";
 import { QuizList } from "./pages/QuizList";
 
 function App() {
@@ -64,7 +64,7 @@ function App() {
               {(params) => <QuizEditor key={params.id} quizID={params.id} />}
             </Route>
             <Route path="/:id/host">
-              {(params) => <HostQuiz key={params.id} quizID={params.id} />}
+              {(params) => <ActiveGame key={params.id} quizID={params.id} />}
             </Route>
           </Switch>
         </PrivateRoute>

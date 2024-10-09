@@ -39,6 +39,7 @@ export function QuizList() {
             <h1>{quiz.title}</h1>
             <p>{quiz.description}</p>
             <p>{quiz.questions.length} questions</p>
+            <Link href={`/${quiz.id}/host`}>Host Game</Link>
             <Link href={`/${quiz.id}`}>Edit Quiz</Link>
             <QuizDeleteButton
               quizID={quiz.id}
