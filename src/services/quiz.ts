@@ -97,7 +97,8 @@ export function updateQuiz(
   return updateDoc(quizRef, quizData);
 }
 
-export function deleteQuiz(quizRef: DocumentReference): Promise<void> {
+export function deleteQuizByID(quizID: string): Promise<void> {
+  const quizRef = doc(db, "quizzes", quizID);
   return deleteDoc(quizRef);
 }
 
