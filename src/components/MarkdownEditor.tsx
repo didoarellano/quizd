@@ -24,7 +24,10 @@ export function MarkdownEditor({
         onChange={(e) => setMDText(e.target.value)}
         language="md"
         minHeight={480}
-        style={{ backgroundColor: "#f5f5f5" }}
+        style={{
+          backgroundColor: "#f5f5f5",
+          fontFamily: "ui-monospace, monospace",
+        }}
       />
       <button type="submit">Save</button>
     </form>
