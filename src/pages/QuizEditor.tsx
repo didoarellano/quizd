@@ -3,6 +3,7 @@ import type { DocumentData, DocumentSnapshot } from "firebase/firestore";
 import { Link, useLocation, useRouter, type RouteComponentProps } from "wouter";
 
 import { generateID, getQuiz, saveNewQuiz, updateQuiz } from "../services/quiz";
+import { QuizDeleteButton } from "../components/QuizDeleteButton";
 import { QuizPreview } from "../components/QuizPreview";
 import { useAuth } from "../contexts/AuthContext";
 import { Teacher, UserRoles } from "../services/auth";
@@ -52,6 +53,10 @@ export function QuizEditor({ quizID }: QuizEditorProps) {
     }
   }
 
+  async function handleDelete() {
+    setLocation("/", { replace: true });
+  }
+
   return (
     <>
       <h1>
@@ -64,6 +69,7 @@ export function QuizEditor({ quizID }: QuizEditorProps) {
         <p>...</p>
       ) : (
         <>
+          <QuizDeleteButton quizID={quizID} onDelete={handleDelete} />
           <MarkdownEditor
             initialMDText={quizData?._rawMD ?? ""}
             handleSave={handleSave}
