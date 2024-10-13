@@ -3,7 +3,9 @@ import { PrivateRoute } from "./components/PrivateRoute";
 import { useAuth } from "./contexts/AuthContext";
 
 import { UserRoles } from "./services/auth";
-import { ActiveGame } from "./pages/ActiveGame";
+import { GameQuestion } from "./pages/GameQuestion";
+import { GameResults } from "./pages/GameResults";
+import { HostLobby } from "./pages/HostLobby";
 import { PlayQuiz } from "./pages/PlayQuiz";
 import { QuizEditor } from "./pages/QuizEditor";
 import { QuizList } from "./pages/QuizList";
@@ -63,8 +65,25 @@ function App() {
             <Route path="/:id">
               {(params) => <QuizEditor key={params.id} quizID={params.id} />}
             </Route>
-            <Route path="/:id/host">
-              {(params) => <ActiveGame key={params.id} quizID={params.id} />}
+          </Switch>
+        </PrivateRoute>
+
+        <PrivateRoute
+          path="/host/:id"
+          nest={true}
+          isAllowed={user?.role === UserRoles.Teacher}
+          redirectTo="/play"
+          replace={true}
+        >
+          <Switch>
+            <Route path="/">
+              {({ id }) => <HostLobby key={id} quizID={id} />}
+            </Route>
+            <Route path="/play">
+              {({ id }) => <GameQuestion key={id} quizID={id} />}
+            </Route>
+            <Route path="/results">
+              {({ id }) => <GameResults key={id} quizID={id} />}
             </Route>
           </Switch>
         </PrivateRoute>
