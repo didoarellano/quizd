@@ -45,7 +45,9 @@ export function QuizList() {
             <h1>{quiz.title}</h1>
             <p>{quiz.description}</p>
             <p>{quiz.questions?.length} questions</p>
-            <Link href={`/${quiz.id}/host`}>Host Game</Link>
+            <Link href={`~${import.meta.env.VITE_BASE_URL}/host/${quiz.id}`}>
+              Host Game
+            </Link>
             <Link href={`/${quiz.id}`}>Edit Quiz</Link>
             <QuizDeleteButton onDeleteClick={() => deleteQuiz(quiz.id)} />
           </div>

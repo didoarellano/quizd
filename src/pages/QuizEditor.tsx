@@ -25,7 +25,7 @@ type QuizEditorProps = {
 } & Partial<RouteComponentProps>;
 
 export function QuizEditor({ quizID }: QuizEditorProps) {
-  const [location, setLocation] = useLocation();
+  const [, setLocation] = useLocation();
   const { base } = useRouter();
   const { user } = useAuth();
 
@@ -87,7 +87,9 @@ export function QuizEditor({ quizID }: QuizEditorProps) {
   return (
     <>
       <h1>Editing Quiz: {data?.quizData?.title ?? ""}</h1>
-      <Link href={`${location}/host`}>Host Game</Link>
+      <Link href={`~${import.meta.env.VITE_BASE_URL}/host/${quizID}`}>
+        Host Game
+      </Link>
       {isPending ? (
         <p>loading...</p>
       ) : (
