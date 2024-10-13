@@ -1,29 +1,35 @@
-import { useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { QuizDeleteButton } from "../components/QuizDeleteButton";
 import { useAuth } from "../contexts/AuthContext";
-import { getQuizzes, type Quiz } from "../services/quiz";
+import { deleteQuizByID, getQuizzes } from "../services/quiz";
 
 export function QuizList() {
   const { user } = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
-  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const queryClient = useQueryClient();
+  const {
+    isPending,
+    isError,
+    error,
+    data: quizzes,
+  } = useQuery({
+    queryKey: ["quizzes"],
+    queryFn: () => getQuizzes(user.id),
+  });
 
-  useEffect(() => {
-    setIsLoading(true);
-    getQuizzes(user.id)
-      .then(setQuizzes)
-      .finally(() => setIsLoading(false));
-  }, []);
+  const { mutate: deleteQuiz } = useMutation({
+    mutationFn: (quizID: string) => deleteQuizByID(quizID),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["quizzes"] });
+    },
+  });
 
-  if (isLoading) {
-    return <p>...</p>;
+  if (isPending) {
+    return <p>loading...</p>;
   }
 
-  function handleDeleteQuiz(deletedQuizId: string) {
-    setQuizzes((prevQuizzes) =>
-      prevQuizzes.filter((quiz) => quiz.id !== deletedQuizId),
-    );
+  if (isError) {
+    return <p>Error: {error.message}</p>;
   }
 
   return (
@@ -38,13 +44,10 @@ export function QuizList() {
           <div key={quiz.id}>
             <h1>{quiz.title}</h1>
             <p>{quiz.description}</p>
-            <p>{quiz.questions.length} questions</p>
+            <p>{quiz.questions?.length} questions</p>
             <Link href={`/${quiz.id}/host`}>Host Game</Link>
             <Link href={`/${quiz.id}`}>Edit Quiz</Link>
-            <QuizDeleteButton
-              quizID={quiz.id}
-              onDelete={() => handleDeleteQuiz(quiz.id)}
-            />
+            <QuizDeleteButton onDeleteClick={() => deleteQuiz(quiz.id)} />
           </div>
         ))
       )}
