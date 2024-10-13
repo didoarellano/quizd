@@ -14,7 +14,7 @@ type AuthContextObject = {
 
 const AuthContext = createContext<AuthContextObject | null>(null);
 
-export function useAuth() {
+export function useAuth(): AuthContextObject {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth should be used inside an <AuthProvider>");
   return ctx;

@@ -1,9 +1,11 @@
 import {
   addDoc,
   collection,
+  CollectionReference,
   deleteDoc,
   doc,
   DocumentReference,
+  DocumentSnapshot,
   FieldValue,
   getDoc,
   getDocs,
@@ -11,7 +13,7 @@ import {
   query,
   serverTimestamp,
   updateDoc,
-  where,
+  where
 } from "firebase/firestore";
 import type { Teacher } from "./auth";
 import { db } from "./firebase";
@@ -49,8 +51,11 @@ export type Quiz = {
   createdAt: FieldValue;
 };
 
-export async function getQuiz(quizID: string, teacherID: string) {
-  const docRef = doc(db, "quizzes", quizID);
+export async function getQuiz(
+  quizID: string,
+  teacherID: string,
+): Promise<{ docSnap: DocumentSnapshot<Quiz>; quizData: Quiz }> {
+  const docRef = doc(db, "quizzes", quizID) as DocumentReference<Quiz>;
   const docSnap = await getDoc(docRef);
   const quizData = docSnap?.data();
 
@@ -58,7 +63,7 @@ export async function getQuiz(quizID: string, teacherID: string) {
     throw new Error("No matching quiz found or teacherID mismatch.");
   }
 
-  return { docSnap, quizData };
+  return { docSnap, quizData: quizData as Quiz };
 }
 
 export async function getQuizzes(
@@ -83,16 +88,20 @@ export async function getQuizzes(
 
 export function saveNewQuiz(
   teacher: Teacher,
-  quizData: Partial<Quiz>
-): Promise<DocumentReference> {
+  quizData: Partial<Quiz>,
+): Promise<DocumentReference<Quiz>> {
   quizData.teacherID = teacher.id;
   quizData.createdAt = serverTimestamp();
-  return addDoc(collection(db, "quizzes"), quizData);
+  const quizzesCollection = collection(
+    db,
+    "quizzes",
+  ) as CollectionReference<Quiz>;
+  return addDoc(quizzesCollection, quizData as Quiz);
 }
 
 export function updateQuiz(
   quizRef: DocumentReference,
-  quizData: Partial<Quiz>
+  quizData: Partial<Quiz>,
 ): Promise<void> {
   return updateDoc(quizRef, quizData);
 }
