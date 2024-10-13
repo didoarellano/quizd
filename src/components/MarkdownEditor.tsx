@@ -1,5 +1,5 @@
-import { useState, type FormEvent } from "react";
 import CodeEditor from "@uiw/react-textarea-code-editor";
+import { useState, type FormEvent } from "react";
 
 type MarkdownEditorProps = {
   handleSave: (mdText: string) => void;

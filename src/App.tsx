@@ -2,13 +2,13 @@ import { Link, Route, Router, Switch } from "wouter";
 import { PrivateRoute } from "./components/PrivateRoute";
 import { useAuth } from "./contexts/AuthContext";
 
-import { UserRoles } from "./services/auth";
 import { GameQuestion } from "./pages/GameQuestion";
 import { GameResults } from "./pages/GameResults";
 import { HostLobby } from "./pages/HostLobby";
 import { PlayQuiz } from "./pages/PlayQuiz";
 import { QuizEditor } from "./pages/QuizEditor";
 import { QuizList } from "./pages/QuizList";
+import { UserRoles } from "./services/auth";
 
 function App() {
   const { user, signin, signinAnonymously, signout } = useAuth();
