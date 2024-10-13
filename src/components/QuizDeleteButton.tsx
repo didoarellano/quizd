@@ -1,12 +1,10 @@
 import { useState } from "react";
-import { deleteQuizByID } from "../services/quiz";
 
 type QuizDeleteButtonProps = {
-  quizID: string;
-  onDelete: () => void;
+  onDeleteClick: () => void;
 };
 
-export function QuizDeleteButton({ quizID, onDelete }: QuizDeleteButtonProps) {
+export function QuizDeleteButton({ onDeleteClick }: QuizDeleteButtonProps) {
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   if (!showConfirmation) {
@@ -18,7 +16,12 @@ export function QuizDeleteButton({ quizID, onDelete }: QuizDeleteButtonProps) {
   return (
     <>
       <button onClick={() => setShowConfirmation(false)}>Cancel</button>
-      <button onClick={() => deleteQuizByID(quizID).then(onDelete)}>
+      <button
+        onClick={() => {
+          setShowConfirmation(false);
+          onDeleteClick();
+        }}
+      >
         Confirm Delete
       </button>
     </>
