@@ -13,8 +13,9 @@ import {
   query,
   serverTimestamp,
   updateDoc,
-  where
+  where,
 } from "firebase/firestore";
+import { NotAllowedError, QuizNotFoundError } from "../utils/errors";
 import type { Teacher } from "./auth";
 import { db } from "./firebase";
 
@@ -59,9 +60,8 @@ export async function getQuiz(
   const docSnap = await getDoc(docRef);
   const quizData = docSnap?.data();
 
-  if (!docSnap.exists() || quizData?.teacherID !== teacherID) {
-    throw new Error("No matching quiz found or teacherID mismatch.");
-  }
+  if (!docSnap.exists()) throw new QuizNotFoundError();
+  if (quizData?.teacherID !== teacherID) throw new NotAllowedError();
 
   return { docSnap, quizData: quizData as Quiz };
 }
