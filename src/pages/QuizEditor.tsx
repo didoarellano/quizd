@@ -18,6 +18,7 @@ import {
   saveNewQuiz,
   updateQuiz,
 } from "../services/quiz";
+import { NotAllowedError, QuizNotFoundError } from "../utils/errors";
 import { parseQuiz } from "../utils/markdown";
 
 type QuizEditorProps = {
@@ -33,9 +34,12 @@ export function QuizEditor({ quizID }: QuizEditorProps) {
   const { isPending, isError, error, data } = useQuery({
     queryKey: ["quizzes", quizID],
     queryFn: () => getQuiz(quizID, user.id),
-    enabled: !!(quizID && user?.role === UserRoles.Teacher),
-    // TODO: If 404 redirect immediately, don't retry
-    // retry: (count, error) => {}
+    retry: (_, error) => {
+      return (
+        !(error instanceof QuizNotFoundError) ||
+        !(error instanceof NotAllowedError)
+      );
+    },
   });
 
   const { mutate: deleteQuiz } = useMutation({
@@ -80,7 +84,6 @@ export function QuizEditor({ quizID }: QuizEditorProps) {
 
   if (isError) {
     // TODO: Flash message
-    console.error(error);
     return <Redirect to={`~${base}`} />;
   }
 
