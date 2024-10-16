@@ -61,9 +61,13 @@ function App() {
         >
           <Switch>
             <Route path="/" component={QuizList} />
-            <Route path="/new" component={QuizEditor} />
+            <Route path="/new">
+              <QuizEditor mode="create" />
+            </Route>
             <Route path="/:id">
-              {(params) => <QuizEditor key={params.id} quizID={params.id} />}
+              {(params) => (
+                <QuizEditor key={params.id} quizID={params.id} mode="edit" />
+              )}
             </Route>
           </Switch>
         </PrivateRoute>

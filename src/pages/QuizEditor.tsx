@@ -23,9 +23,10 @@ import { parseQuiz } from "../utils/markdown";
 
 type QuizEditorProps = {
   quizID?: string;
+  mode: "create" | "edit";
 } & Partial<RouteComponentProps>;
 
-export function QuizEditor({ quizID }: QuizEditorProps) {
+export function QuizEditor({ quizID, mode }: QuizEditorProps) {
   const [, setLocation] = useLocation();
   const { base } = useRouter();
   const { user } = useAuth();
@@ -34,6 +35,7 @@ export function QuizEditor({ quizID }: QuizEditorProps) {
   const { isPending, isError, error, data } = useQuery({
     queryKey: ["quizzes", quizID],
     queryFn: () => getQuiz(quizID, user.id),
+    enabled: !!(mode === "edit" && user?.role === UserRoles.Teacher),
     retry: (_, error) => {
       return (
         !(error instanceof QuizNotFoundError) ||
@@ -73,7 +75,7 @@ export function QuizEditor({ quizID }: QuizEditorProps) {
     },
   });
 
-  if (!quizID) {
+  if (mode === "create") {
     return (
       <>
         <h1>Create Quiz</h1>
