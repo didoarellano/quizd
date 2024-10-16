@@ -3,59 +3,77 @@ import * as logger from "firebase-functions/logger";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { generatePIN } from "./utils/generatePIN";
 
+import type { Quiz } from "../../../src/services/quiz";
+
 const db = admin.firestore();
 
-export const createGame = onCall(async (request) => {
-  const quizID = request.data;
+type StoredGame = {
+  pin: string;
+  quizID: string;
+  currentQuestionIndex: number;
+  teacherID: string;
+};
 
-  const quizDoc = await db.collection("quizzes").doc(quizID).get();
+export type ReturnedGame = StoredGame & {
+  id: string;
+  quizData: Quiz;
+};
 
-  if (!quizDoc.exists) {
-    logger.error(`Quiz with ID ${quizID} not found.`);
-    throw new HttpsError("not-found", `Quiz with ID ${quizID} does not exist.`);
-  }
+export const createGame = onCall<string, Promise<ReturnedGame>>(
+  async (request) => {
+    const quizID = request.data;
 
-  const quizData = quizDoc.data();
+    const quizDoc = await db.collection("quizzes").doc(quizID).get();
 
-  let activeGameSnap = await db
-    .collection("activeGames")
-    .where("quizID", "==", quizID)
-    .get();
+    if (!quizDoc.exists) {
+      logger.error(`Quiz with ID ${quizID} not found.`);
+      throw new HttpsError(
+        "not-found",
+        `Quiz with ID ${quizID} does not exist.`,
+      );
+    }
 
-  let activeGame;
+    const quizData = quizDoc.data() as Quiz;
 
-  if (!activeGameSnap.empty) {
-    const activeGameDoc = activeGameSnap.docs[0];
-    activeGame = activeGameDoc.data();
-    activeGame.id = activeGameDoc.id;
-    activeGame.quizData = quizData;
-    return activeGame;
-  }
-
-  let pin;
-  let pinExists = true;
-  while (pinExists) {
-    pin = generatePIN();
-
-    const pinQuery = await db
+    const gameSnap = await db
       .collection("activeGames")
-      .where("pin", "==", pin)
+      .where("quizID", "==", quizID)
       .get();
 
-    pinExists = !pinQuery.empty;
-  }
+    if (!gameSnap.empty) {
+      const gameDoc = gameSnap.docs[0];
+      const game: ReturnedGame = gameDoc.data() as StoredGame;
+      game.id = gameDoc.id;
+      game.quizData = quizData;
+      return game;
+    }
 
-  activeGame = {
-    pin,
-    quizID,
-    teacherID: quizData.teacherID,
-    currentQuestionIndex: 0,
-  };
+    let pin: string;
+    let pinExists = true;
+    while (pinExists) {
+      pin = generatePIN();
 
-  db.collection("activeGames").add(activeGame);
+      const pinQuery = await db
+        .collection("activeGames")
+        .where("pin", "==", pin)
+        .get();
 
-  return {
-    ...activeGame,
-    quizData,
-  };
-});
+      pinExists = !pinQuery.empty;
+    }
+
+    const newGame = {
+      pin,
+      quizID,
+      teacherID: quizData.teacherID,
+      currentQuestionIndex: 0,
+    };
+
+    const newGameRef = await db.collection("activeGames").add(newGame);
+
+    return {
+      id: newGameRef.id,
+      ...newGame,
+      quizData,
+    };
+  },
+);
