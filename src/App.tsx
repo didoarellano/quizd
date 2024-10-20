@@ -5,7 +5,6 @@ import { useAuth } from "./contexts/AuthContext";
 import { GameQuestion } from "./pages/GameQuestion";
 import { GameResults } from "./pages/GameResults";
 import { HostLobby } from "./pages/HostLobby";
-import { PlayQuiz } from "./pages/PlayQuiz";
 import { QuizEditor } from "./pages/QuizEditor";
 import { QuizList } from "./pages/QuizList";
 import { UserRoles } from "./services/auth";
@@ -26,9 +25,6 @@ function App() {
             </li>
             <li>
               <Link href="/quiz/new">Create a Quiz</Link>
-            </li>
-            <li>
-              <Link href="/play/jj8MgM10ezL8zCPKQ39A">Play</Link>
             </li>
             {!user ? (
               <>
@@ -91,10 +87,6 @@ function App() {
             </Route>
           </Switch>
         </PrivateRoute>
-
-        <Route path="/play/:id">
-          {(params) => <PlayQuiz key={params.id} quizID={params.id} />}
-        </Route>
       </Switch>
     </Router>
   );
