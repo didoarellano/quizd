@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "npm run emulators & concurrently -c auto --names \"VITE,TS:functions\" \"vite\" \"npm run functions_watcher\"",
+    "dev": "concurrently -c auto --names \"VITE,TS:functions\" \"vite\" \"npm run functions_watcher\"",
     "emulators": "firebase emulators:start --import firebase/emulator-data --export-on-exit firebase/emulator-data",
     "functions_watcher": "cd firebase/functions && npm run build:watch",
     "build": "tsc -b && vite build",
