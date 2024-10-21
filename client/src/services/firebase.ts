@@ -1,8 +1,8 @@
-import { initializeApp } from "firebase/app";
-import { getAuth, connectAuthEmulator } from "firebase/auth";
-import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
-import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 import { getAnalytics } from "firebase/analytics";
+import { initializeApp } from "firebase/app";
+import { connectAuthEmulator, getAuth } from "firebase/auth";
+import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
+import { connectFunctionsEmulator, getFunctions } from "firebase/functions";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -21,10 +21,10 @@ const analytics = getAnalytics(app);
 const functions = getFunctions(app);
 
 if (import.meta.env.VITE_ENV === "development") {
-  const { emulators } = await import("../../firebase.json");
+  const { emulators } = await import("../../../firebase/firebase.json");
   connectAuthEmulator(auth, `http://localhost:${emulators.auth.port}`);
   connectFirestoreEmulator(db, "localhost", emulators.firestore.port);
   connectFunctionsEmulator(functions, "localhost", emulators.functions.port);
 }
 
-export { app, auth, db, functions, analytics };
+export { analytics, app, auth, db, functions };
