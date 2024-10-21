@@ -1,0 +1,12 @@
+{
+  "name": "haderach",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "concurrently -c auto --names \"VITE,TS:functions\" \"cd client && npm run dev\" \"npm run functions_watcher\"",
+    "emulators": "firebase -c firebase/firebase.json emulators:start --import firebase/emulator-data --export-on-exit firebase/emulator-data",
+    "functions_watcher": "cd firebase/functions && npm run build:watch"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}
