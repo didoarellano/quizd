@@ -19,36 +19,9 @@ import { NotAllowedError, QuizNotFoundError } from "../utils/errors";
 import type { Teacher } from "./auth";
 import { db } from "./firebase";
 
-export type Option = {
-  id: string;
-  text: string;
-};
+import type { Quiz as _Quiz } from "../../../shared/quiz.types";
 
-export type Answer = Option["id"];
-
-export const QuestionTypes = {
-  Multi: "multiple-choice",
-  Text: "text",
-} as const;
-
-type QuestionTypeKeys = (typeof QuestionTypes)[keyof typeof QuestionTypes];
-
-export type Question = {
-  id: string;
-  type?: QuestionTypeKeys;
-  heading: string;
-  body: string;
-  options: Option[];
-  answers: Option["id"][];
-};
-
-export type Quiz = {
-  id?: string;
-  _rawMD: string;
-  teacherID: Teacher["id"];
-  title: string;
-  description?: string;
-  questions: Question[];
+type Quiz = _Quiz & {
   createdAt: FieldValue;
 };
 

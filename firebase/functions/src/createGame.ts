@@ -3,7 +3,7 @@ import * as logger from "firebase-functions/logger";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { generatePIN } from "./utils/generatePIN";
 
-import type { Quiz } from "../../../src/services/quiz";
+import type { Quiz } from "../../../shared/quiz.types";
 
 const db = admin.firestore();
 
@@ -42,13 +42,16 @@ export const createGame = onCall<string, Promise<ReturnedGame>>(
 
     if (!gameSnap.empty) {
       const gameDoc = gameSnap.docs[0];
-      const game: ReturnedGame = gameDoc.data() as StoredGame;
-      game.id = gameDoc.id;
-      game.quizData = quizData;
+      const gameData = gameDoc.data() as StoredGame;
+      const game: ReturnedGame = {
+        ...gameData,
+        id: gameDoc.id,
+        quizData: quizData,
+      };
       return game;
     }
 
-    let pin: string;
+    let pin = "";
     let pinExists = true;
     while (pinExists) {
       pin = generatePIN();
