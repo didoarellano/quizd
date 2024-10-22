@@ -8,7 +8,7 @@ import type { Quiz } from "../../../shared/quiz.types";
 
 const db = admin.firestore();
 
-export const createGame = onCall<string, Promise<ReturnedGame>>(
+export const getOrCreateGame = onCall<string, Promise<ReturnedGame>>(
   async (request) => {
     const quizID = request.data;
 
