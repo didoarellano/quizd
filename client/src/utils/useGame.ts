@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { httpsCallable } from "firebase/functions";
-import type { ReturnedGame } from "../../../firebase/functions/src/createGame";
+import type { ReturnedGame } from "../../../shared/game.types";
 import { functions } from "../services/firebase";
 
 const createGame = httpsCallable<string, ReturnedGame>(functions, "createGame");

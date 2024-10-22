@@ -3,21 +3,10 @@ import * as logger from "firebase-functions/logger";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { generatePIN } from "./utils/generatePIN";
 
+import type { ReturnedGame, StoredGame } from "../../../shared/game.types";
 import type { Quiz } from "../../../shared/quiz.types";
 
 const db = admin.firestore();
-
-type StoredGame = {
-  pin: string;
-  quizID: string;
-  currentQuestionIndex: number;
-  teacherID: string;
-};
-
-export type ReturnedGame = StoredGame & {
-  id: string;
-  quizData: Quiz;
-};
 
 export const createGame = onCall<string, Promise<ReturnedGame>>(
   async (request) => {
