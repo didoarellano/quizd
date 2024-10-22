@@ -56,7 +56,6 @@ export const getOrCreateGame = onCall<string, Promise<ReturnedGame>>(
     const newGame = {
       pin,
       quizID,
-      teacherID: quizData.teacherID,
       currentQuestionIndex: 0,
     };
 
