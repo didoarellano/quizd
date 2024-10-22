@@ -25,7 +25,7 @@ export const getOrCreateGame = onCall<string, Promise<ReturnedGame>>(
     const quizData = quizDoc.data() as Quiz;
 
     const gameSnap = await db
-      .collection("activeGames")
+      .collection("games")
       .where("quizID", "==", quizID)
       .get();
 
@@ -46,7 +46,7 @@ export const getOrCreateGame = onCall<string, Promise<ReturnedGame>>(
       pin = generatePIN();
 
       const pinQuery = await db
-        .collection("activeGames")
+        .collection("games")
         .where("pin", "==", pin)
         .get();
 
@@ -60,7 +60,7 @@ export const getOrCreateGame = onCall<string, Promise<ReturnedGame>>(
       currentQuestionIndex: 0,
     };
 
-    const newGameRef = await db.collection("activeGames").add(newGame);
+    const newGameRef = await db.collection("games").add(newGame);
 
     return {
       id: newGameRef.id,
