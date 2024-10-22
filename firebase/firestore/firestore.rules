@@ -44,5 +44,13 @@ service cloud.firestore {
       allow read: if request.auth != null && request.auth.token.email == email;
       allow write: if false;
     }
+
+    match /games/{gameID} {
+      // Both teachers and students can read quizzes
+      allow read: if request.auth != null;
+
+      // Disable writes. Create, so far, is handled by a cloud function.
+      allow write: if false;
+    }
   }
 }

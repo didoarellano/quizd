@@ -24,6 +24,11 @@ export const getOrCreateGame = onCall<string, Promise<ReturnedGame>>(
 
     const quizData = quizDoc.data() as Quiz;
 
+    if (quizData.teacherID !== request.auth?.uid) {
+      logger.error(`User ${request.auth?.uid} tried to access Quiz ${quizID}.`);
+      throw new HttpsError("permission-denied", "Permission Denied");
+    }
+
     const gameSnap = await db
       .collection("games")
       .where("quizID", "==", quizID)
