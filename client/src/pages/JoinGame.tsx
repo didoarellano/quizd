@@ -31,6 +31,7 @@ export function JoinGame() {
     await updateProfile(auth.currentUser, {
       displayName,
     });
+    auth.currentUser?.reload();
     setLocation(`/${gameID}`);
   }
 

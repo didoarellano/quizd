@@ -1,7 +1,7 @@
 import type { User as FirebaseUser, Unsubscribe } from "firebase/auth";
 import {
   GoogleAuthProvider,
-  onAuthStateChanged,
+  onIdTokenChanged,
   signInAnonymously,
   signInWithPopup,
   signOut,
@@ -66,14 +66,13 @@ export function signout(): Promise<void> {
 }
 
 export function onAuthChange(cb: Function): Unsubscribe {
-  return onAuthStateChanged(auth, async (user) => {
+  return onIdTokenChanged(auth, async (user) => {
     if (!user) return cb(null);
 
     if (user.isAnonymous) {
       return cb({
         id: user.uid,
-        // TODO: Create username generator
-        displayName: user?.displayName ?? "Tonto",
+        displayName: user?.displayName ?? "",
         role: UserRoles.Student,
       });
     }
