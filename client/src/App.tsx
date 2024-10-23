@@ -5,6 +5,7 @@ import { useAuth } from "./contexts/AuthContext";
 import { GameQuestion } from "./pages/GameQuestion";
 import { GameResults } from "./pages/GameResults";
 import { HostLobby } from "./pages/HostLobby";
+import { JoinGame } from "./pages/JoinGame";
 import { QuizEditor } from "./pages/QuizEditor";
 import { QuizList } from "./pages/QuizList";
 import { UserRoles } from "./services/auth";
@@ -87,6 +88,10 @@ function App() {
             </Route>
           </Switch>
         </PrivateRoute>
+
+        <Route path="/play" nest={true}>
+          <Route path="/" component={JoinGame} />
+        </Route>
       </Switch>
     </Router>
   );
