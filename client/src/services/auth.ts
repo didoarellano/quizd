@@ -1,3 +1,4 @@
+import type { User as FirebaseUser, Unsubscribe } from "firebase/auth";
 import {
   GoogleAuthProvider,
   onAuthStateChanged,
@@ -6,7 +7,6 @@ import {
   signOut,
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import type { Unsubscribe, User as FirebaseUser } from "firebase/auth";
 
 import { auth, db } from "./firebase";
 
@@ -42,7 +42,7 @@ export type User = Teacher | Student;
 
 export async function assignRole(
   userId: string,
-  role: UserRoleKeys
+  role: UserRoleKeys,
 ): Promise<void> {
   const teachersDocRef = doc(db, "teachers", userId);
   const userDoc = await getDoc(teachersDocRef);

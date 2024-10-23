@@ -1,8 +1,13 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import type { PropsWithChildren } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type PropsWithChildren,
+} from "react";
 
-import * as auth from "../services/auth";
 import type { User } from "../services/auth";
+import * as auth from "../services/auth";
 
 type AuthContextObject = {
   user: User | null;
