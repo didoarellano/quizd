@@ -3,7 +3,11 @@ import * as logger from "firebase-functions/logger";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { generatePIN } from "./utils/generatePIN";
 
-import type { ReturnedGame, StoredGame } from "../../../shared/game.types";
+import {
+  GameStatus,
+  type ReturnedGame,
+  type StoredGame,
+} from "../../../shared/game.types";
 import type { Quiz } from "../../../shared/quiz.types";
 
 const db = admin.firestore();
@@ -61,6 +65,7 @@ export const getOrCreateGame = onCall<string, Promise<ReturnedGame>>(
     const newGame = {
       pin,
       quizID,
+      status: GameStatus.PENDING,
       currentQuestionIndex: 0,
     };
 
