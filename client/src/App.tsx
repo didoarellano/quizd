@@ -6,6 +6,7 @@ import { GameQuestion } from "./pages/GameQuestion";
 import { GameResults } from "./pages/GameResults";
 import { HostLobby } from "./pages/HostLobby";
 import { JoinGame } from "./pages/JoinGame";
+import { PlayerLobby } from "./pages/PlayerLobby";
 import { QuizEditor } from "./pages/QuizEditor";
 import { QuizList } from "./pages/QuizList";
 import { UserRoles } from "./services/auth";
@@ -91,6 +92,7 @@ function App() {
 
         <Route path="/play" nest={true}>
           <Route path="/" component={JoinGame} />
+          <Route path="/:gameID" component={PlayerLobby} />
         </Route>
       </Switch>
     </Router>
