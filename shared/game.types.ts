@@ -13,6 +13,7 @@ export type StoredGame = {
   status: GameStatusKeys;
   quizID: string;
   currentQuestionIndex: number;
+  players: string[];
 };
 
 export type ReturnedGame = StoredGame & {

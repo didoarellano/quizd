@@ -1,4 +1,5 @@
 import * as admin from "firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 import * as logger from "firebase-functions/logger";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import type { StoredGame } from "../../../shared/game.types";
@@ -35,6 +36,10 @@ export const joinGame = onCall<
   do {
     displayName = generateUsername();
   } while (game.players.includes(displayName));
+
+  await gameDoc.ref.update({
+    players: FieldValue.arrayUnion(displayName),
+  });
 
   return {
     displayName,

@@ -67,6 +67,7 @@ export const getOrCreateGame = onCall<string, Promise<ReturnedGame>>(
       quizID,
       status: GameStatus.PENDING,
       currentQuestionIndex: 0,
+      players: [],
     };
 
     const newGameRef = await db.collection("games").add(newGame);
