@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { useGame } from "../utils/useGame";
 
 export function HostLobby({ quizID }: { quizID: string }) {
-  const { game } = useGame(quizID);
+  const { data: game } = useGame(quizID);
 
   let q = game?.currentQuestionIndex ?? 0;
 

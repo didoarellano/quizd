@@ -4,7 +4,7 @@ import { QuestionText } from "../components/QuestionText";
 import { useGame } from "../utils/useGame";
 
 export function GameQuestion({ quizID }: { quizID: string }) {
-  const { game } = useGame(quizID);
+  const { data: game } = useGame(quizID);
   const searchParams = useSearch();
 
   if (!game || !searchParams) return <Redirect to={`/`} />;

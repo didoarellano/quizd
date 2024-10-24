@@ -9,9 +9,9 @@ const getOrCreateGame = httpsCallable<string, ReturnedGame>(
 );
 
 export function useGame(quizID: string) {
-  const { data, ...rest } = useQuery({
+  return useQuery({
     queryKey: ["games", quizID],
-    queryFn: () => getOrCreateGame(quizID),
+    queryFn: () => getOrCreateGame(quizID).then(({ data }) => data),
   });
   return { game: data?.data, ...rest };
 }

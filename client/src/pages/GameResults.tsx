@@ -2,7 +2,7 @@ import { Link, Redirect } from "wouter";
 import { useGame } from "../utils/useGame";
 
 export function GameResults({ quizID }: { quizID: string }) {
-  const { game } = useGame(quizID);
+  const { data: game } = useGame(quizID);
 
   if (!game) return <Redirect to={`/`} />;
 
