@@ -1,7 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { doc, onSnapshot } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
+import { useEffect } from "react";
 import type { ReturnedGame } from "../../../shared/game.types";
-import { functions } from "../services/firebase";
+import { db, functions } from "../services/firebase";
 
 const getOrCreateGame = httpsCallable<string, ReturnedGame>(
   functions,
@@ -9,9 +11,27 @@ const getOrCreateGame = httpsCallable<string, ReturnedGame>(
 );
 
 export function useGame(quizID: string) {
-  return useQuery({
+  const queryRes = useQuery({
     queryKey: ["games", quizID],
     queryFn: () => getOrCreateGame(quizID).then(({ data }) => data),
   });
-  return { game: data?.data, ...rest };
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const gameID = queryRes?.data?.id;
+    if (!gameID) return;
+    const gameRef = doc(db, "games", gameID);
+    const unsubscribe = onSnapshot(gameRef, async (snapshot) => {
+      const gameData = snapshot.data();
+      if (gameData) {
+        queryClient.setQueryData(["games", quizID], {
+          ...queryRes.data,
+          ...gameData,
+        });
+      }
+    });
+    return unsubscribe;
+  }, [queryClient, quizID, queryRes]);
+
+  return queryRes;
 }

@@ -3,8 +3,8 @@ import { useGame } from "../utils/useGame";
 
 export function HostLobby({ quizID }: { quizID: string }) {
   const { data: game } = useGame(quizID);
-
-  let q = game?.currentQuestionIndex ?? 0;
+  const players = game?.players;
+  const q = game?.currentQuestionIndex ?? 0;
 
   return (
     <>
@@ -20,6 +20,9 @@ export function HostLobby({ quizID }: { quizID: string }) {
       </Link>
       <div>
         <h3>Players</h3>
+        <ul>
+          {players && players.map((player) => <li key={player}>{player}</li>)}
+        </ul>
       </div>
     </>
   );
