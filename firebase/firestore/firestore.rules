@@ -49,8 +49,12 @@ service cloud.firestore {
       // Both teachers and students can read quizzes
       allow read: if request.auth != null;
 
-      // Disable writes. Create, so far, is handled by a cloud function.
-      allow write: if false;
+      // Disable create & delete, it'll be handled by cloud functions.
+      allow create, delete: if false;
+
+      // Only teacher that created the quiz and game can update.
+      allow update: if request.auth != null &&
+      get(/databases/$(database)/documents/quizzes/$(resource.data.quizID)).data.teacherID == request.auth.uid;
     }
   }
 }
