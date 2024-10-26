@@ -32,6 +32,16 @@ export const joinGame = onCall<
   const gameDoc = gameSnapshot.docs[0];
   const game = gameDoc.data() as StoredGame;
 
+  const quizDoc = await db.collection("quizzes").doc(game.quizID).get();
+  const quiz = quizDoc?.data();
+  if (!quizDoc.exists || !quiz) {
+    logger.error(`Error retrieving quiz ${game.quizID} data.`);
+    throw new HttpsError(
+      "internal",
+      `Error retrieving quiz ${game.quizID} data.`,
+    );
+  }
+
   let displayName = "";
   do {
     displayName = generateUsername();
@@ -43,6 +53,10 @@ export const joinGame = onCall<
 
   return {
     displayName,
-    gameID: gameDoc.id,
+    game: {
+      id: gameDoc.id,
+      ...game,
+    },
+    quiz,
   };
 });
