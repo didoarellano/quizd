@@ -41,6 +41,8 @@ export const joinGame = onCall<
       `Error retrieving quiz ${game.quizID} data.`,
     );
   }
+  ["id", "_rawMD", "teacherID", "createdAt"].forEach((k) => delete quiz[k]);
+  quiz.questions.forEach((q) => delete q.answers);
 
   let displayName = "";
   do {
