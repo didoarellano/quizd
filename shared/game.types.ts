@@ -22,7 +22,7 @@ export type ReturnedGame = StoredGame & {
 };
 
 export type JoinGameResponse = {
-  displayName: string;
+  displayName?: string;
   game: StoredGame & { id: string };
   quiz: Omit<Quiz, "id" | "_rawMD" | "teacherID" | "createdAt"> & {
     questions: Omit<Question, "answers">[];

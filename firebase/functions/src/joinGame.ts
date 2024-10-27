@@ -50,20 +50,30 @@ export const joinGame = onCall<string, Promise<JoinGameResponse>>(
     quiz.questions.forEach((q) => delete q.answers);
 
     const user = await admin.auth().getUser(uid);
-    const displayName =
-      user?.displayName || generateUniqueUsername(game.players);
+    let displayName = user?.displayName;
 
-    await gameDoc.ref.update({
-      players: FieldValue.arrayUnion(displayName),
-    });
+    if (!displayName) {
+      displayName = generateUniqueUsername(game.players);
+    }
 
-    return {
-      displayName,
+    if (!game.players.includes(displayName)) {
+      await gameDoc.ref.update({
+        players: FieldValue.arrayUnion(displayName),
+      });
+    }
+
+    const response: JoinGameResponse = {
       game: {
         id: gameDoc.id,
         ...game,
       },
       quiz,
     };
+
+    if (!user?.displayName) {
+      response.displayName = displayName;
+    }
+
+    return response;
   },
 );

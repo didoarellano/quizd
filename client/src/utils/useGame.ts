@@ -48,11 +48,13 @@ export function useGameAsPlayer(pin: string) {
     queryKey: ["games", pin],
     queryFn: async () => {
       const { data } = await joinGame(pin);
-      const user = auth.currentUser as User;
-      await updateProfile(user, {
-        displayName: data.displayName,
-      });
-      user.reload();
+      if (data.displayName) {
+        const user = auth.currentUser as User;
+        await updateProfile(user, {
+          displayName: data.displayName,
+        });
+        user.reload();
+      }
       return data;
     },
     enabled: !!auth.currentUser,
