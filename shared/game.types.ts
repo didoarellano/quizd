@@ -18,5 +18,5 @@ export type StoredGame = {
 
 export type ReturnedGame = StoredGame & {
   id: string;
-  quizData: Quiz;
+  quiz: Quiz;
 };

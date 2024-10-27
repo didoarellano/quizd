@@ -31,8 +31,8 @@ export function HostLobby({ quizID }: { quizID: string }) {
       <h1>Host Lobby</h1>
       <Link href="/play">Play</Link>
       <Link href="/results">Results</Link>
-      <h2>{game?.quizData.title}</h2>
-      <p>{game?.quizData.description}</p>
+      <h2>{game?.quiz.title}</h2>
+      <p>{game?.quiz.description}</p>
       <p>Go to: {window.location.href.replace(/host\/.*/i, "play")}</p>
       <p>Enter PIN: {game?.pin}</p>
       <Link href={`/play?q=${q}`} onClick={() => updateGameStatus()}>

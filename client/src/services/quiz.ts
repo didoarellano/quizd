@@ -28,15 +28,15 @@ type Quiz = _Quiz & {
 export async function getQuiz(
   quizID: string,
   teacherID: string,
-): Promise<{ docSnap: DocumentSnapshot<Quiz>; quizData: Quiz }> {
+): Promise<{ docSnap: DocumentSnapshot<Quiz>; quiz: Quiz }> {
   const docRef = doc(db, "quizzes", quizID) as DocumentReference<Quiz>;
   const docSnap = await getDoc(docRef);
-  const quizData = docSnap?.data();
+  const quiz = docSnap?.data();
 
   if (!docSnap.exists()) throw new QuizNotFoundError();
-  if (quizData?.teacherID !== teacherID) throw new NotAllowedError();
+  if (quiz?.teacherID !== teacherID) throw new NotAllowedError();
 
-  return { docSnap, quizData: quizData as Quiz };
+  return { docSnap, quiz: quiz as Quiz };
 }
 
 export async function getQuizzes(
@@ -61,22 +61,22 @@ export async function getQuizzes(
 
 export function saveNewQuiz(
   teacher: Teacher,
-  quizData: Partial<Quiz>,
+  quiz: Partial<Quiz>,
 ): Promise<DocumentReference<Quiz>> {
-  quizData.teacherID = teacher.id;
-  quizData.createdAt = serverTimestamp();
+  quiz.teacherID = teacher.id;
+  quiz.createdAt = serverTimestamp();
   const quizzesCollection = collection(
     db,
     "quizzes",
   ) as CollectionReference<Quiz>;
-  return addDoc(quizzesCollection, quizData as Quiz);
+  return addDoc(quizzesCollection, quiz as Quiz);
 }
 
 export function updateQuiz(
   quizRef: DocumentReference,
-  quizData: Partial<Quiz>,
+  quiz: Partial<Quiz>,
 ): Promise<void> {
-  return updateDoc(quizRef, quizData);
+  return updateDoc(quizRef, quiz);
 }
 
 export function deleteQuizByID(quizID: string): Promise<void> {

@@ -27,7 +27,7 @@ export function GameQuestion({ quizID }: { quizID: string }) {
 
   if (!game || !searchParams) return <Redirect to={`/`} />;
 
-  const questions = game.quizData.questions;
+  const questions = game.quiz.questions;
   const question = questions && questions[currentIndex];
   const nextIndex = currentIndex + 1 < questions.length && currentIndex + 1;
 

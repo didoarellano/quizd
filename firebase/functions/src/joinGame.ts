@@ -7,10 +7,7 @@ import { generateUsername } from "./utils/generateUsername";
 
 const db = admin.firestore();
 
-export const joinGame = onCall<
-  string,
-  Promise<{ displayName: string; gameID: string }>
->(async (request) => {
+export const joinGame = onCall(async (request) => {
   const uid = request.auth?.uid;
 
   if (!uid) {

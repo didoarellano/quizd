@@ -91,7 +91,7 @@ export function QuizEditor({ quizID, mode }: QuizEditorProps) {
 
   return (
     <>
-      <h1>Editing Quiz: {data?.quizData?.title ?? ""}</h1>
+      <h1>Editing Quiz: {data?.quiz?.title ?? ""}</h1>
       <Link href={`~${import.meta.env.VITE_BASE_URL}/host/${quizID}`}>
         Host Game
       </Link>
@@ -101,11 +101,11 @@ export function QuizEditor({ quizID, mode }: QuizEditorProps) {
         <>
           <QuizDeleteButton onDeleteClick={deleteQuiz} />
           <MarkdownEditor
-            initialMDText={data.quizData._rawMD}
+            initialMDText={data.quiz._rawMD}
             handleSave={saveQuiz}
           />
           <hr />
-          <QuizPreview quiz={data.quizData} />
+          <QuizPreview quiz={data.quiz} />
         </>
       )}
     </>

@@ -26,9 +26,9 @@ export const getOrCreateGame = onCall<string, Promise<ReturnedGame>>(
       );
     }
 
-    const quizData = quizDoc.data() as Quiz;
+    const quiz = quizDoc.data() as Quiz;
 
-    if (quizData.teacherID !== request.auth?.uid) {
+    if (quiz.teacherID !== request.auth?.uid) {
       logger.error(`User ${request.auth?.uid} tried to access Quiz ${quizID}.`);
       throw new HttpsError("permission-denied", "Permission Denied");
     }
@@ -44,7 +44,7 @@ export const getOrCreateGame = onCall<string, Promise<ReturnedGame>>(
       const game: ReturnedGame = {
         ...gameData,
         id: gameDoc.id,
-        quizData: quizData,
+        quiz,
       };
       return game;
     }
@@ -75,7 +75,7 @@ export const getOrCreateGame = onCall<string, Promise<ReturnedGame>>(
     return {
       id: newGameRef.id,
       ...newGame,
-      quizData,
+      quiz,
     };
   },
 );
