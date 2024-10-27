@@ -1,13 +1,13 @@
-import { type Quiz as QuizType } from "../services/quiz";
-import { QuestionText } from "./QuestionText";
+import { Quiz } from "../../../shared/quiz.types";
 import { Option } from "./Option";
+import { QuestionText } from "./QuestionText";
 
 type QuizProps = {
-  quiz: QuizType;
+  quiz: Quiz;
   questionIndex: number;
 };
 
-export function Quiz({ quiz, questionIndex }: QuizProps) {
+export function QuizDisplay({ quiz, questionIndex }: QuizProps) {
   const currentQuestion = quiz.questions[questionIndex];
 
   return (

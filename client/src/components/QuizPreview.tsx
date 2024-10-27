@@ -1,8 +1,8 @@
 import type { CSSProperties, PropsWithChildren } from "react";
 import { useMemo } from "react";
 import { Link, useLocation, useSearch } from "wouter";
-import { type Quiz as QuizType } from "../services/quiz";
-import { Quiz } from "./Quiz";
+import { Quiz } from "../../../shared/quiz.types";
+import { QuizDisplay } from "./QuizDisplay";
 
 type CycleLinkProps = {
   href: string;
@@ -22,7 +22,7 @@ function CycleLink({
   );
 }
 
-export function QuizPreview({ quiz }: { quiz: QuizType }) {
+export function QuizPreview({ quiz }: { quiz: Quiz }) {
   const [location] = useLocation();
   const searchParams = useSearch();
   const showPreview = !!searchParams;
@@ -59,7 +59,7 @@ export function QuizPreview({ quiz }: { quiz: QuizType }) {
             Next
           </CycleLink>
 
-          <Quiz quiz={quiz} questionIndex={questionIndex} />
+          <QuizDisplay quiz={quiz} questionIndex={questionIndex} />
         </>
       )}
     </div>
