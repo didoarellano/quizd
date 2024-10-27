@@ -18,7 +18,7 @@ export type Question = {
   heading: string;
   body: string;
   options: Option[];
-  answers: Option["id"][];
+  answers?: Option["id"][];
 };
 
 export type Quiz = {
