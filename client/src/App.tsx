@@ -92,7 +92,7 @@ function App() {
 
         <Route path="/play" nest={true}>
           <Route path="/" component={JoinGame} />
-          <Route path="/:gameID" component={PlayerLobby} />
+          <Route path="/:pin" component={PlayerLobby} />
         </Route>
       </Switch>
     </Router>
