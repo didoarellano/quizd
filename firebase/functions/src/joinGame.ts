@@ -2,19 +2,11 @@ import * as admin from "firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
 import * as logger from "firebase-functions/logger";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
-import type { StoredGame } from "../../../shared/game.types";
-import { Question, Quiz } from "../../../shared/quiz.types";
+import type { JoinGameResponse, StoredGame } from "../../../shared/game.types";
+import { Quiz } from "../../../shared/quiz.types";
 import { generateUniqueUsername } from "./utils/generateUsername";
 
 const db = admin.firestore();
-
-type JoinGameResponse = {
-  displayName: string;
-  game: StoredGame & { id: string };
-  quiz: Omit<Quiz, "id" | "_rawMD" | "teacherID" | "createdAt"> & {
-    questions: Omit<Question, "answers">[];
-  };
-};
 
 export const joinGame = onCall<string, Promise<JoinGameResponse>>(
   async (request) => {

@@ -3,7 +3,10 @@ import { updateProfile, User } from "firebase/auth";
 import { doc, onSnapshot } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 import { useEffect } from "react";
-import type { ReturnedGame } from "../../../shared/game.types";
+import type {
+  JoinGameResponse,
+  ReturnedGame,
+} from "../../../shared/game.types";
 import { signinAnonymously } from "../services/auth";
 import { auth, db, functions } from "../services/firebase";
 
@@ -38,7 +41,7 @@ export function useGameAsHost(quizID: string) {
   return queryRes;
 }
 
-const joinGame = httpsCallable(functions, "joinGame");
+const joinGame = httpsCallable<string, JoinGameResponse>(functions, "joinGame");
 
 export function useGameAsPlayer(pin: string) {
   const queryRes = useQuery({

@@ -1,4 +1,4 @@
-import type { Quiz } from "./quiz.types";
+import type { Question, Quiz } from "./quiz.types";
 
 export const GameStatus = {
   PENDING: "pending",
@@ -19,4 +19,12 @@ export type StoredGame = {
 export type ReturnedGame = StoredGame & {
   id: string;
   quiz: Quiz;
+};
+
+export type JoinGameResponse = {
+  displayName: string;
+  game: StoredGame & { id: string };
+  quiz: Omit<Quiz, "id" | "_rawMD" | "teacherID" | "createdAt"> & {
+    questions: Omit<Question, "answers">[];
+  };
 };
