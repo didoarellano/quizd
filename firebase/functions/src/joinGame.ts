@@ -4,7 +4,7 @@ import * as logger from "firebase-functions/logger";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import type { StoredGame } from "../../../shared/game.types";
 import { Question, Quiz } from "../../../shared/quiz.types";
-import { generateUsername } from "./utils/generateUsername";
+import { generateUniqueUsername } from "./utils/generateUsername";
 
 const db = admin.firestore();
 
@@ -57,10 +57,9 @@ export const joinGame = onCall<string, Promise<JoinGameResponse>>(
     keysToDelete.forEach((k) => delete quiz[k]);
     quiz.questions.forEach((q) => delete q.answers);
 
-    let displayName = "";
-    do {
-      displayName = generateUsername();
-    } while (game.players.includes(displayName));
+    const user = await admin.auth().getUser(uid);
+    const displayName =
+      user?.displayName || generateUniqueUsername(game.players);
 
     await gameDoc.ref.update({
       players: FieldValue.arrayUnion(displayName),

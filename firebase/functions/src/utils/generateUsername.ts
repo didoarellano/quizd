@@ -32,3 +32,11 @@ export function generateUsername() {
   const duckBreed = duckBreeds[randomInt(0, duckBreeds.length)];
   return `${adjective}${duckBreed}`;
 }
+
+export function generateUniqueUsername(existingNames: string[]): string {
+  let name = "";
+  do {
+    name = generateUsername();
+  } while (existingNames.includes(name));
+  return name;
+}
