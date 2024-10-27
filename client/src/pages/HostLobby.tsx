@@ -3,7 +3,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { Link } from "wouter";
 import { GameStatus } from "../../../shared/game.types";
 import { db } from "../services/firebase";
-import { useGame } from "../utils/useGame";
+import { useGameAsHost } from "../utils/useGame";
 
 const startButtonText = {
   [GameStatus.PENDING]: "Start Game",
@@ -12,7 +12,7 @@ const startButtonText = {
 };
 
 export function HostLobby({ quizID }: { quizID: string }) {
-  const { data: game } = useGame(quizID);
+  const { data: game } = useGameAsHost(quizID);
   const { mutate: updateGameStatus } = useMutation({
     mutationFn: () => {
       if (game && game.status === GameStatus.PENDING) {

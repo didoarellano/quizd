@@ -1,8 +1,8 @@
 import { Link, Redirect } from "wouter";
-import { useGame } from "../utils/useGame";
+import { useGameAsHost } from "../utils/useGame";
 
 export function GameResults({ quizID }: { quizID: string }) {
-  const { data: game } = useGame(quizID);
+  const { data: game } = useGameAsHost(quizID);
 
   if (!game) return <Redirect to={`/`} />;
 

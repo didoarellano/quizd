@@ -5,10 +5,10 @@ import { Link, Redirect, useSearch } from "wouter";
 import { Option } from "../components/Option";
 import { QuestionText } from "../components/QuestionText";
 import { db } from "../services/firebase";
-import { useGame } from "../utils/useGame";
+import { useGameAsHost } from "../utils/useGame";
 
 export function GameQuestion({ quizID }: { quizID: string }) {
-  const { data: game } = useGame(quizID);
+  const { data: game } = useGameAsHost(quizID);
   const { mutate: updateCurrentQuestionIndex } = useMutation({
     mutationFn: (currentQuestionIndex: number) => {
       if (!game) return Promise.resolve();
