@@ -2,8 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { doc, updateDoc } from "firebase/firestore";
 import { useEffect } from "react";
 import { Link, Redirect, useSearch } from "wouter";
-import { Option } from "../components/Option";
-import { QuestionText } from "../components/QuestionText";
+import { QuestionDisplay } from "../components/QuestionDisplay";
 import { db } from "../services/firebase";
 import { useGameAsHost } from "../utils/useGame";
 
@@ -40,14 +39,7 @@ export function GameQuestion({ quizID }: { quizID: string }) {
       <br />
       {nextIndex && <Link href={`/play?q=${nextIndex}`}>Next Question</Link>}
 
-      <article>
-        <QuestionText heading={question.heading} body={question.body} />
-        <div>
-          {question.options.map((option) => (
-            <Option key={option.id} text={option.text} />
-          ))}
-        </div>
-      </article>
+      <QuestionDisplay key={question.id} question={question} />
     </>
   );
 }

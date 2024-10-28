@@ -1,7 +1,6 @@
 import { Redirect, useParams } from "wouter";
 import { GameStatus } from "../../../shared/game.types";
-import { Option } from "../components/Option";
-import { QuestionText } from "../components/QuestionText";
+import { QuestionDisplay } from "../components/QuestionDisplay";
 import { useAuth } from "../contexts/AuthContext";
 import { useGameAsPlayer } from "../utils/useGame";
 
@@ -28,16 +27,7 @@ export function PlayerLobby() {
 
   if (data.game.status === GameStatus.ONGOING) {
     const question = data.quiz.questions[data.game.currentQuestionIndex];
-    return (
-      <article>
-        <QuestionText heading={question.heading} body={question.body} />
-        <div>
-          {question.options.map((option) => (
-            <Option key={option.id} text={option.text} />
-          ))}
-        </div>
-      </article>
-    );
+    return <QuestionDisplay key={question.id} question={question} />;
   }
 
   return <p>...</p>;
