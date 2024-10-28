@@ -14,7 +14,10 @@ export function QuizList() {
     data: quizzes,
   } = useQuery({
     queryKey: ["quizzes"],
-    queryFn: () => getQuizzes(user.id),
+    queryFn: async () => {
+      if (!user?.id) throw new Error("User not logged in");
+      return getQuizzes(user.id);
+    },
   });
 
   const { mutate: deleteQuiz } = useMutation({
@@ -49,7 +52,9 @@ export function QuizList() {
               Host Game
             </Link>
             <Link href={`/${quiz.id}`}>Edit Quiz</Link>
-            <QuizDeleteButton onDeleteClick={() => deleteQuiz(quiz.id)} />
+            <QuizDeleteButton
+              onDeleteClick={() => deleteQuiz(quiz.id as string)}
+            />
           </div>
         ))
       )}

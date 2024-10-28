@@ -1,13 +1,13 @@
-import type { RootContent, Root, Parent } from "mdast";
+import type { Parent, Root, RootContent } from "mdast";
 import { fromMarkdown } from "mdast-util-from-markdown";
+import { frontmatterFromMarkdown } from "mdast-util-frontmatter";
+import { gfmFromMarkdown, gfmToMarkdown } from "mdast-util-gfm";
 import { toMarkdown } from "mdast-util-to-markdown";
 import { frontmatter } from "micromark-extension-frontmatter";
-import { frontmatterFromMarkdown } from "mdast-util-frontmatter";
-import yaml from "yaml";
 import { gfm } from "micromark-extension-gfm";
-import { gfmFromMarkdown, gfmToMarkdown } from "mdast-util-gfm";
+import yaml from "yaml";
 
-import { Answer, Option, Question, Quiz } from "../services/quiz";
+import { Answer, Option, Question, Quiz } from "../../../shared/quiz.types";
 
 type idGenerator = () => string;
 
@@ -20,12 +20,12 @@ const toMDAST = (mdText: string): Root =>
 const toMD = (nodes: RootContent[]) =>
   toMarkdown(
     { type: "root", children: nodes },
-    { extensions: [gfmToMarkdown()] }
+    { extensions: [gfmToMarkdown()] },
   );
 
 function parseOptions(
   optionNodes: any[],
-  generateID: idGenerator
+  generateID: idGenerator,
 ): { options: Option[]; answers: Answer[] } {
   let answers: Answer[] = [];
   const options: Option[] = optionNodes
@@ -48,7 +48,7 @@ function parseQuestion(
   node: Parent,
   i: number,
   tree: Root,
-  generateID: idGenerator
+  generateID: idGenerator,
 ): Question {
   const questionID = generateID();
   const heading = toMD(node.children);

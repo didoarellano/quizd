@@ -6,7 +6,7 @@ import { useGameAsPlayer } from "../utils/useGame";
 export function PlayerLobby() {
   const { user } = useAuth();
   const { pin } = useParams();
-  const { data } = useGameAsPlayer(pin);
+  const { data } = useGameAsPlayer(pin || "");
 
   if (!pin) return <Redirect to="/" />;
 

@@ -32,9 +32,13 @@ export function QuizEditor({ quizID, mode }: QuizEditorProps) {
   const { user } = useAuth();
 
   const queryClient = useQueryClient();
-  const { isPending, isError, error, data } = useQuery({
+  const { isPending, isError, data } = useQuery({
     queryKey: ["quizzes", quizID],
-    queryFn: () => getQuiz(quizID, user.id),
+    queryFn: async () => {
+      if (!quizID) throw new Error("QuizID is required");
+      if (!user?.id) throw new Error("User not logged in");
+      return getQuiz(quizID, user.id);
+    },
     enabled: !!(mode === "edit" && user?.role === UserRoles.Teacher),
     retry: (_, error) => {
       return (
@@ -45,7 +49,10 @@ export function QuizEditor({ quizID, mode }: QuizEditorProps) {
   });
 
   const { mutate: deleteQuiz } = useMutation({
-    mutationFn: () => deleteQuizByID(quizID),
+    mutationFn: async () => {
+      if (!quizID) throw new Error("QuizID is required");
+      return deleteQuizByID(quizID);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["quizzes", quizID] });
       setLocation("/", { replace: true });
@@ -65,10 +72,12 @@ export function QuizEditor({ quizID, mode }: QuizEditorProps) {
   });
 
   const { mutate: saveQuiz } = useMutation({
-    mutationFn: (mdText: string) => {
+    mutationFn: async (mdText: string) => {
       let quiz = parseQuiz(generateID, mdText);
       quiz._rawMD = mdText;
-      return updateQuiz(data.quizSnap.ref, quiz);
+      if (data?.docSnap.ref) {
+        return updateQuiz(data.docSnap.ref, quiz);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["quizzes", quizID] });

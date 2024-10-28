@@ -57,7 +57,7 @@ export function useGameAsPlayer(pin: string) {
       }
       return data;
     },
-    enabled: !!auth.currentUser,
+    enabled: !!auth.currentUser && !!pin,
   });
   const queryClient = useQueryClient();
 
