@@ -31,22 +31,33 @@ export const joinGame = onCall<string, Promise<JoinGameResponse>>(
     const gameDoc = gameSnapshot.docs[0];
     const game = gameDoc.data() as StoredGame;
 
-    const quizDoc = await db.collection("quizzes").doc(game.quizID).get();
-    const quiz = quizDoc?.data() as Quiz;
-    if (!quizDoc.exists || !quiz) {
+    const quizQuery = db
+      .collection("quizzes")
+      .where("__name__", "==", game.quizID)
+      .select("title", "description", "questions");
+    const quizSnapshot = await quizQuery.get();
+
+    if (quizSnapshot.empty) {
+      logger.error(`Quiz with ID ${game.quizID} not found.`);
+      throw new HttpsError(
+        "not-found",
+        `Quiz with ID ${game.quizID} does not exist.`,
+      );
+    }
+
+    const quiz = quizSnapshot.docs[0].data() as Pick<
+      Quiz,
+      "title" | "description" | "questions"
+    >;
+
+    if (!quiz) {
       logger.error(`Error retrieving quiz ${game.quizID} data.`);
       throw new HttpsError(
         "internal",
         `Error retrieving quiz ${game.quizID} data.`,
       );
     }
-    const keysToDelete = [
-      "id",
-      "_rawMD",
-      "teacherID",
-      "createdAt",
-    ] as (keyof Quiz)[];
-    keysToDelete.forEach((k) => delete quiz[k]);
+
     quiz.questions.forEach((q) => delete q.answers);
 
     const user = await admin.auth().getUser(uid);
