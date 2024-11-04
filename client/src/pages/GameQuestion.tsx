@@ -9,10 +9,10 @@ import { useGameAsHost } from "../utils/useGame";
 export function GameQuestion({ quizID }: { quizID: string }) {
   const { data: game } = useGameAsHost(quizID);
   const { mutate: updateCurrentQuestionIndex } = useMutation({
-    mutationFn: (currentQuestionIndex: number) => {
-      if (!game) return Promise.resolve();
-      const gameRef = doc(db, "games", game.id);
-      return updateDoc(gameRef, { currentQuestionIndex });
+    mutationFn: async (currentQuestionIndex: number) => {
+      if (!game) return;
+      const activeGameChannelRef = doc(db, "activeGamesChannel", game.id);
+      return updateDoc(activeGameChannelRef, { currentQuestionIndex });
     },
   });
   const searchParams = useSearch();
@@ -27,7 +27,7 @@ export function GameQuestion({ quizID }: { quizID: string }) {
   if (!game || !searchParams) return <Redirect to={`/`} />;
 
   const questions = game.quiz.questions;
-  const question = questions && questions[currentIndex];
+  const question = questions[currentIndex];
   const nextIndex = currentIndex + 1 < questions.length && currentIndex + 1;
 
   return (

@@ -7,16 +7,20 @@ import { useGameAsPlayer } from "../utils/useGame";
 export function PlayerLobby() {
   const { user } = useAuth();
   const { pin } = useParams();
-  const { data } = useGameAsPlayer(pin || "");
+  const { data, isPending } = useGameAsPlayer(pin || "");
 
   if (!pin) return <Redirect to="/" />;
+
+  if (isPending) {
+    return <p>...</p>;
+  }
 
   if (!data) {
     // TODO redirect?
     return <p>Game not found.</p>;
   }
 
-  if (data.game.status === GameStatus.PENDING) {
+  if (data.activeGameChannel.status === GameStatus.PENDING) {
     return (
       <>
         <p>Welcome {user?.displayName}!</p>
@@ -25,8 +29,9 @@ export function PlayerLobby() {
     );
   }
 
-  if (data.game.status === GameStatus.ONGOING) {
-    const question = data.quiz.questions[data.game.currentQuestionIndex];
+  if (data.activeGameChannel.status === GameStatus.ONGOING) {
+    const question =
+      data.quiz.questions[data.activeGameChannel.currentQuestionIndex];
     return <QuestionDisplay key={question.id} question={question} />;
   }
 

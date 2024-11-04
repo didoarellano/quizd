@@ -14,17 +14,20 @@ const startButtonText = {
 export function HostLobby({ quizID }: { quizID: string }) {
   const { data: game } = useGameAsHost(quizID);
   const { mutate: updateGameStatus } = useMutation({
-    mutationFn: () => {
+    mutationFn: async () => {
       if (game && game.status === GameStatus.PENDING) {
         const gameRef = doc(db, "games", game.id);
-        return updateDoc(gameRef, { status: GameStatus.ONGOING });
+        const activeGameChannelRef = doc(db, "activeGamesChannel", game.id);
+        return Promise.all([
+          updateDoc(gameRef, { status: GameStatus.ONGOING }),
+          updateDoc(activeGameChannelRef, { status: GameStatus.ONGOING }),
+        ]);
       }
-      return Promise.resolve();
     },
   });
 
   const players = game?.players;
-  const q = game?.currentQuestionIndex ?? 0;
+  const q = game?.activeGameChannel.currentQuestionIndex ?? 0;
 
   return (
     <>
@@ -33,10 +36,10 @@ export function HostLobby({ quizID }: { quizID: string }) {
       <Link href="/results">Results</Link>
       {game && (
         <>
-          <h2>{game?.quiz.title}</h2>
-          <p>{game?.quiz.description}</p>
+          <h2>{game.quiz.title}</h2>
+          <p>{game.quiz.description}</p>
           <Link href={`/play?q=${q}`} onClick={() => updateGameStatus()}>
-            {startButtonText[game?.status]}
+            {startButtonText[game.status]}
           </Link>
         </>
       )}
@@ -45,7 +48,10 @@ export function HostLobby({ quizID }: { quizID: string }) {
       <div>
         <h3>Players</h3>
         <ul>
-          {players && players.map((player) => <li key={player}>{player}</li>)}
+          {players &&
+            players.map((player) => (
+              <li key={player.id}>{player.displayName}</li>
+            ))}
         </ul>
       </div>
     </>

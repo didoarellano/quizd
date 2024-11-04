@@ -1,18 +1,19 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useQueryClient,
+  UseQueryResult,
+} from "@tanstack/react-query";
 import { updateProfile, User } from "firebase/auth";
-import { doc, onSnapshot } from "firebase/firestore";
+import { collection, doc, onSnapshot } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 import { useEffect } from "react";
-import type {
-  JoinGameResponse,
-  ReturnedGame,
-} from "../../../shared/game.types";
+import { JoinGameResponse, LiveGame, Player } from "../../../shared/game.types";
 import { signinAnonymously } from "../services/auth";
 import { auth, db, functions } from "../services/firebase";
 
-const getOrCreateGame = httpsCallable<string, ReturnedGame>(
+const getOrCreateGame = httpsCallable<string, LiveGame>(
   functions,
-  "getOrCreateGame",
+  "getOrCreateGame"
 );
 
 export function useGameAsHost(quizID: string) {
@@ -20,30 +21,29 @@ export function useGameAsHost(quizID: string) {
     queryKey: ["games", quizID],
     queryFn: () => getOrCreateGame(quizID).then(({ data }) => data),
   });
-  const queryClient = useQueryClient();
 
+  const queryClient = useQueryClient();
+  const gameID = queryRes?.data?.id;
   useEffect(() => {
-    const gameID = queryRes?.data?.id;
     if (!gameID) return;
-    const gameRef = doc(db, "games", gameID);
-    const unsubscribe = onSnapshot(gameRef, async (snapshot) => {
-      const gameData = snapshot.data();
-      if (gameData) {
-        queryClient.setQueryData(["games", quizID], {
-          ...queryRes.data,
-          ...gameData,
-        });
-      }
+    const playersCollection = collection(db, "games", gameID, "players");
+    return onSnapshot(playersCollection, async (snapshot) => {
+      const players: Player[] = snapshot.docs.map(
+        (doc) => doc.data() as Player
+      );
+      queryClient.setQueryData(["games", quizID], {
+        ...queryRes.data,
+        players,
+      });
     });
-    return unsubscribe;
-  }, [queryClient, quizID, queryRes]);
+  }, [gameID, quizID, queryRes, queryClient]);
 
   return queryRes;
 }
 
 const joinGame = httpsCallable<string, JoinGameResponse>(functions, "joinGame");
 
-export function useGameAsPlayer(pin: string) {
+export function useGameAsPlayer(pin: string): UseQueryResult<JoinGameResponse> {
   const queryRes = useQuery({
     queryKey: ["games", pin],
     queryFn: async () => {
@@ -59,28 +59,25 @@ export function useGameAsPlayer(pin: string) {
     },
     enabled: !!auth.currentUser && !!pin,
   });
-  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!auth.currentUser) signinAnonymously();
   }, []);
 
+  const queryClient = useQueryClient();
   useEffect(() => {
-    const gameID = queryRes?.data?.game.id;
+    const gameID = queryRes?.data?.gameID;
     if (!gameID) return;
-    const gameRef = doc(db, "games", gameID);
-    const unsubscribe = onSnapshot(gameRef, async (snapshot) => {
-      const gameData = snapshot.data();
-      if (gameData) {
-        gameData.id = gameID;
-        queryClient.setQueryData(["games", pin], {
-          ...queryRes.data,
-          game: gameData,
-        });
-      }
+    const activeGameChannelRef = doc(db, "activeGamesChannel", gameID);
+    return onSnapshot(activeGameChannelRef, async (snapshot) => {
+      const channelData = snapshot.data();
+      if (!channelData) return;
+      queryClient.setQueryData(["games", pin], {
+        ...queryRes.data,
+        activeGameChannel: channelData,
+      });
     });
-    return unsubscribe;
-  }, [pin, queryClient, queryRes]);
+  }, [pin, queryRes, queryClient]);
 
   return queryRes;
 }
