@@ -46,15 +46,35 @@ service cloud.firestore {
     }
 
     match /games/{gameID} {
-      // Both teachers and students can read quizzes
+      allow read, create, delete: if false;
+
+      // creator can update status field
+      allow update: if request.auth != null &&
+      resource.data.teacherID == request.auth.uid &&
+      request.resource.data.diff(resource.data).affectedKeys().hasOnly(["status"]);
+
+      match /players/{playerID} {
+        allow create, delete: if false;
+
+        // creator can read
+        allow read: if get(/databases/$(database)/documents/games/$(gameID)).data.teacherID == request.auth.uid
+
+        // player can update their answers
+        allow update: if playerID == request.auth.uid &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["answers"]);
+      }
+    }
+
+    match /activeGamesChannel/{gameID} {
+      // hosts and players can read
       allow read: if request.auth != null;
 
-      // Disable create & delete, it'll be handled by cloud functions.
       allow create, delete: if false;
 
-      // Only teacher that created the quiz and game can update.
+      // creator can update fields
       allow update: if request.auth != null &&
-      get(/databases/$(database)/documents/quizzes/$(resource.data.quizID)).data.teacherID == request.auth.uid;
+      get(/databases/$(database)/documents/games/$(gameID)).data.teacherID == request.auth.uid &&
+      request.resource.data.diff(resource.data).affectedKeys().hasOnly(["status", "currentQuestionIndex", "currentQuestionTimer", "currentQuestionAnswer"]);
     }
   }
 }
