@@ -1,81 +1,87 @@
 import * as admin from "firebase-admin";
-import * as logger from "firebase-functions/logger";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { generatePIN } from "./utils/generatePIN";
 
-import {
-  GameStatus,
-  type ReturnedGame,
-  type StoredGame,
-} from "../../../shared/game.types";
+import { GameStatus, LiveGame, SavedGame } from "../../../shared/game.types";
 import type { Quiz } from "../../../shared/quiz.types";
+import { splitQuestionsAndAnswerKey } from "./utils/buildAnswerKey";
+import { getActiveGame } from "./utils/getActiveGame";
 
 const db = admin.firestore();
 
-export const getOrCreateGame = onCall<string, Promise<ReturnedGame>>(
+export const getOrCreateGame = onCall<string, Promise<LiveGame>>(
   async (request) => {
     const quizID = request.data;
+    const userID = request.auth?.uid;
+
+    if (!userID) {
+      throw new HttpsError("permission-denied", "User not logged in");
+    }
+
+    const activeGame = await getActiveGame(userID, quizID);
+    if (activeGame) return activeGame;
 
     const quizDoc = await db.collection("quizzes").doc(quizID).get();
-
     if (!quizDoc.exists) {
-      logger.error(`Quiz with ID ${quizID} not found.`);
+      throw new HttpsError("not-found", `Quiz with ID ${quizID} not found.`);
+    }
+    const quizData = quizDoc.data() as Quiz;
+
+    if (quizData.teacherID !== userID) {
       throw new HttpsError(
-        "not-found",
-        `Quiz with ID ${quizID} does not exist.`,
+        "permission-denied",
+        `User ${userID} tried to access Quiz ${quizID}.`
       );
     }
 
-    const quiz = quizDoc.data() as Quiz;
-
-    if (quiz.teacherID !== request.auth?.uid) {
-      logger.error(`User ${request.auth?.uid} tried to access Quiz ${quizID}.`);
-      throw new HttpsError("permission-denied", "Permission Denied");
-    }
-
-    const gameSnap = await db
-      .collection("games")
-      .where("quizID", "==", quizID)
-      .get();
-
-    if (!gameSnap.empty) {
-      const gameDoc = gameSnap.docs[0];
-      const gameData = gameDoc.data() as StoredGame;
-      const game: ReturnedGame = {
-        ...gameData,
-        id: gameDoc.id,
-        quiz,
-      };
-      return game;
-    }
+    const { questions, answerKey } = splitQuestionsAndAnswerKey(
+      quizData.questions
+    );
+    const quiz: SavedGame["quiz"] = {
+      description: quizData.description,
+      title: quizData.title,
+      questions,
+    };
 
     let pin = "";
     let pinExists = true;
     while (pinExists) {
       pin = generatePIN();
-
       const pinQuery = await db
         .collection("games")
         .where("pin", "==", pin)
         .get();
-
       pinExists = !pinQuery.empty;
     }
 
-    const newGame = {
-      pin,
+    const newGame: SavedGame = {
+      id: db.collection("dummy").doc().id,
+      teacherID: userID,
       quizID,
+      pin,
       status: GameStatus.PENDING,
-      currentQuestionIndex: 0,
-      players: [],
-    };
-
-    const newGameRef = await db.collection("games").add(newGame);
-
-    return {
-      id: newGameRef.id,
-      ...newGame,
       quiz,
+      answerKey,
     };
-  },
+    const liveGame: LiveGame = {
+      ...newGame,
+      players: [],
+      activeGameChannel: {
+        status: GameStatus.PENDING,
+        currentQuestionIndex: 0,
+      },
+    };
+
+    const newGameRef = db.collection("games").doc(newGame.id);
+    const activeGameChannelRef = db
+      .collection("activeGamesChannel")
+      .doc(newGame.id);
+
+    await Promise.all([
+      newGameRef.set(newGame),
+      activeGameChannelRef.set(liveGame.activeGameChannel),
+    ]);
+
+    return liveGame;
+  }
 );

@@ -8,22 +8,41 @@ export const GameStatus = {
 
 type GameStatusKeys = (typeof GameStatus)[keyof typeof GameStatus];
 
-export type StoredGame = {
-  pin: string;
-  status: GameStatusKeys;
-  quizID: string;
-  currentQuestionIndex: number;
-  players: string[];
+export type Player = {
+  id: string;
+  displayName: string;
+  answers: { [questionID: string]: string };
 };
 
-export type ReturnedGame = StoredGame & {
+export type SavedGame = {
   id: string;
-  quiz: Quiz;
+  teacherID: string;
+  quizID: string;
+  pin: string;
+  status: GameStatusKeys;
+  quiz: Omit<Quiz, "id" | "_rawMD" | "teacherID" | "createdAt"> & {
+    questions: Omit<Question, "answers">[];
+  };
+  answerKey: {
+    [questionID: string]: string[];
+  };
+};
+
+export type ActiveGameChannel = {
+  status: GameStatusKeys;
+  currentQuestionIndex: number;
+  currentQuestionTimer?: number;
+  currentQuestionAnswer?: string[];
+};
+
+export type LiveGame = SavedGame & {
+  players: Player[];
+  activeGameChannel: ActiveGameChannel;
 };
 
 export type JoinGameResponse = {
   displayName?: string;
-  game: StoredGame & { id: string };
+  game: SavedGame;
   quiz: Omit<Quiz, "id" | "_rawMD" | "teacherID" | "createdAt"> & {
     questions: Omit<Question, "answers">[];
   };
