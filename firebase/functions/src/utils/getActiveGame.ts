@@ -10,7 +10,7 @@ import {
 
 const db = admin.firestore();
 
-export async function getActiveGame(
+export async function getActiveGameByQuizID(
   userID: string,
   quizID: string
 ): Promise<LiveGame | null> {

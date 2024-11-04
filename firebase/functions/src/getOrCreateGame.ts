@@ -5,7 +5,7 @@ import { generatePIN } from "./utils/generatePIN";
 import { GameStatus, LiveGame, SavedGame } from "../../../shared/game.types";
 import type { Quiz } from "../../../shared/quiz.types";
 import { splitQuestionsAndAnswerKey } from "./utils/buildAnswerKey";
-import { getActiveGame } from "./utils/getActiveGame";
+import { getActiveGameByQuizID } from "./utils/getActiveGame";
 
 const db = admin.firestore();
 
@@ -18,7 +18,7 @@ export const getOrCreateGame = onCall<string, Promise<LiveGame>>(
       throw new HttpsError("permission-denied", "User not logged in");
     }
 
-    const activeGame = await getActiveGame(userID, quizID);
+    const activeGame = await getActiveGameByQuizID(userID, quizID);
     if (activeGame) return activeGame;
 
     const quizDoc = await db.collection("quizzes").doc(quizID).get();
