@@ -77,10 +77,10 @@ export const getOrCreateGame = onCall<string, Promise<LiveGame>>(
       .collection("activeGamesChannel")
       .doc(newGame.id);
 
-    await Promise.all([
-      newGameRef.set(newGame),
-      activeGameChannelRef.set(liveGame.activeGameChannel),
-    ]);
+    const batch = db.batch();
+    batch.set(newGameRef, newGame);
+    batch.set(activeGameChannelRef, liveGame.activeGameChannel);
+    await batch.commit();
 
     return liveGame;
   }
