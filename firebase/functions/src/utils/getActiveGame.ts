@@ -49,3 +49,16 @@ export async function getActiveGame(
     activeGameChannel: activeGameChannel as ActiveGameChannel,
   };
 }
+
+export async function getActiveGameByPIN(
+  pin: string
+): Promise<SavedGame | null> {
+  const gameSnapshot = await db
+    .collection("games")
+    .where("pin", "==", pin)
+    .where("status", "!=", GameStatus.COMPLETED)
+    .get();
+  const game = gameSnapshot.docs[0].data();
+  if (gameSnapshot.empty || !game) return null;
+  return game as SavedGame;
+}

@@ -41,9 +41,8 @@ export type LiveGame = SavedGame & {
 };
 
 export type JoinGameResponse = {
+  gameID: string;
+  quiz: SavedGame["quiz"];
   displayName?: string;
-  game: SavedGame;
-  quiz: Omit<Quiz, "id" | "_rawMD" | "teacherID" | "createdAt"> & {
-    questions: Omit<Question, "answers">[];
-  };
+  activeGameChannel: ActiveGameChannel;
 };
