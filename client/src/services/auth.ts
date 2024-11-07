@@ -42,7 +42,7 @@ export type User = Teacher | Student;
 
 export async function assignRole(
   userId: string,
-  role: UserRoleKeys,
+  role: UserRoleKeys
 ): Promise<void> {
   const teachersDocRef = doc(db, "teachers", userId);
   const userDoc = await getDoc(teachersDocRef);

@@ -17,7 +17,7 @@ export function GameQuestion({ quizID }: { quizID: string }) {
   });
   const searchParams = useSearch();
   const currentIndex = Number(
-    Object.fromEntries(new URLSearchParams(searchParams))?.q,
+    Object.fromEntries(new URLSearchParams(searchParams))?.q
   );
 
   useEffect(() => {
