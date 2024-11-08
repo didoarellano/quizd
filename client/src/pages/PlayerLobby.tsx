@@ -8,23 +8,29 @@ import { useAuth } from "../contexts/AuthContext";
 import { db } from "../services/firebase";
 import { useGameAsPlayer } from "../utils/useGame";
 
+type SavedCurrentQuestion = {
+  questionID: string;
+  answerID: string;
+};
+const savedQuestion = localStorage.getItem("currentQuestion");
+const currentQuestion: SavedCurrentQuestion | null = savedQuestion
+  ? JSON.parse(savedQuestion)
+  : null;
+
 export function PlayerLobby() {
   const { user } = useAuth();
   const { pin } = useParams();
   const { data, isPending } = useGameAsPlayer(pin || "");
   const { mutate: saveAnswer } = useMutation({
-    mutationFn: async ({
-      questionID,
-      answerID,
-    }: {
-      questionID: string;
-      answerID: string;
-    }) => {
+    mutationFn: async ({ questionID, answerID }: SavedCurrentQuestion) => {
       if (!data || !user) return;
       const playerDocRef = doc(db, "games", data.gameID, "players", user.id);
       return updateDoc(playerDocRef, {
         [`answers.${questionID}`]: answerID,
       });
+    },
+    onSuccess: (_, vars) => {
+      localStorage.setItem("currentQuestion", JSON.stringify(vars));
     },
   });
   const [currentAnswer, setCurrentAnswer] = useState("");
@@ -52,6 +58,10 @@ export function PlayerLobby() {
   if (data.activeGameChannel.status === GameStatus.ONGOING) {
     const question =
       data.quiz.questions[data.activeGameChannel.currentQuestionIndex];
+    const savedAnswer =
+      currentQuestion?.questionID === question.id
+        ? currentQuestion.answerID
+        : "";
 
     return (
       <QuestionDisplay
@@ -61,7 +71,7 @@ export function PlayerLobby() {
           setCurrentAnswer(answerID);
           saveAnswer({ questionID, answerID });
         }}
-        activeOptionID={currentAnswer}
+        activeOptionID={currentAnswer || savedAnswer}
       />
     );
   }
