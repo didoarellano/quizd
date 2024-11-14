@@ -1,8 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { doc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation, useSearch } from "wouter";
 import { QuestionDisplay } from "../components/QuestionDisplay";
+import { QuestionResults } from "../components/QuestionResults";
 import { db } from "../services/firebase";
 import { useGameAsHost } from "../utils/useGame";
 
@@ -11,6 +12,9 @@ export function HostQuestion({ quizID }: { quizID: string }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<
     number | undefined
   >(game?.activeGameChannel.currentQuestionIndex);
+  const [location, setLocation] = useLocation();
+  const searchParams = useSearch();
+  const view = new URLSearchParams(searchParams).get("view");
 
   useEffect(() => {
     const idx = game && game.activeGameChannel.currentQuestionIndex;
@@ -27,6 +31,7 @@ export function HostQuestion({ quizID }: { quizID: string }) {
       });
     },
     onSuccess: () => {
+      setLocation(`${location}`);
       nextIndex && setCurrentQuestionIndex(nextIndex);
     },
   });
@@ -38,6 +43,11 @@ export function HostQuestion({ quizID }: { quizID: string }) {
       const activeGameChannelRef = doc(db, "activeGamesChannel", game.id);
       return updateDoc(activeGameChannelRef, { currentQuestionAnswer });
     },
+    onSuccess: () => {
+      setLocation(`${location}?view=results`);
+    },
+  });
+
   });
 
   if (!game) return <p>...</p>;
@@ -66,7 +76,16 @@ export function HostQuestion({ quizID }: { quizID: string }) {
         </button>
       )}
 
-      <QuestionDisplay key={question.id} question={question} />
+      {view === "results" ? (
+        <QuestionResults
+          key={question.id}
+          question={question}
+          answerKey={game.answerKey}
+          playerAnswers={game.players}
+        />
+      ) : (
+        <QuestionDisplay key={question.id} question={question} />
+      )}
     </>
   );
 }
