@@ -16,11 +16,15 @@ export function QuestionResults({
 }: ResultsProps) {
   const correctAnswerIDs = answerKey[question.id] || [];
   const responseCounts = question.options.reduce((counts, option) => {
-    counts[option.id] = playerAnswers.filter(
-      (player) => player.answers[question.id] === option.id
-    ).length;
+    counts[option.id] = 0;
     return counts;
   }, {} as Record<string, number>);
+  playerAnswers.forEach((player) => {
+    const answerID = player.answers[question.id];
+    if (answerID && responseCounts.hasOwnProperty(answerID)) {
+      responseCounts[answerID]++;
+    }
+  });
   const totalResponses = Object.values(responseCounts).reduce(
     (sum, count) => sum + count,
     0
