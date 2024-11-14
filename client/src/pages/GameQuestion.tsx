@@ -12,9 +12,22 @@ export function GameQuestion({ quizID }: { quizID: string }) {
     mutationFn: async (currentQuestionIndex: number) => {
       if (!game) return;
       const activeGameChannelRef = doc(db, "activeGamesChannel", game.id);
-      return updateDoc(activeGameChannelRef, { currentQuestionIndex });
+      return updateDoc(activeGameChannelRef, {
+        currentQuestionIndex,
+        currentQuestionAnswer: null,
+      });
     },
   });
+
+  const closeQuestionRoundMutation = useMutation({
+    mutationFn: async (questionID: string) => {
+      if (!game) return;
+      const currentQuestionAnswer = game.answerKey[questionID];
+      const activeGameChannelRef = doc(db, "activeGamesChannel", game.id);
+      return updateDoc(activeGameChannelRef, { currentQuestionAnswer });
+    },
+  });
+
   const searchParams = useSearch();
   const currentIndex = Number(
     Object.fromEntries(new URLSearchParams(searchParams))?.q
@@ -22,6 +35,7 @@ export function GameQuestion({ quizID }: { quizID: string }) {
 
   useEffect(() => {
     updateCurrentQuestionIndex(currentIndex);
+    closeQuestionRoundMutation.reset();
   }, [currentIndex, updateCurrentQuestionIndex]);
 
   if (!game || !searchParams) return <Redirect to={`/`} />;
@@ -38,6 +52,10 @@ export function GameQuestion({ quizID }: { quizID: string }) {
 
       <br />
       {nextIndex && <Link href={`/play?q=${nextIndex}`}>Next Question</Link>}
+
+      <button onClick={() => closeQuestionRoundMutation.mutate(question.id)}>
+        Close Question
+      </button>
 
       <QuestionDisplay key={question.id} question={question} />
     </>
