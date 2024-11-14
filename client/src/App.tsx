@@ -2,9 +2,9 @@ import { Link, Route, Router, Switch } from "wouter";
 import { PrivateRoute } from "./components/PrivateRoute";
 import { useAuth } from "./contexts/AuthContext";
 
-import { GameQuestion } from "./pages/GameQuestion";
 import { GameResults } from "./pages/GameResults";
 import { HostLobby } from "./pages/HostLobby";
+import { HostQuestion } from "./pages/HostQuestion";
 import { JoinGame } from "./pages/JoinGame";
 import { PlayerLobby } from "./pages/PlayerLobby";
 import { QuizEditor } from "./pages/QuizEditor";
@@ -82,7 +82,7 @@ function App() {
               {({ id }) => <HostLobby key={id} quizID={id} />}
             </Route>
             <Route path="/play">
-              {({ id }) => <GameQuestion key={id} quizID={id} />}
+              {({ id }) => <HostQuestion key={id} quizID={id} />}
             </Route>
             <Route path="/results">
               {({ id }) => <GameResults key={id} quizID={id} />}

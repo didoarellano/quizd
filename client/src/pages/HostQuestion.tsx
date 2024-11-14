@@ -6,7 +6,7 @@ import { QuestionDisplay } from "../components/QuestionDisplay";
 import { db } from "../services/firebase";
 import { useGameAsHost } from "../utils/useGame";
 
-export function GameQuestion({ quizID }: { quizID: string }) {
+export function HostQuestion({ quizID }: { quizID: string }) {
   const { data: game } = useGameAsHost(quizID);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<
     number | undefined
