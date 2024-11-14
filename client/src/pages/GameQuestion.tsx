@@ -8,7 +8,8 @@ import { useGameAsHost } from "../utils/useGame";
 
 export function GameQuestion({ quizID }: { quizID: string }) {
   const { data: game } = useGameAsHost(quizID);
-  const { mutate: updateCurrentQuestionIndex } = useMutation({
+
+  const startNewQuestionRoundMutation = useMutation({
     mutationFn: async (currentQuestionIndex: number) => {
       if (!game) return;
       const activeGameChannelRef = doc(db, "activeGamesChannel", game.id);
@@ -34,9 +35,9 @@ export function GameQuestion({ quizID }: { quizID: string }) {
   );
 
   useEffect(() => {
-    updateCurrentQuestionIndex(currentIndex);
+    startNewQuestionRoundMutation.mutate(currentIndex);
     closeQuestionRoundMutation.reset();
-  }, [currentIndex, updateCurrentQuestionIndex]);
+  }, [currentIndex]);
 
   if (!game || !searchParams) return <Redirect to={`/`} />;
 
