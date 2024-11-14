@@ -1,8 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { doc, updateDoc } from "firebase/firestore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Redirect, useParams } from "wouter";
 import { GameStatus } from "../../../shared/game.types";
+import { Markdown } from "../components/Markdown";
 import { QuestionDisplay } from "../components/QuestionDisplay";
 import { useAuth } from "../contexts/AuthContext";
 import { db } from "../services/firebase";
@@ -21,6 +22,7 @@ export function PlayerLobby() {
   const { user } = useAuth();
   const { pin } = useParams();
   const { data, isPending } = useGameAsPlayer(pin || "");
+  const [currentAnswerID, setCurrentAnswerID] = useState("");
   const { mutate: saveAnswer } = useMutation({
     mutationFn: async ({ questionID, answerID }: SavedCurrentQuestion) => {
       if (!data || !user) return;
@@ -31,9 +33,13 @@ export function PlayerLobby() {
     },
     onSuccess: (_, vars) => {
       localStorage.setItem("currentQuestion", JSON.stringify(vars));
+      setCurrentAnswerID(vars.answerID);
     },
   });
-  const [currentAnswer, setCurrentAnswer] = useState("");
+
+  useEffect(() => {
+    setCurrentAnswerID("");
+  }, [data?.activeGameChannel.currentQuestionIndex]);
 
   if (!pin) return <Redirect to="/" />;
 
@@ -55,23 +61,48 @@ export function PlayerLobby() {
     );
   }
 
-  if (data.activeGameChannel.status === GameStatus.ONGOING) {
-    const question =
-      data.quiz.questions[data.activeGameChannel.currentQuestionIndex];
-    const savedAnswer =
-      currentQuestion?.questionID === question.id
-        ? currentQuestion.answerID
-        : "";
+  const answerKey = data.activeGameChannel?.currentQuestionAnswer;
+  const questionIsClosed = !!answerKey;
+  const question =
+    data.quiz.questions[data.activeGameChannel.currentQuestionIndex];
 
+  if (
+    data.activeGameChannel.status === GameStatus.ONGOING &&
+    questionIsClosed
+  ) {
+    const correctAnswers = question.options.filter((o) =>
+      answerKey.includes(o.id)
+    );
+    const playerAnswer = question.options.find((o) => o.id === currentAnswerID);
+    const isCorrect = answerKey.includes(currentAnswerID);
+
+    return (
+      <>
+        <h3>Correct answer(s):</h3>
+        {correctAnswers.map((option) => (
+          <Markdown key={option.id}>{option.text}</Markdown>
+        ))}
+        {playerAnswer && (
+          <>
+            <h3>Your answer</h3>
+            <Markdown>{playerAnswer.text}</Markdown>
+            <p>is {isCorrect ? "correct" : "incorrect"}</p>
+          </>
+        )}
+      </>
+    );
+  }
+
+  if (data.activeGameChannel.status === GameStatus.ONGOING) {
     return (
       <QuestionDisplay
         key={question.id}
         question={question}
         onOptionClick={(questionID: string, answerID: string) => {
-          setCurrentAnswer(answerID);
+          setCurrentAnswerID(answerID);
           saveAnswer({ questionID, answerID });
         }}
-        activeOptionID={currentAnswer || savedAnswer}
+        activeOptionID={currentAnswerID}
       />
     );
   }
