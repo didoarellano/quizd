@@ -1,7 +1,7 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { doc, updateDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
 import { Link, useLocation, useSearch } from "wouter";
+import { LiveGame } from "../../../shared/game.types";
 import { QuestionDisplay } from "../components/QuestionDisplay";
 import { QuestionResults } from "../components/QuestionResults";
 import { db } from "../services/firebase";
@@ -9,18 +9,11 @@ import { useGameAsHost } from "../utils/useGame";
 
 export function HostQuestion({ quizID }: { quizID: string }) {
   const { data: game } = useGameAsHost(quizID);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<
-    number | undefined
-  >(game?.activeGameChannel.currentQuestionIndex);
   const [location, setLocation] = useLocation();
   const searchParams = useSearch();
   const view = new URLSearchParams(searchParams).get("view");
 
-  useEffect(() => {
-    const idx = game && game.activeGameChannel.currentQuestionIndex;
-    if (idx !== undefined) setCurrentQuestionIndex(idx);
-  }, [game]);
-
+  const queryClient = useQueryClient();
   const startNewQuestionRoundMutation = useMutation({
     mutationFn: async (currentQuestionIndex: number) => {
       if (!game) return;
@@ -28,11 +21,20 @@ export function HostQuestion({ quizID }: { quizID: string }) {
       return updateDoc(activeGameChannelRef, {
         currentQuestionIndex,
         currentQuestionAnswer: null,
-      });
+      }).then(() => currentQuestionIndex);
     },
-    onSuccess: () => {
+    onSuccess: (currentQuestionIndex) => {
+      if (!currentQuestionIndex) return;
+      queryClient.setQueryData<LiveGame>(["games", quizID], (oldGame) => {
+        if (!oldGame) return;
+        const { activeGameChannel } = oldGame;
+        activeGameChannel.currentQuestionIndex = currentQuestionIndex;
+        return {
+          ...oldGame,
+          activeGameChannel,
+        };
+      });
       setLocation(`${location}`);
-      nextIndex && setCurrentQuestionIndex(nextIndex);
     },
   });
 
@@ -52,8 +54,7 @@ export function HostQuestion({ quizID }: { quizID: string }) {
 
   if (!game) return <p>...</p>;
 
-  const currentIndex =
-    currentQuestionIndex ?? game.activeGameChannel.currentQuestionIndex;
+  const currentIndex = game.activeGameChannel.currentQuestionIndex;
   const questions = game.quiz.questions;
   const question = questions[currentIndex];
   const nextIndex = currentIndex + 1 < questions.length && currentIndex + 1;
