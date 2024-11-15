@@ -28,11 +28,14 @@ export type SavedGame = {
   };
 };
 
+export type Leaderboard = { id: string; displayName: string; score: number }[];
+
 export type ActiveGameChannel = {
   status: GameStatusKeys;
   currentQuestionIndex: number;
   currentQuestionTimer?: number;
   currentQuestionAnswer?: string[];
+  leaderboard?: Leaderboard;
 };
 
 export type LiveGame = SavedGame & {
@@ -46,5 +49,3 @@ export type JoinGameResponse = {
   displayName?: string;
   activeGameChannel: ActiveGameChannel;
 };
-
-export type Leaderboard = { id: string; displayName: string; score: number }[];

@@ -1,6 +1,6 @@
 import * as admin from "firebase-admin";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
-import { Leaderboard, Player } from "../../../shared/game.types";
+import { GameStatus, Leaderboard, Player } from "../../../shared/game.types";
 import { getActiveGameByQuizID } from "./utils/getActiveGame";
 
 const db = admin.firestore();
@@ -46,11 +46,14 @@ export const endGame = onCall<string, Promise<Leaderboard>>(async (request) => {
     .sort((p1, p2) => p2.score - p1.score);
 
   // TODO
-  // - Add completedOn timestamp to game
-  // - Add player scores to activeGameChannel for PlayerGameOverScreen
-  // - Update status to "completed" in game and activeGamesChannel
-  //   - Delete Firebase Auth users
-  //   - Delete activeGamesChannel document
+  // - Update game status and completedOn fields
+
+  if (game.status !== GameStatus.COMPLETED) {
+    await db
+      .collection("activeGamesChannel")
+      .doc(game.id)
+      .update({ status: GameStatus.COMPLETED, leaderboard });
+  }
 
   return leaderboard;
 });
