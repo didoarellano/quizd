@@ -10,5 +10,6 @@
 import * as admin from "firebase-admin";
 admin.initializeApp();
 
+export { endGame } from "./endGame";
 export { getOrCreateGame } from "./getOrCreateGame";
 export { joinGame } from "./joinGame";
