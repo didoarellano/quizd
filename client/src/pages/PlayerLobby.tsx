@@ -22,7 +22,9 @@ export function PlayerLobby() {
   const { user } = useAuth();
   const { pin } = useParams();
   const { data, isPending } = useGameAsPlayer(pin || "");
-  const [currentAnswerID, setCurrentAnswerID] = useState("");
+  const [currentAnswerID, setCurrentAnswerID] = useState<string>(
+    currentQuestion?.answerID || ""
+  );
   const { mutate: saveAnswer } = useMutation({
     mutationFn: async ({ questionID, answerID }: SavedCurrentQuestion) => {
       if (!data || !user) return;
@@ -38,8 +40,13 @@ export function PlayerLobby() {
   });
 
   useEffect(() => {
-    setCurrentAnswerID("");
-  }, [data?.activeGameChannel.currentQuestionIndex]);
+    if (!data || !currentQuestion) return;
+    const question =
+      data && data.quiz.questions[data.activeGameChannel.currentQuestionIndex];
+    if (currentQuestion.questionID !== question.id) {
+      setCurrentAnswerID("");
+    }
+  }, [data]);
 
   if (!pin) return <Redirect to="/" />;
 
