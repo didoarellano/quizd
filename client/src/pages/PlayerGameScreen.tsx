@@ -59,6 +59,10 @@ export function PlayerGameScreen() {
     return <p>Game not found.</p>;
   }
 
+  if (!user) {
+    return <p>User not logged in</p>;
+  }
+
   if (data.activeGameChannel.status === GameStatus.PENDING) {
     return (
       <>
@@ -111,6 +115,22 @@ export function PlayerGameScreen() {
         }}
         activeOptionID={currentAnswerID}
       />
+    );
+  }
+
+  if (
+    data.activeGameChannel.status === GameStatus.COMPLETED &&
+    data.activeGameChannel.leaderboard
+  ) {
+    const thisPlayer = data.activeGameChannel.leaderboard.find(
+      (player) => player.id === user.id
+    );
+
+    return (
+      <>
+        <h1>Results</h1>
+        {thisPlayer && <p>You scored {thisPlayer.score} points</p>}
+      </>
     );
   }
 
