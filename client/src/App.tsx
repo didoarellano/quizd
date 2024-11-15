@@ -6,7 +6,7 @@ import { GameResults } from "./pages/GameResults";
 import { HostLobby } from "./pages/HostLobby";
 import { HostQuestion } from "./pages/HostQuestion";
 import { JoinGame } from "./pages/JoinGame";
-import { PlayerLobby } from "./pages/PlayerLobby";
+import { PlayerGameScreen } from "./pages/PlayerGameScreen";
 import { QuizEditor } from "./pages/QuizEditor";
 import { QuizList } from "./pages/QuizList";
 import { UserRoles } from "./services/auth";
@@ -92,7 +92,7 @@ function App() {
 
         <Route path="/play" nest={true}>
           <Route path="/" component={JoinGame} />
-          <Route path="/:pin" component={PlayerLobby} />
+          <Route path="/:pin" component={PlayerGameScreen} />
         </Route>
       </Switch>
     </Router>

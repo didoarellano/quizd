@@ -18,7 +18,7 @@ const currentQuestion: SavedCurrentQuestion | null = savedQuestion
   ? JSON.parse(savedQuestion)
   : null;
 
-export function PlayerLobby() {
+export function PlayerGameScreen() {
   const { user } = useAuth();
   const { pin } = useParams();
   const { data, isPending } = useGameAsPlayer(pin || "");
