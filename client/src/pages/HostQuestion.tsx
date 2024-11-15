@@ -1,11 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { doc, updateDoc } from "firebase/firestore";
+import { httpsCallable } from "firebase/functions";
 import { Link, useLocation, useSearch } from "wouter";
-import { LiveGame } from "../../../shared/game.types";
+import { Leaderboard, LiveGame } from "../../../shared/game.types";
 import { QuestionDisplay } from "../components/QuestionDisplay";
 import { QuestionResults } from "../components/QuestionResults";
-import { db } from "../services/firebase";
+import { db, functions } from "../services/firebase";
 import { useGameAsHost } from "../utils/useGame";
+
+const endGame = httpsCallable<string, Leaderboard>(functions, "endGame");
 
 export function HostQuestion({ quizID }: { quizID: string }) {
   const { data: game } = useGameAsHost(quizID);
@@ -50,6 +53,14 @@ export function HostQuestion({ quizID }: { quizID: string }) {
     },
   });
 
+  const endGameMutation = useMutation({
+    mutationFn: endGame,
+    onSuccess: (response) => {
+      queryClient.setQueryData(["leaderboard", quizID], response.data);
+      setLocation("/results");
+    },
+  });
+
   });
 
   if (!game) return <p>...</p>;
@@ -71,10 +82,12 @@ export function HostQuestion({ quizID }: { quizID: string }) {
       </button>
 
       <br />
-      {nextIndex && (
+      {nextIndex ? (
         <button onClick={() => startNewQuestionRoundMutation.mutate(nextIndex)}>
           Next Question
         </button>
+      ) : (
+        <button onClick={() => endGameMutation.mutate(quizID)}>End Game</button>
       )}
 
       {view === "results" ? (

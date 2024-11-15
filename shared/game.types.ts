@@ -46,3 +46,5 @@ export type JoinGameResponse = {
   displayName?: string;
   activeGameChannel: ActiveGameChannel;
 };
+
+export type Leaderboard = { id: string; displayName: string; score: number }[];
