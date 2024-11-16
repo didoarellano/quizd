@@ -2,13 +2,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { doc, updateDoc } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 import { Link, useLocation, useSearch } from "wouter";
-import { Leaderboard, LiveGame } from "../../../shared/game.types";
+import { EndGameResponse, LiveGame } from "../../../shared/game.types";
 import { QuestionDisplay } from "../components/QuestionDisplay";
 import { QuestionResults } from "../components/QuestionResults";
 import { db, functions } from "../services/firebase";
 import { useGameAsHost } from "../utils/useGame";
 
-const endGame = httpsCallable<string, Leaderboard>(functions, "endGame");
+const endGame = httpsCallable<string, EndGameResponse>(functions, "endGame");
 
 export function HostQuestion({ quizID }: { quizID: string }) {
   const { data: game } = useGameAsHost(quizID);
@@ -56,11 +56,9 @@ export function HostQuestion({ quizID }: { quizID: string }) {
   const endGameMutation = useMutation({
     mutationFn: endGame,
     onSuccess: (response) => {
-      queryClient.setQueryData(["leaderboard", quizID], response.data);
+      queryClient.setQueryData(["gameResults", quizID], response.data);
       setLocation("/results");
     },
-  });
-
   });
 
   if (!game) return <p>...</p>;

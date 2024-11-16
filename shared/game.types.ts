@@ -49,3 +49,8 @@ export type JoinGameResponse = {
   displayName?: string;
   activeGameChannel: ActiveGameChannel;
 };
+
+export type EndGameResponse = {
+  leaderboard: Leaderboard;
+  quiz: Pick<Quiz, "title" | "description">;
+};
