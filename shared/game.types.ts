@@ -20,6 +20,7 @@ export type SavedGame = {
   quizID: string;
   pin: string;
   status: GameStatusKeys;
+  completedOn?: any; // FieldValue is the correct type but we'll need to install firebase in this dir too
   quiz: Omit<Quiz, "id" | "_rawMD" | "teacherID" | "createdAt"> & {
     questions: Omit<Question, "answers">[];
   };

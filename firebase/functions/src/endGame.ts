@@ -1,6 +1,13 @@
 import * as admin from "firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
-import { EndGameResponse, Player, SavedGame } from "../../../shared/game.types";
+import {
+  ActiveGameChannel,
+  EndGameResponse,
+  GameStatus,
+  Player,
+  SavedGame,
+} from "../../../shared/game.types";
 
 const db = admin.firestore();
 
@@ -48,8 +55,25 @@ export const endGame = onCall<string, Promise<EndGameResponse>>(
       })
       .sort((p1, p2) => p2.score - p1.score);
 
-    // TODO
-    // - Update game status and completedOn fields
+    if (game.status !== GameStatus.COMPLETED) {
+      const batch = db.batch();
+
+      const status = GameStatus.COMPLETED;
+      batch.update(gameDoc.ref, {
+        status,
+        completedOn: FieldValue.serverTimestamp(),
+      } as SavedGame);
+
+      const activeGameChannelRef = db
+        .collection("activeGamesChannel")
+        .doc(game.id);
+      batch.update(activeGameChannelRef, {
+        status,
+        leaderboard,
+      } as Partial<ActiveGameChannel>);
+
+      await batch.commit();
+    }
 
     return {
       leaderboard,
