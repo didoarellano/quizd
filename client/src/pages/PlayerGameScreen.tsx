@@ -7,7 +7,7 @@ import { Markdown } from "../components/Markdown";
 import { QuestionDisplay } from "../components/QuestionDisplay";
 import { useAuth } from "../contexts/AuthContext";
 import { db } from "../services/firebase";
-import { useGameAsPlayer } from "../utils/useGame";
+import { useGameAsPlayer } from "../utils/useGameAsPlayer";
 
 type SavedCurrentQuestion = {
   questionID: string;

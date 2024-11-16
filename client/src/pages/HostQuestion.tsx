@@ -6,7 +6,7 @@ import { EndGameResponse, LiveGame } from "../../../shared/game.types";
 import { QuestionDisplay } from "../components/QuestionDisplay";
 import { QuestionResults } from "../components/QuestionResults";
 import { db, functions } from "../services/firebase";
-import { useGameAsHost } from "../utils/useGame";
+import { useGameAsHost } from "../utils/useGameAsHost";
 
 const endGame = httpsCallable<string, EndGameResponse>(functions, "endGame");
 

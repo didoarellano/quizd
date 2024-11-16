@@ -3,7 +3,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { Link } from "wouter";
 import { GameStatus } from "../../../shared/game.types";
 import { db } from "../services/firebase";
-import { useGameAsHost } from "../utils/useGame";
+import { useGameAsHost } from "../utils/useGameAsHost";
 
 const startButtonText = {
   [GameStatus.PENDING]: "Start Game",

@@ -4,42 +4,12 @@ import {
   UseQueryResult,
 } from "@tanstack/react-query";
 import { updateProfile, User } from "firebase/auth";
-import { collection, doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 import { useEffect } from "react";
-import { JoinGameResponse, LiveGame, Player } from "../../../shared/game.types";
+import { JoinGameResponse } from "../../../shared/game.types";
 import { signinAnonymously } from "../services/auth";
 import { auth, db, functions } from "../services/firebase";
-
-const getOrCreateGame = httpsCallable<string, LiveGame>(
-  functions,
-  "getOrCreateGame"
-);
-
-export function useGameAsHost(quizID: string) {
-  const queryRes = useQuery({
-    queryKey: ["games", quizID],
-    queryFn: () => getOrCreateGame(quizID).then(({ data }) => data),
-  });
-
-  const queryClient = useQueryClient();
-  const gameID = queryRes?.data?.id;
-  useEffect(() => {
-    if (!gameID) return;
-    const playersCollection = collection(db, "games", gameID, "players");
-    return onSnapshot(playersCollection, async (snapshot) => {
-      const players: Player[] = snapshot.docs.map(
-        (doc) => doc.data() as Player
-      );
-      queryClient.setQueryData(["games", quizID], {
-        ...queryRes.data,
-        players,
-      });
-    });
-  }, [gameID, quizID, queryRes, queryClient]);
-
-  return queryRes;
-}
 
 const joinGame = httpsCallable<string, JoinGameResponse>(functions, "joinGame");
 
