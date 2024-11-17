@@ -56,8 +56,8 @@ service cloud.firestore {
       match /players/{playerID} {
         allow create, delete: if false;
 
-        // creator can read
-        allow read: if get(/databases/$(database)/documents/games/$(gameID)).data.teacherID == request.auth.uid
+        // game creator and player can read
+        allow read: if get(/databases/$(database)/documents/games/$(gameID)).data.teacherID == request.auth.uid || playerID == request.auth.uid;
 
         // player can update their answers
         allow update: if playerID == request.auth.uid &&

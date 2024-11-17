@@ -1,6 +1,6 @@
 import * as admin from "firebase-admin";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
-import { JoinGameResponse } from "../../../shared/game.types";
+import { JoinGameResponse, Player } from "../../../shared/game.types";
 import { addPlayerToGame } from "./utils/addPlayerToGame";
 import { getActiveGameByPIN } from "./utils/getActiveGame";
 import { getActiveGameChannel } from "./utils/getActiveGameChannel";
@@ -31,7 +31,7 @@ export const joinGame = onCall<string, Promise<JoinGameResponse>>(
       );
     }
 
-    const response: JoinGameResponse = {
+    const response: Partial<JoinGameResponse> = {
       gameID: game.id,
       quiz: game.quiz,
       activeGameChannel,
@@ -43,17 +43,21 @@ export const joinGame = onCall<string, Promise<JoinGameResponse>>(
     const playerNames: string[] = playersSnapshot.docs.map(
       (playerDoc) => playerDoc.data().displayName
     );
+    const playerDoc = playersSnapshot.docs.find(
+      (playerDoc) => playerDoc.id === userID
+    );
 
-    const playerHasJoined = playerNames.includes(user.displayName || "");
+    let player: Player;
+    const playerHasJoined =
+      playerDoc && playerNames.includes(user.displayName || "");
     if (!playerHasJoined) {
-      const { displayName } = await addPlayerToGame(
-        user,
-        playersCollection,
-        playerNames
-      );
-      response.displayName = displayName;
+      player = await addPlayerToGame(user, playersCollection, playerNames);
+      response.displayName = player.displayName;
+    } else {
+      player = playerDoc.data() as Player;
     }
 
+    response.answers = player.answers;
     return response;
   }
 );

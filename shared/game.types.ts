@@ -49,6 +49,7 @@ export type JoinGameResponse = {
   quiz: SavedGame["quiz"];
   displayName?: string;
   activeGameChannel: ActiveGameChannel;
+  answers: Player["answers"];
 };
 
 export type EndGameResponse = {

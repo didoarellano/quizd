@@ -1,10 +1,11 @@
 import {
+  useMutation,
   useQuery,
   useQueryClient,
   UseQueryResult,
 } from "@tanstack/react-query";
 import { updateProfile, User } from "firebase/auth";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 import { useEffect } from "react";
 import { JoinGameResponse } from "../../../shared/game.types";
@@ -50,4 +51,43 @@ export function useGameAsPlayer(pin: string): UseQueryResult<JoinGameResponse> {
   }, [pin, queryRes, queryClient]);
 
   return queryRes;
+}
+
+export function useSaveAnswerMutation({
+  docPath,
+  queryKey,
+}: {
+  docPath: string;
+  queryKey: string[];
+}) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      questionID,
+      answerID,
+    }: {
+      questionID: string;
+      answerID: string;
+    }) => {
+      const playerDocRef = doc(db, docPath);
+      const snapshot = await getDoc(playerDocRef);
+      if (!snapshot.exists()) {
+        throw new Error(`Document at path ${docPath} does not exist.`);
+      }
+      return updateDoc(playerDocRef, {
+        [`answers.${questionID}`]: answerID,
+      });
+    },
+    onSuccess: (_, { questionID, answerID }) => {
+      const data = queryClient.getQueryData<JoinGameResponse>(queryKey);
+      if (!data) return;
+      const answers = data.answers;
+      answers[questionID] = answerID;
+      queryClient.setQueryData(queryKey, {
+        ...data,
+        answers,
+      });
+    },
+  });
 }

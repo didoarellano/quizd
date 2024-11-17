@@ -1,52 +1,22 @@
-import { useMutation } from "@tanstack/react-query";
-import { doc, updateDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
 import { Redirect, useParams } from "wouter";
 import { GameStatus } from "../../../shared/game.types";
 import { Markdown } from "../components/Markdown";
 import { QuestionDisplay } from "../components/QuestionDisplay";
 import { useAuth } from "../contexts/AuthContext";
-import { db } from "../services/firebase";
-import { useGameAsPlayer } from "../utils/useGameAsPlayer";
-
-type SavedCurrentQuestion = {
-  questionID: string;
-  answerID: string;
-};
-const savedQuestion = localStorage.getItem("currentQuestion");
-const currentQuestion: SavedCurrentQuestion | null = savedQuestion
-  ? JSON.parse(savedQuestion)
-  : null;
+import {
+  useGameAsPlayer,
+  useSaveAnswerMutation,
+} from "../utils/useGameAsPlayer";
 
 export function PlayerGameScreen() {
   const { user } = useAuth();
   const { pin } = useParams();
   const { data, isPending } = useGameAsPlayer(pin || "");
-  const [currentAnswerID, setCurrentAnswerID] = useState<string>(
-    currentQuestion?.answerID || ""
-  );
-  const { mutate: saveAnswer } = useMutation({
-    mutationFn: async ({ questionID, answerID }: SavedCurrentQuestion) => {
-      if (!data || !user) return;
-      const playerDocRef = doc(db, "games", data.gameID, "players", user.id);
-      return updateDoc(playerDocRef, {
-        [`answers.${questionID}`]: answerID,
-      });
-    },
-    onSuccess: (_, vars) => {
-      localStorage.setItem("currentQuestion", JSON.stringify(vars));
-      setCurrentAnswerID(vars.answerID);
-    },
-  });
 
-  useEffect(() => {
-    if (!data || !currentQuestion) return;
-    const question =
-      data && data.quiz.questions[data.activeGameChannel.currentQuestionIndex];
-    if (currentQuestion.questionID !== question.id) {
-      setCurrentAnswerID("");
-    }
-  }, [data]);
+  const saveAnswer = useSaveAnswerMutation({
+    docPath: `games/${data?.gameID}/players/${user?.id}`,
+    queryKey: ["games", pin || ""],
+  });
 
   if (!pin) return <Redirect to="/" />;
 
@@ -76,6 +46,7 @@ export function PlayerGameScreen() {
   const questionIsClosed = !!answerKey;
   const question =
     data.quiz.questions[data.activeGameChannel.currentQuestionIndex];
+  const currentAnswerID = data.answers[question.id];
 
   if (
     data.activeGameChannel.status === GameStatus.ONGOING &&
@@ -110,8 +81,7 @@ export function PlayerGameScreen() {
         key={question.id}
         question={question}
         onOptionClick={(questionID: string, answerID: string) => {
-          setCurrentAnswerID(answerID);
-          saveAnswer({ questionID, answerID });
+          saveAnswer.mutate({ questionID, answerID });
         }}
         activeOptionID={currentAnswerID}
       />
