@@ -47,7 +47,8 @@ export type LiveGame = SavedGame & {
 export type JoinGameResponse = {
   gameID: string;
   quiz: SavedGame["quiz"];
-  displayName?: string;
+  displayName: string;
+  isNewPlayer: boolean;
   activeGameChannel: ActiveGameChannel;
   answers: Player["answers"];
 };

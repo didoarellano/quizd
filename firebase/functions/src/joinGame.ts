@@ -31,12 +31,6 @@ export const joinGame = onCall<string, Promise<JoinGameResponse>>(
       );
     }
 
-    const response: Partial<JoinGameResponse> = {
-      gameID: game.id,
-      quiz: game.quiz,
-      activeGameChannel,
-    };
-
     const playersCollection = db.collection(`games/${game.id}/players`);
     const playersSnapshot = await playersCollection.get();
     const user = await admin.auth().getUser(userID);
@@ -47,17 +41,19 @@ export const joinGame = onCall<string, Promise<JoinGameResponse>>(
       (playerDoc) => playerDoc.id === userID
     );
 
-    let player: Player;
     const playerHasJoined =
       playerDoc && playerNames.includes(user.displayName || "");
-    if (!playerHasJoined) {
-      player = await addPlayerToGame(user, playersCollection, playerNames);
-      response.displayName = player.displayName;
-    } else {
-      player = playerDoc.data() as Player;
-    }
+    const player = !playerHasJoined
+      ? await addPlayerToGame(user, playersCollection, playerNames)
+      : (playerDoc.data() as Player);
 
-    response.answers = player.answers;
-    return response;
+    return {
+      gameID: game.id,
+      quiz: game.quiz,
+      activeGameChannel,
+      displayName: player.displayName,
+      isNewPlayer: !playerHasJoined,
+      answers: player.answers,
+    };
   }
 );

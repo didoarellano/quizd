@@ -19,7 +19,7 @@ export function useGameAsPlayer(pin: string): UseQueryResult<JoinGameResponse> {
     queryKey: ["games", pin],
     queryFn: async () => {
       const { data } = await joinGame(pin);
-      if (data.displayName) {
+      if (data.isNewPlayer) {
         const user = auth.currentUser as User;
         await updateProfile(user, {
           displayName: data.displayName,
