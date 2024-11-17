@@ -46,7 +46,9 @@ export function PlayerGameScreen() {
   const questionIsClosed = !!answerKey;
   const question =
     data.quiz.questions[data.activeGameChannel.currentQuestionIndex];
-  const currentAnswerID = data.answers[question.id];
+  const currentAnswerID = saveAnswer.isPending
+    ? saveAnswer.variables?.answerID
+    : data.answers[question.id];
 
   if (
     data.activeGameChannel.status === GameStatus.ONGOING &&

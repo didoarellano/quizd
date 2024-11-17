@@ -79,15 +79,8 @@ export function useSaveAnswerMutation({
         [`answers.${questionID}`]: answerID,
       });
     },
-    onSuccess: (_, { questionID, answerID }) => {
-      const data = queryClient.getQueryData<JoinGameResponse>(queryKey);
-      if (!data) return;
-      const answers = data.answers;
-      answers[questionID] = answerID;
-      queryClient.setQueryData(queryKey, {
-        ...data,
-        answers,
-      });
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey });
     },
   });
 }
