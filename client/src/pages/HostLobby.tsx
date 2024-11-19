@@ -1,9 +1,6 @@
-import { useMutation } from "@tanstack/react-query";
-import { doc, updateDoc } from "firebase/firestore";
 import { Link } from "wouter";
 import { GameStatus } from "../../../shared/game.types";
-import { db } from "../services/firebase";
-import { useGameAsHost } from "../utils/useGameAsHost";
+import { useGameAsHost, useStartGameMutation } from "../utils/useGameAsHost";
 
 const startButtonText = {
   [GameStatus.PENDING]: "Start Game",
@@ -13,25 +10,8 @@ const startButtonText = {
 
 export function HostLobby({ quizID }: { quizID: string }) {
   const { data: game } = useGameAsHost(quizID);
-  const currentQuestionIndex =
-    game?.activeGameChannel.currentQuestionIndex ?? 0;
+  const startGame = useStartGameMutation({ game });
   const players = game?.players;
-
-  const { mutate: updateGameStatus } = useMutation({
-    mutationFn: async () => {
-      if (game && game.status === GameStatus.PENDING) {
-        const gameRef = doc(db, "games", game.id);
-        const activeGameChannelRef = doc(db, "activeGamesChannel", game.id);
-        return Promise.all([
-          updateDoc(gameRef, { status: GameStatus.ONGOING }),
-          updateDoc(activeGameChannelRef, {
-            status: GameStatus.ONGOING,
-            currentQuestionIndex,
-          }),
-        ]);
-      }
-    },
-  });
 
   return (
     <>
@@ -42,7 +22,7 @@ export function HostLobby({ quizID }: { quizID: string }) {
         <>
           <h2>{game.quiz.title}</h2>
           <p>{game.quiz.description}</p>
-          <Link href="/play" onClick={() => updateGameStatus()}>
+          <Link href="/play" onClick={() => startGame.mutate()}>
             {startButtonText[game.status]}
           </Link>
         </>

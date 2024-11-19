@@ -1,64 +1,26 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { doc, updateDoc } from "firebase/firestore";
-import { httpsCallable } from "firebase/functions";
 import { Link, useLocation, useSearch } from "wouter";
-import { EndGameResponse, LiveGame } from "../../../shared/game.types";
 import { QuestionDisplay } from "../components/QuestionDisplay";
 import { QuestionResults } from "../components/QuestionResults";
-import { db, functions } from "../services/firebase";
-import { useGameAsHost } from "../utils/useGameAsHost";
-
-const endGame = httpsCallable<string, EndGameResponse>(functions, "endGame");
+import {
+  useEndGameMutation,
+  useGameAsHost,
+  useQuestionRoundMutations,
+} from "../utils/useGameAsHost";
 
 export function HostQuestion({ quizID }: { quizID: string }) {
   const { data: game } = useGameAsHost(quizID);
-  const [location, setLocation] = useLocation();
   const searchParams = useSearch();
   const view = new URLSearchParams(searchParams).get("view");
-
-  const queryClient = useQueryClient();
-  const startNewQuestionRoundMutation = useMutation({
-    mutationFn: async (currentQuestionIndex: number) => {
-      if (!game) return;
-      const activeGameChannelRef = doc(db, "activeGamesChannel", game.id);
-      return updateDoc(activeGameChannelRef, {
-        currentQuestionIndex,
-        currentQuestionAnswer: null,
-      }).then(() => currentQuestionIndex);
-    },
-    onSuccess: (currentQuestionIndex) => {
-      if (!currentQuestionIndex) return;
-      queryClient.setQueryData<LiveGame>(["games", quizID], (oldGame) => {
-        if (!oldGame) return;
-        const { activeGameChannel } = oldGame;
-        activeGameChannel.currentQuestionIndex = currentQuestionIndex;
-        return {
-          ...oldGame,
-          activeGameChannel,
-        };
-      });
-      setLocation(`${location}`);
-    },
+  const [location, setLocation] = useLocation();
+  const { startNewRound, closeCurrentRound } = useQuestionRoundMutations({
+    quizID,
+    docPath: `activeGamesChannel/${game?.id || ""}`,
+    onStartNewRound: () => setLocation(`${location}`),
+    onCloseRound: () => setLocation(`${location}?view=results`),
   });
-
-  const closeQuestionRoundMutation = useMutation({
-    mutationFn: async (questionID: string) => {
-      if (!game) return;
-      const currentQuestionAnswer = game.answerKey[questionID];
-      const activeGameChannelRef = doc(db, "activeGamesChannel", game.id);
-      return updateDoc(activeGameChannelRef, { currentQuestionAnswer });
-    },
-    onSuccess: () => {
-      setLocation(`${location}?view=results`);
-    },
-  });
-
-  const endGameMutation = useMutation({
-    mutationFn: endGame,
-    onSuccess: (response) => {
-      queryClient.setQueryData(["gameResults", quizID], response.data);
-      setLocation("/results");
-    },
+  const endGame = useEndGameMutation({
+    quizID,
+    onEndGame: () => setLocation(`/results`),
   });
 
   if (!game) return <p>...</p>;
@@ -75,17 +37,17 @@ export function HostQuestion({ quizID }: { quizID: string }) {
       <Link href="/results">Results</Link>
 
       <br />
-      <button onClick={() => closeQuestionRoundMutation.mutate(question.id)}>
+      <button onClick={() => closeCurrentRound.mutate(question.id)}>
         Close Question
       </button>
 
       <br />
       {nextIndex ? (
-        <button onClick={() => startNewQuestionRoundMutation.mutate(nextIndex)}>
+        <button onClick={() => startNewRound.mutate(nextIndex)}>
           Next Question
         </button>
       ) : (
-        <button onClick={() => endGameMutation.mutate(quizID)}>End Game</button>
+        <button onClick={() => endGame.mutate(quizID)}>End Game</button>
       )}
 
       {view === "results" ? (
