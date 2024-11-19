@@ -55,11 +55,12 @@ export function useGameAsPlayer(pin: string): UseQueryResult<JoinGameResponse> {
 
 export function useSaveAnswerMutation({
   docPath,
-  queryKey,
+  pin,
 }: {
   docPath: string;
-  queryKey: string[];
+  pin: string;
 }) {
+  const queryKey = ["games", pin];
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -79,8 +80,20 @@ export function useSaveAnswerMutation({
         [`answers.${questionID}`]: answerID,
       });
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey });
+    onMutate: ({ questionID, answerID }) => {
+      const prevData = queryClient.getQueryData<JoinGameResponse>(queryKey);
+      if (!prevData) return;
+      const answers = prevData.answers;
+      answers[questionID] = answerID;
+      queryClient.setQueryData(queryKey, {
+        ...prevData,
+        answers,
+      });
+      return prevData;
+    },
+    onError: (error, _vars, prevData) => {
+      console.error(error.message);
+      queryClient.setQueryData(queryKey, prevData);
     },
   });
 }

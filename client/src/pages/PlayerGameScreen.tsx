@@ -12,10 +12,9 @@ export function PlayerGameScreen() {
   const { user } = useAuth();
   const { pin } = useParams();
   const { data, isPending } = useGameAsPlayer(pin || "");
-
   const saveAnswer = useSaveAnswerMutation({
     docPath: `games/${data?.gameID}/players/${user?.id}`,
-    queryKey: ["games", pin || ""],
+    pin: pin || "",
   });
 
   if (!pin) return <Redirect to="/" />;
@@ -46,9 +45,7 @@ export function PlayerGameScreen() {
   const questionIsClosed = !!answerKey;
   const question =
     data.quiz.questions[data.activeGameChannel.currentQuestionIndex];
-  const currentAnswerID = saveAnswer.isPending
-    ? saveAnswer.variables?.answerID
-    : data.answers[question.id];
+  const currentAnswerID = data.answers[question.id];
 
   if (
     data.activeGameChannel.status === GameStatus.ONGOING &&
