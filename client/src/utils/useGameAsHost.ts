@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from "@tanstack/react-query";
 import { collection, doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 import { useEffect } from "react";
@@ -15,10 +20,24 @@ const getOrCreateGame = httpsCallable<string, LiveGame>(
   "getOrCreateGame"
 );
 
-export function useGameAsHost(quizID: string) {
+type UseGameOptions = {
+  quizID: string | null;
+  // Don't show queryKey, queryFn as options;
+  queryOptions?: Omit<UseQueryOptions<LiveGame, Error>, "queryKey" | "queryFn">;
+};
+
+export function useGameAsHost({ quizID, queryOptions }: UseGameOptions) {
+  const queryKey = ["games", quizID];
+  const { enabled, ...opts } = queryOptions ?? {};
+  const callerEnabled =
+    typeof enabled === "function" ? enabled : () => enabled ?? true;
   const queryRes = useQuery({
-    queryKey: ["games", quizID],
+    ...opts,
+    queryKey,
     queryFn: () => getOrCreateGame(quizID).then(({ data }) => data),
+    enabled: (query) => {
+      return !!quizID && callerEnabled(query);
+    },
   });
 
   const queryClient = useQueryClient();
@@ -40,10 +59,15 @@ export function useGameAsHost(quizID: string) {
   return queryRes;
 }
 
-export function useStartGameMutation({ game }: { game?: LiveGame }) {
+type UseStartGameOptions = {
+  game: LiveGame | null;
+  onStart?: (game: LiveGame) => void;
+  onError?: (error: Error, prevData: LiveGame | undefined) => void;
+};
+
+export function useStartGame({ game, onStart, onError }: UseStartGameOptions) {
   const queryClient = useQueryClient();
   const queryKey = ["games", game?.quizID];
-
   return useMutation({
     mutationFn: async () => {
       if (game && game.status === GameStatus.PENDING) {
@@ -74,18 +98,55 @@ export function useStartGameMutation({ game }: { game?: LiveGame }) {
     onError: (error, _vars, prevData) => {
       console.error(error.message);
       queryClient.setQueryData(queryKey, prevData);
+      onError?.(error, prevData);
+    },
+    onSuccess: (_data, _vars, game) => {
+      onStart?.(game);
     },
   });
 }
 
 const endGame = httpsCallable<string, EndGameResponse>(functions, "endGame");
-export function useEndGameMutation({
-  quizID,
-  onEndGame,
-}: {
+
+type UseGameResultsOptions = {
   quizID: string;
-  onEndGame?: () => void;
-}) {
+  // Don't show queryKey, queryFn as options;
+  queryOptions?: Omit<
+    UseQueryOptions<EndGameResponse, Error>,
+    "queryKey" | "queryFn"
+  >;
+};
+
+export function useGameResults({
+  quizID,
+  queryOptions,
+}: UseGameResultsOptions) {
+  const queryKey = ["gameResults", quizID];
+  const { enabled, ...opts } = queryOptions ?? {};
+  const callerEnabled =
+    typeof enabled === "function" ? enabled : () => enabled ?? true;
+
+  return useQuery({
+    ...opts,
+    queryKey,
+    queryFn: () => endGame(quizID).then((response) => response.data),
+    enabled: (query) => {
+      return !!quizID && callerEnabled(query);
+    },
+  });
+}
+
+type UseEndGameOptions = {
+  quizID: string;
+  onBeforeEndGame?: () => void;
+  onEndGame?: (reponse: EndGameResponse) => void;
+};
+
+export function useEndGame({
+  quizID,
+  onBeforeEndGame,
+  onEndGame,
+}: UseEndGameOptions) {
   const queryClient = useQueryClient();
   const queryKey = ["gameResults", quizID];
 
@@ -101,7 +162,7 @@ export function useEndGameMutation({
           description: prevData.quiz.description,
         },
       });
-      onEndGame && onEndGame();
+      onBeforeEndGame?.();
       return prevData;
     },
     onError: (error, _vars, prevData) => {
@@ -111,6 +172,7 @@ export function useEndGameMutation({
     onSuccess: (response) => {
       // add response data to cache instead of invalidating queries to prevent unnecessary requeries
       queryClient.setQueryData(["gameResults", quizID], response.data);
+      onEndGame?.(response.data);
     },
   });
 }
@@ -153,7 +215,7 @@ export function useQuestionRoundMutations({
       queryClient.setQueryData(queryKey, prevData);
     },
     onSuccess: () => {
-      onStartNewRound && onStartNewRound();
+      onStartNewRound?.();
     },
   });
 
@@ -181,7 +243,7 @@ export function useQuestionRoundMutations({
       queryClient.setQueryData(queryKey, prevData);
     },
     onSuccess: () => {
-      onCloseRound && onCloseRound();
+      onCloseRound?.();
     },
   });
 

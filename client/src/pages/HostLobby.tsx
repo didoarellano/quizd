@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { GameStatus } from "../../../shared/game.types";
-import { useGameAsHost, useStartGameMutation } from "../utils/useGameAsHost";
+import { useGameAsHost, useStartGame } from "../utils/useGameAsHost";
 
 const startButtonText = {
   [GameStatus.PENDING]: "Start Game",
@@ -9,8 +9,8 @@ const startButtonText = {
 };
 
 export function HostLobby({ quizID }: { quizID: string }) {
-  const { data: game } = useGameAsHost(quizID);
-  const startGame = useStartGameMutation({ game });
+  const { data: game } = useGameAsHost({ quizID });
+  const startGame = useStartGame({ game: game ?? null });
   const players = game?.players;
 
   return (

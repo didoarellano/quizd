@@ -1,14 +1,15 @@
 import { Link, useLocation, useSearch } from "wouter";
 import { QuestionDisplay } from "../components/QuestionDisplay";
 import { QuestionResults } from "../components/QuestionResults";
+import { ResetGameButton } from "../components/ResetGameButton";
 import {
-  useEndGameMutation,
+  useEndGame,
   useGameAsHost,
   useQuestionRoundMutations,
 } from "../utils/useGameAsHost";
 
 export function HostQuestion({ quizID }: { quizID: string }) {
-  const { data: game } = useGameAsHost(quizID);
+  const { data: game } = useGameAsHost({ quizID });
   const searchParams = useSearch();
   const view = new URLSearchParams(searchParams).get("view");
   const [location, setLocation] = useLocation();
@@ -18,9 +19,9 @@ export function HostQuestion({ quizID }: { quizID: string }) {
     onStartNewRound: () => setLocation(`${location}`),
     onCloseRound: () => setLocation(`${location}?view=results`),
   });
-  const endGame = useEndGameMutation({
+  const endGame = useEndGame({
     quizID,
-    onEndGame: () => setLocation(`/results`),
+    onBeforeEndGame: () => setLocation(`/results`),
   });
 
   if (!game) return <p>...</p>;

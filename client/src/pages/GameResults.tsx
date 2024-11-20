@@ -1,14 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
-import { httpsCallable } from "firebase/functions";
-import { EndGameResponse } from "../../../shared/game.types";
-import { functions } from "../services/firebase";
-
-const endGame = httpsCallable<string, EndGameResponse>(functions, "endGame");
+import { useGameResults } from "../utils/useGameAsHost";
 
 export function GameResults({ quizID }: { quizID: string }) {
-  const { data } = useQuery({
-    queryKey: ["gameResults", quizID],
-    queryFn: () => endGame(quizID).then((response) => response.data),
+  const { data } = useGameResults({
+    quizID,
   });
 
   if (!data) return <p>...</p>;
