@@ -16,7 +16,6 @@ import {
   where,
 } from "firebase/firestore";
 import { NotAllowedError, QuizNotFoundError } from "../utils/errors";
-import type { Teacher } from "./auth";
 import { db } from "./firebase";
 
 import type { Quiz as _Quiz } from "../../../shared/quiz.types";
@@ -27,7 +26,7 @@ type Quiz = _Quiz & {
 
 export async function getQuiz(
   quizID: string,
-  teacherID: string,
+  teacherID: string
 ): Promise<{ docSnap: DocumentSnapshot<Quiz>; quiz: Quiz }> {
   const docRef = doc(db, "quizzes", quizID) as DocumentReference<Quiz>;
   const docSnap = await getDoc(docRef);
@@ -41,12 +40,12 @@ export async function getQuiz(
 
 export async function getQuizzes(
   teacherID: string,
-  sort: "asc" | "desc" = "desc",
+  sort: "asc" | "desc" = "desc"
 ): Promise<Quiz[]> {
   const q = query(
     collection(db, "quizzes"),
     orderBy("createdAt", sort),
-    where("teacherID", "==", teacherID),
+    where("teacherID", "==", teacherID)
   );
   const querySnapshot = await getDocs(q);
   const quizzes: Quiz[] = querySnapshot.docs.map((doc) => {
@@ -60,21 +59,21 @@ export async function getQuizzes(
 }
 
 export function saveNewQuiz(
-  teacher: Teacher,
-  quiz: Partial<Quiz>,
+  teacherID: string,
+  quiz: Partial<Quiz>
 ): Promise<DocumentReference<Quiz>> {
-  quiz.teacherID = teacher.id;
+  quiz.teacherID = teacherID;
   quiz.createdAt = serverTimestamp();
   const quizzesCollection = collection(
     db,
-    "quizzes",
+    "quizzes"
   ) as CollectionReference<Quiz>;
   return addDoc(quizzesCollection, quiz as Quiz);
 }
 
 export function updateQuiz(
   quizRef: DocumentReference,
-  quiz: Partial<Quiz>,
+  quiz: Partial<Quiz>
 ): Promise<void> {
   return updateDoc(quizRef, quiz);
 }

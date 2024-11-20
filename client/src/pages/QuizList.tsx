@@ -1,31 +1,19 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { QuizDeleteButton } from "../components/QuizDeleteButton";
 import { useAuth } from "../contexts/AuthContext";
-import { deleteQuizByID, getQuizzes } from "../services/quiz";
+import { useDeleteQuiz, useQuizzes } from "../utils/useQuiz";
 
 export function QuizList() {
   const { user } = useAuth();
-  const queryClient = useQueryClient();
   const {
     isPending,
     isError,
     error,
     data: quizzes,
-  } = useQuery({
-    queryKey: ["quizzes"],
-    queryFn: async () => {
-      if (!user?.id) throw new Error("User not logged in");
-      return getQuizzes(user.id);
-    },
+  } = useQuizzes({
+    userID: user?.id ?? null,
   });
-
-  const { mutate: deleteQuiz } = useMutation({
-    mutationFn: (quizID: string) => deleteQuizByID(quizID),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["quizzes"] });
-    },
-  });
+  const deleteQuiz = useDeleteQuiz();
 
   if (isPending) {
     return <p>loading...</p>;
@@ -53,7 +41,7 @@ export function QuizList() {
             </Link>
             <Link href={`/${quiz.id}`}>Edit Quiz</Link>
             <QuizDeleteButton
-              onDeleteClick={() => deleteQuiz(quiz.id as string)}
+              onDeleteClick={() => quiz?.id && deleteQuiz.mutate(quiz.id)}
             />
           </div>
         ))
