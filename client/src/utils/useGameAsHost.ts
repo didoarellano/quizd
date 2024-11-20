@@ -4,7 +4,7 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from "@tanstack/react-query";
-import { collection, doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { useEffect } from "react";
 import {
   EndGameResponse,
@@ -13,7 +13,13 @@ import {
   Player,
 } from "../../../shared/game.types";
 import { db } from "../services/firebase";
-import { endGame, getOrCreateGame } from "../services/game";
+import {
+  closeQuestion,
+  endGame,
+  getOrCreateGame,
+  startGame,
+  startNewQuestion,
+} from "../services/game";
 
 type UseGameOptions = {
   quizID: string | null;
@@ -66,14 +72,7 @@ export function useStartGame({ game, onStart, onError }: UseStartGameOptions) {
   return useMutation({
     mutationFn: async () => {
       if (game && game.status === GameStatus.PENDING) {
-        const gameRef = doc(db, "games", game.id);
-        const activeGameChannelRef = doc(db, "activeGamesChannel", game.id);
-        return Promise.all([
-          updateDoc(gameRef, { status: GameStatus.ONGOING }),
-          updateDoc(activeGameChannelRef, {
-            status: GameStatus.ONGOING,
-          }),
-        ]);
+        return startGame(game.id);
       }
     },
     onMutate: () => {
@@ -172,36 +171,33 @@ export function useEndGame({
 
 export function useQuestionRoundMutations({
   quizID,
-  docPath,
   onStartNewRound,
   onCloseRound,
 }: {
   quizID: string;
-  docPath: string;
   onStartNewRound?: () => void;
   onCloseRound?: () => void;
 }) {
   const queryKey = ["games", quizID];
   const queryClient = useQueryClient();
+  const cachedGame = queryClient.getQueryData<LiveGame>(queryKey);
 
   const startNewRound = useMutation({
     mutationFn: async (currentQuestionIndex: number) => {
-      const activeGameChannelRef = doc(db, docPath);
-      return updateDoc(activeGameChannelRef, {
-        currentQuestionIndex,
-        currentQuestionAnswer: null,
-      }).then(() => currentQuestionIndex);
+      if (!cachedGame) return;
+      return startNewQuestion(cachedGame.id, currentQuestionIndex).then(
+        () => currentQuestionIndex
+      );
     },
     onMutate: (currentQuestionIndex) => {
-      const prevData = queryClient.getQueryData<LiveGame>(queryKey);
-      if (!prevData) return;
-      const { activeGameChannel } = prevData;
+      if (!cachedGame) return;
+      const { activeGameChannel } = cachedGame;
       activeGameChannel.currentQuestionIndex = currentQuestionIndex;
       queryClient.setQueryData(queryKey, {
-        ...prevData,
+        ...cachedGame,
         activeGameChannel,
       });
-      return prevData;
+      return cachedGame;
     },
     onError: (error, _vars, prevData) => {
       console.error(error.message);
@@ -214,22 +210,20 @@ export function useQuestionRoundMutations({
 
   const closeCurrentRound = useMutation({
     mutationFn: async (questionID: string) => {
-      const game = queryClient.getQueryData<LiveGame>(queryKey);
-      if (!game) return;
-      const currentQuestionAnswer = game.answerKey[questionID];
-      const activeGameChannelRef = doc(db, "activeGamesChannel", game.id);
-      return updateDoc(activeGameChannelRef, { currentQuestionAnswer });
+      if (!cachedGame) return;
+      const currentQuestionAnswer = cachedGame.answerKey[questionID];
+      return closeQuestion(cachedGame.id, currentQuestionAnswer);
     },
     onMutate: (questionID) => {
-      const prevData = queryClient.getQueryData<LiveGame>(queryKey);
-      if (!prevData) return;
-      const { activeGameChannel } = prevData;
-      activeGameChannel.currentQuestionAnswer = prevData.answerKey[questionID];
+      if (!cachedGame) return;
+      const { activeGameChannel } = cachedGame;
+      activeGameChannel.currentQuestionAnswer =
+        cachedGame.answerKey[questionID];
       queryClient.setQueryData(queryKey, {
-        ...prevData,
+        ...cachedGame,
         activeGameChannel,
       });
-      return prevData;
+      return cachedGame;
     },
     onError: (error, _vars, prevData) => {
       console.error(error.message);

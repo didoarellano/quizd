@@ -15,7 +15,6 @@ export function HostQuestion({ quizID }: { quizID: string }) {
   const [location, setLocation] = useLocation();
   const { startNewRound, closeCurrentRound } = useQuestionRoundMutations({
     quizID,
-    docPath: `activeGamesChannel/${game?.id || ""}`,
     onStartNewRound: () => setLocation(`${location}`),
     onCloseRound: () => setLocation(`${location}?view=results`),
   });
