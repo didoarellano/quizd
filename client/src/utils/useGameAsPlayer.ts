@@ -6,13 +6,11 @@ import {
 } from "@tanstack/react-query";
 import { updateProfile, User } from "firebase/auth";
 import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
-import { httpsCallable } from "firebase/functions";
 import { useEffect } from "react";
 import { JoinGameResponse } from "../../../shared/game.types";
 import { signinAnonymously } from "../services/auth";
-import { auth, db, functions } from "../services/firebase";
-
-const joinGame = httpsCallable<string, JoinGameResponse>(functions, "joinGame");
+import { auth, db } from "../services/firebase";
+import { joinGame } from "../services/game";
 
 export function useGameAsPlayer(pin: string): UseQueryResult<JoinGameResponse> {
   const queryRes = useQuery({

@@ -5,7 +5,6 @@ import {
   UseQueryOptions,
 } from "@tanstack/react-query";
 import { collection, doc, onSnapshot, updateDoc } from "firebase/firestore";
-import { httpsCallable } from "firebase/functions";
 import { useEffect } from "react";
 import {
   EndGameResponse,
@@ -13,12 +12,8 @@ import {
   LiveGame,
   Player,
 } from "../../../shared/game.types";
-import { db, functions } from "../services/firebase";
-
-const getOrCreateGame = httpsCallable<string, LiveGame>(
-  functions,
-  "getOrCreateGame"
-);
+import { db } from "../services/firebase";
+import { endGame, getOrCreateGame } from "../services/game";
 
 type UseGameOptions = {
   quizID: string | null;
@@ -105,8 +100,6 @@ export function useStartGame({ game, onStart, onError }: UseStartGameOptions) {
     },
   });
 }
-
-const endGame = httpsCallable<string, EndGameResponse>(functions, "endGame");
 
 type UseGameResultsOptions = {
   quizID: string;
