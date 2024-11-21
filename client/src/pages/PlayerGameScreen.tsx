@@ -17,7 +17,7 @@ export function PlayerGameScreen() {
     pin: pin || "",
   });
 
-  if (!pin) return <Redirect to="/" />;
+  if (!pin) return <Redirect to={`~${import.meta.env.VITE_BASE_URL}/play`} />;
 
   if (isPending) {
     return <p>...</p>;
@@ -29,7 +29,7 @@ export function PlayerGameScreen() {
   }
 
   if (!user) {
-    return <p>User not logged in</p>;
+    return <Redirect to={`~${import.meta.env.VITE_BASE_URL}/play`} />;
   }
 
   if (data.activeGameChannel.status === GameStatus.PENDING) {
