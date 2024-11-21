@@ -22,7 +22,7 @@ export type Question = {
 };
 
 export type Quiz = {
-  id?: string;
+  id: string;
   _rawMD: string;
   teacherID: string;
   title: string;

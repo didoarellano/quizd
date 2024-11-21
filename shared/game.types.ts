@@ -6,7 +6,7 @@ export const GameStatus = {
   COMPLETED: "completed",
 } as const;
 
-type GameStatusKeys = (typeof GameStatus)[keyof typeof GameStatus];
+export type GameStatusKeys = (typeof GameStatus)[keyof typeof GameStatus];
 
 export type Player = {
   id: string;
