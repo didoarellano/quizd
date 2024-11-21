@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { HostGameButton } from "../components/HostGameButton";
 import { QuizDeleteButton } from "../components/QuizDeleteButton";
 import { useAuth } from "../contexts/AuthContext";
 import { useDeleteQuiz, useQuizzes } from "../utils/useQuiz";
@@ -36,9 +37,7 @@ export function QuizList() {
             <h1>{quiz.title}</h1>
             <p>{quiz.description}</p>
             <p>{quiz.questions?.length} questions</p>
-            <Link href={`~${import.meta.env.VITE_BASE_URL}/host/${quiz.id}`}>
-              Host Game
-            </Link>
+            <HostGameButton quizID={quiz.id} />
             <Link href={`/${quiz.id}`}>Edit Quiz</Link>
             <QuizDeleteButton
               onDeleteClick={() => quiz?.id && deleteQuiz.mutate(quiz.id)}

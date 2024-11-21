@@ -1,10 +1,10 @@
 import {
-  Link,
   Redirect,
   useLocation,
   useRouter,
   type RouteComponentProps,
 } from "wouter";
+import { HostGameButton } from "../components/HostGameButton";
 import { MarkdownEditor } from "../components/MarkdownEditor";
 import { QuizDeleteButton } from "../components/QuizDeleteButton";
 import { QuizPreview } from "../components/QuizPreview";
@@ -74,9 +74,7 @@ export function QuizEditor({ quizID, mode }: QuizEditorProps) {
   return (
     <>
       <h1>Editing Quiz: {data?.quiz?.title ?? ""}</h1>
-      <Link href={`~${import.meta.env.VITE_BASE_URL}/host/${quizID}`}>
-        Host Game
-      </Link>
+      <HostGameButton quizID={quizID as string} />
       {isPending ? (
         <p>loading...</p>
       ) : (
