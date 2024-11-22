@@ -1,6 +1,6 @@
 import * as admin from "firebase-admin";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
-import { JoinGameResponse, Player } from "../../../shared/game.types";
+import { JoinGameResponse, Player } from "../../../src/types/game";
 import { addPlayerToGame } from "./utils/addPlayerToGame";
 import { getActiveGameByPIN } from "./utils/getActiveGame";
 import { getActiveGameChannel } from "./utils/getActiveGameChannel";

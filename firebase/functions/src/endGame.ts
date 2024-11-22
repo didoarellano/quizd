@@ -7,7 +7,7 @@ import {
   GameStatus,
   Player,
   SavedGame,
-} from "../../../shared/game.types";
+} from "../../../src/types/game";
 
 const db = admin.firestore();
 

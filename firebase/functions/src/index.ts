@@ -13,3 +13,5 @@ admin.initializeApp();
 export { endGame } from "./endGame";
 export { getOrCreateGame } from "./getOrCreateGame";
 export { joinGame } from "./joinGame";
+
+export { resetGame } from "./resetGame";

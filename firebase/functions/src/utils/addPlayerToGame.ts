@@ -1,6 +1,6 @@
 import { UserRecord } from "firebase-admin/auth";
 import { CollectionReference } from "firebase-admin/firestore";
-import { Player } from "../../../../shared/game.types";
+import { Player } from "../../../../src/types/game";
 import { generateUniqueUsername } from "./generateUsername";
 
 export async function addPlayerToGame(

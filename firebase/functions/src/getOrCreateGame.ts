@@ -2,8 +2,8 @@ import * as admin from "firebase-admin";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { generatePIN } from "./utils/generatePIN";
 
-import { GameStatus, LiveGame, SavedGame } from "../../../shared/game.types";
-import type { Quiz } from "../../../shared/quiz.types";
+import { GameStatus, LiveGame, SavedGame } from "../../../src/types/game";
+import { Quiz } from "../../../src/types/quiz";
 import { splitQuestionsAndAnswerKey } from "./utils/buildAnswerKey";
 import { getActiveGameByQuizID } from "./utils/getActiveGame";
 

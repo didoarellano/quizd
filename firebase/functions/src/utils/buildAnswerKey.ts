@@ -1,4 +1,4 @@
-import { Question } from "../../../../shared/quiz.types";
+import { Question } from "../../../../src/types/quiz";
 
 type SplitResult = {
   questions: Omit<Question, "answers">[];
