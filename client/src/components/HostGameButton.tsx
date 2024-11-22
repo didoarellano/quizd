@@ -1,9 +1,7 @@
-import { Link } from "wouter";
+import { Link, useRouter } from "wouter";
 
 export function HostGameButton({ quizID }: { quizID: string }) {
-  return (
-    <Link href={`~${import.meta.env.VITE_BASE_URL}/host/${quizID}`}>
-      Host Game
-    </Link>
-  );
+  const { base } = useRouter();
+  const href = `~${base.replace("quiz", "host")}/${quizID}`;
+  return <Link href={href}>Host Game</Link>;
 }

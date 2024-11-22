@@ -1,4 +1,4 @@
-import { Redirect, useParams } from "wouter";
+import { Redirect, useParams, useRouter } from "wouter";
 import { GameStatus } from "../../../shared/game.types";
 import { Markdown } from "../components/Markdown";
 import { QuestionDisplay } from "../components/QuestionDisplay";
@@ -16,8 +16,9 @@ export function PlayerGameScreen() {
     docPath: `games/${data?.gameID}/players/${user?.id}`,
     pin: pin || "",
   });
+  const { base } = useRouter();
 
-  if (!pin) return <Redirect to={`~${import.meta.env.VITE_BASE_URL}/play`} />;
+  if (!pin) return <Redirect to={`~${base}`} />;
 
   if (isPending) {
     return <p>...</p>;
@@ -29,7 +30,7 @@ export function PlayerGameScreen() {
   }
 
   if (!user) {
-    return <Redirect to={`~${import.meta.env.VITE_BASE_URL}/play`} />;
+    return <Redirect to={`~${base}`} />;
   }
 
   if (data.activeGameChannel.status === GameStatus.PENDING) {
