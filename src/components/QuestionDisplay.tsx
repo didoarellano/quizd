@@ -1,6 +1,6 @@
-import { Question } from "../types/quiz";
-import { Option } from "./Option";
-import { QuestionText } from "./QuestionText";
+import { Option } from "@/components/Option";
+import { QuestionText } from "@/components/QuestionText";
+import { Question } from "@/types/quiz";
 
 type QuestionDisplayProps = {
   question: Question;

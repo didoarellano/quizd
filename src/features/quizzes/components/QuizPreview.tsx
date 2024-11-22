@@ -1,8 +1,8 @@
+import { QuizDisplay } from "@/components/QuizDisplay";
+import { Quiz } from "@/types/quiz";
 import type { CSSProperties, PropsWithChildren } from "react";
 import { useMemo } from "react";
 import { Link, useLocation, useSearch } from "wouter";
-import { QuizDisplay } from "../../../components/QuizDisplay";
-import { Quiz } from "../../../types/quiz";
 
 type CycleLinkProps = {
   href: string;

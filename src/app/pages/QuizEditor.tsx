@@ -1,22 +1,22 @@
+import { MarkdownEditor } from "@/components/MarkdownEditor";
+import { HostGameButton } from "@/features/quizzes/components/HostGameButton";
+import { QuizDeleteButton } from "@/features/quizzes/components/QuizDeleteButton";
+import { QuizPreview } from "@/features/quizzes/components/QuizPreview";
+import {
+  useDeleteQuiz,
+  useQuiz,
+  useSaveNewQuiz,
+  useSaveQuiz,
+} from "@/features/quizzes/queries";
+import { UserRoles } from "@/services/auth";
+import { useAuth } from "@/utils/AuthContext";
+import { NotAllowedError, QuizNotFoundError } from "@/utils/errors";
 import {
   Redirect,
   useLocation,
   useRouter,
   type RouteComponentProps,
 } from "wouter";
-import { MarkdownEditor } from "../../components/MarkdownEditor";
-import { HostGameButton } from "../../features/quizzes/components/HostGameButton";
-import { QuizDeleteButton } from "../../features/quizzes/components/QuizDeleteButton";
-import { QuizPreview } from "../../features/quizzes/components/QuizPreview";
-import {
-  useDeleteQuiz,
-  useQuiz,
-  useSaveNewQuiz,
-  useSaveQuiz,
-} from "../../features/quizzes/queries";
-import { UserRoles } from "../../services/auth";
-import { useAuth } from "../../utils/AuthContext";
-import { NotAllowedError, QuizNotFoundError } from "../../utils/errors";
 
 type QuizEditorProps = {
   quizID?: string;

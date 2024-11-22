@@ -1,3 +1,12 @@
+import { db } from "@/services/firebase";
+import {
+  closeQuestion,
+  endGame,
+  getOrCreateGame,
+  startGame,
+  startNewQuestion,
+} from "@/services/game";
+import { EndGameResponse, GameStatus, LiveGame, Player } from "@/types/game";
 import {
   useMutation,
   useQuery,
@@ -6,20 +15,6 @@ import {
 } from "@tanstack/react-query";
 import { collection, onSnapshot } from "firebase/firestore";
 import { useEffect } from "react";
-import { db } from "../../services/firebase";
-import {
-  closeQuestion,
-  endGame,
-  getOrCreateGame,
-  startGame,
-  startNewQuestion,
-} from "../../services/game";
-import {
-  EndGameResponse,
-  GameStatus,
-  LiveGame,
-  Player,
-} from "../../types/game";
 
 type UseGameOptions = {
   quizID: string | null;

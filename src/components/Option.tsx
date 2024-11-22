@@ -1,4 +1,4 @@
-import { Markdown } from "./Markdown";
+import { Markdown } from "@/components/Markdown";
 
 export function Option({
   text,

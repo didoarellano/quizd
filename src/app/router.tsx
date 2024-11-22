@@ -1,14 +1,14 @@
+import { GameResults } from "@/app/pages/GameResults";
+import { HostLobby } from "@/app/pages/HostLobby";
+import { HostQuestion } from "@/app/pages/HostQuestion";
+import { JoinGame } from "@/app/pages/JoinGame";
+import { PlayerGameScreen } from "@/app/pages/PlayerGameScreen";
+import { QuizEditor } from "@/app/pages/QuizEditor";
+import { QuizList } from "@/app/pages/QuizList";
+import { UserRoles } from "@/services/auth";
+import { useAuth } from "@/utils/AuthContext";
+import { PrivateRoute } from "@/utils/PrivateRoute";
 import { Link, Route, Router, Switch } from "wouter";
-import { UserRoles } from "../services/auth";
-import { useAuth } from "../utils/AuthContext";
-import { PrivateRoute } from "../utils/PrivateRoute";
-import { GameResults } from "./pages/GameResults";
-import { HostLobby } from "./pages/HostLobby";
-import { HostQuestion } from "./pages/HostQuestion";
-import { JoinGame } from "./pages/JoinGame";
-import { PlayerGameScreen } from "./pages/PlayerGameScreen";
-import { QuizEditor } from "./pages/QuizEditor";
-import { QuizList } from "./pages/QuizList";
 
 export function AppRouter() {
   const { user, signin, signout, signinAnonymously } = useAuth();

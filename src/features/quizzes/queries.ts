@@ -1,4 +1,14 @@
 import {
+  deleteQuizByID,
+  generateID,
+  getQuiz,
+  getQuizzes,
+  saveNewQuiz,
+  updateQuiz,
+} from "@/services/quiz";
+import { Quiz } from "@/types/quiz";
+import { parseQuiz } from "@/utils/markdown-parser";
+import {
   UseMutationOptions,
   UseQueryOptions,
   useMutation,
@@ -6,16 +16,6 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { DocumentReference, DocumentSnapshot } from "firebase/firestore";
-import {
-  deleteQuizByID,
-  generateID,
-  getQuiz,
-  getQuizzes,
-  saveNewQuiz,
-  updateQuiz,
-} from "../../services/quiz";
-import { Quiz } from "../../types/quiz";
-import { parseQuiz } from "../../utils/markdown-parser";
 
 type UseQuizzesOptions = {
   userID: string | null;

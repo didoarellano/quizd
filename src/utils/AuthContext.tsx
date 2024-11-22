@@ -6,8 +6,8 @@ import {
   type PropsWithChildren,
 } from "react";
 
-import type { User } from "../services/auth";
-import * as auth from "../services/auth";
+import * as auth from "@/services/auth";
+import { User } from "@/services/auth";
 
 type AuthContextObject = {
   user: User | null;

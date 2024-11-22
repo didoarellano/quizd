@@ -1,8 +1,8 @@
+import { HostGameButton } from "@/features/quizzes/components/HostGameButton";
+import { QuizDeleteButton } from "@/features/quizzes/components/QuizDeleteButton";
+import { useDeleteQuiz, useQuizzes } from "@/features/quizzes/queries";
+import { useAuth } from "@/utils/AuthContext";
 import { Link } from "wouter";
-import { HostGameButton } from "../../features/quizzes/components/HostGameButton";
-import { QuizDeleteButton } from "../../features/quizzes/components/QuizDeleteButton";
-import { useDeleteQuiz, useQuizzes } from "../../features/quizzes/queries";
-import { useAuth } from "../../utils/AuthContext";
 
 export function QuizList() {
   const { user } = useAuth();

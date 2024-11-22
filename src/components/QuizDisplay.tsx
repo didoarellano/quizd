@@ -1,6 +1,6 @@
-import { Quiz } from "../types/quiz";
-import { Option } from "./Option";
-import { QuestionText } from "./QuestionText";
+import { Option } from "@/components/Option";
+import { QuestionText } from "@/components/QuestionText";
+import { Quiz } from "@/types/quiz";
 
 type QuizProps = {
   quiz: Quiz;

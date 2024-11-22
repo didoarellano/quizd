@@ -1,11 +1,11 @@
-import { Link, useLocation, useSearch } from "wouter";
-import { QuestionDisplay } from "../../components/QuestionDisplay";
-import { QuestionResults } from "../../features/games-as-host/components/QuestionResults";
+import { QuestionDisplay } from "@/components/QuestionDisplay";
 import {
   useEndGame,
   useGameAsHost,
   useQuestionRoundMutations,
-} from "../../features/games-as-host/queries";
+} from "@/features/games-as-host/queries";
+import { QuestionResults } from "@/features/games/components/QuestionResults";
+import { Link, useLocation, useSearch } from "wouter";
 
 export function HostQuestion({ quizID }: { quizID: string }) {
   const { data: game } = useGameAsHost({ quizID });

@@ -1,12 +1,12 @@
-import { Redirect, useRouter } from "wouter";
-import { Markdown } from "../../components/Markdown";
-import { QuestionDisplay } from "../../components/QuestionDisplay";
+import { Markdown } from "@/components/Markdown";
+import { QuestionDisplay } from "@/components/QuestionDisplay";
 import {
   useGameAsPlayer,
   useSaveAnswerMutation,
-} from "../../features/games-as-player/queries";
-import { GameStatus } from "../../types/game";
-import { useAuth } from "../../utils/AuthContext";
+} from "@/features/games-as-player/queries";
+import { GameStatus } from "@/types/game";
+import { useAuth } from "@/utils/AuthContext";
+import { Redirect, useRouter } from "wouter";
 
 export function PlayerGameScreen({ pin }: { pin: string }) {
   const { user } = useAuth();

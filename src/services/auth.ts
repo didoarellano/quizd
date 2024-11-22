@@ -1,3 +1,4 @@
+import { auth, db } from "@/services/firebase";
 import type { User as FirebaseUser, Unsubscribe } from "firebase/auth";
 import {
   GoogleAuthProvider,
@@ -7,8 +8,6 @@ import {
   signOut,
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-
-import { auth, db } from "./firebase";
 
 const provider = new GoogleAuthProvider();
 

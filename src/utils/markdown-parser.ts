@@ -1,3 +1,4 @@
+import { Answer, Option, Question, Quiz } from "@/types/quiz";
 import type { Parent, Root, RootContent } from "mdast";
 import { fromMarkdown } from "mdast-util-from-markdown";
 import { frontmatterFromMarkdown } from "mdast-util-frontmatter";
@@ -6,8 +7,6 @@ import { toMarkdown } from "mdast-util-to-markdown";
 import { frontmatter } from "micromark-extension-frontmatter";
 import { gfm } from "micromark-extension-gfm";
 import yaml from "yaml";
-
-import { Answer, Option, Question, Quiz } from "../types/quiz";
 
 type idGenerator = () => string;
 

@@ -1,7 +1,7 @@
-import { Markdown } from "../../../components/Markdown";
-import { QuestionText } from "../../../components/QuestionText";
-import { LiveGame } from "../../../types/game";
-import { Question } from "../../../types/quiz";
+import { Markdown } from "@/components/Markdown";
+import { QuestionText } from "@/components/QuestionText";
+import { LiveGame } from "@/types/game";
+import { Question } from "@/types/quiz";
 
 type ResultsProps = {
   question: Question;

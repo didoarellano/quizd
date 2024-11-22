@@ -1,4 +1,4 @@
-import { useGameResults } from "../../features/games-as-host/queries";
+import { useGameResults } from "@/features/games-as-host/queries";
 
 export function GameResults({ quizID }: { quizID: string }) {
   const { data } = useGameResults({
@@ -12,6 +12,7 @@ export function GameResults({ quizID }: { quizID: string }) {
   return (
     <>
       <h1>Game Results</h1>
+
       <h2>{quiz.title}</h2>
       <h3>{quiz.description}</h3>
 

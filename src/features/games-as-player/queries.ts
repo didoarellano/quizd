@@ -1,3 +1,7 @@
+import { signinAnonymously } from "@/services/auth";
+import { auth, db } from "@/services/firebase";
+import { joinGame } from "@/services/game";
+import { JoinGameResponse } from "@/types/game";
 import {
   useMutation,
   useQuery,
@@ -7,10 +11,6 @@ import {
 import { updateProfile, User } from "firebase/auth";
 import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { useEffect } from "react";
-import { signinAnonymously } from "../../services/auth";
-import { auth, db } from "../../services/firebase";
-import { joinGame } from "../../services/game";
-import { JoinGameResponse } from "../../types/game";
 
 export function useGameAsPlayer(pin: string): UseQueryResult<JoinGameResponse> {
   const queryRes = useQuery({

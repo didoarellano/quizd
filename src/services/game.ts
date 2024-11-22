@@ -1,12 +1,12 @@
-import { doc, updateDoc } from "firebase/firestore";
-import { httpsCallable } from "firebase/functions";
+import { db, functions } from "@/services/firebase";
 import {
   EndGameResponse,
   GameStatus,
   JoinGameResponse,
   LiveGame,
-} from "../types/game";
-import { db, functions } from "./firebase";
+} from "@/types/game";
+import { doc, updateDoc } from "firebase/firestore";
+import { httpsCallable } from "firebase/functions";
 
 export const getOrCreateGame = httpsCallable<string, LiveGame>(
   functions,

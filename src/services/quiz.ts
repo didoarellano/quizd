@@ -1,3 +1,6 @@
+import { db } from "@/services/firebase";
+import { Quiz as _Quiz } from "@/types/quiz";
+import { NotAllowedError, QuizNotFoundError } from "@/utils/errors";
 import {
   addDoc,
   collection,
@@ -15,10 +18,6 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { NotAllowedError, QuizNotFoundError } from "../utils/errors";
-import { db } from "./firebase";
-
-import type { Quiz as _Quiz } from "../types/quiz";
 
 type Quiz = _Quiz & {
   createdAt: FieldValue;

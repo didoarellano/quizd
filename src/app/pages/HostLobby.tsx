@@ -1,9 +1,6 @@
+import { useGameAsHost, useStartGame } from "@/features/games-as-host/queries";
+import { GameStatus } from "@/types/game";
 import { Link, useLocation } from "wouter";
-import {
-  useGameAsHost,
-  useStartGame,
-} from "../../features/games-as-host/queries";
-import { GameStatus } from "../../types/game";
 
 const startButtonText = {
   [GameStatus.PENDING]: "Start Game",

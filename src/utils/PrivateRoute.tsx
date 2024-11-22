@@ -1,6 +1,5 @@
+import { PropsWithChildren } from "react";
 import { Redirect, Route, useRouter } from "wouter";
-
-import type { PropsWithChildren } from "react";
 import { useAuth } from "./AuthContext";
 
 type PrivateRouteProps = {
