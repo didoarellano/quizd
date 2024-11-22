@@ -1,4 +1,4 @@
-import { Redirect, useParams, useRouter } from "wouter";
+import { Redirect, useRouter } from "wouter";
 import { GameStatus } from "../../../shared/game.types";
 import { Markdown } from "../components/Markdown";
 import { QuestionDisplay } from "../components/QuestionDisplay";
@@ -8,17 +8,14 @@ import {
   useSaveAnswerMutation,
 } from "../utils/useGameAsPlayer";
 
-export function PlayerGameScreen() {
+export function PlayerGameScreen({ pin }: { pin: string }) {
   const { user } = useAuth();
-  const { pin } = useParams();
-  const { data, isPending } = useGameAsPlayer(pin || "");
+  const { data, isPending } = useGameAsPlayer(pin);
   const saveAnswer = useSaveAnswerMutation({
     docPath: `games/${data?.gameID}/players/${user?.id}`,
-    pin: pin || "",
+    pin,
   });
   const { base } = useRouter();
-
-  if (!pin) return <Redirect to={`~${base}`} />;
 
   if (isPending) {
     return <p>...</p>;

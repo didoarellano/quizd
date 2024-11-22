@@ -90,7 +90,9 @@ function App() {
 
         <Route path="/play" nest={true}>
           <Route path="/" component={JoinGame} />
-          <Route path="/:pin" component={PlayerGameScreen} />
+          <Route path="/:pin">
+            {({ pin }) => <PlayerGameScreen key={pin} pin={pin} />}
+          </Route>
         </Route>
       </Switch>
     </Router>
