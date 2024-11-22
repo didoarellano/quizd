@@ -1,4 +1,4 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { GameStatus } from "../../../shared/game.types";
 import { useGameAsHost, useStartGame } from "../utils/useGameAsHost";
 
@@ -12,17 +12,18 @@ export function HostLobby({ quizID }: { quizID: string }) {
   const { data: game } = useGameAsHost({ quizID });
   const startGame = useStartGame({ game: game ?? null });
   const players = game?.players;
+  const [location] = useLocation();
 
   return (
     <>
       <h1>Host Lobby</h1>
-      <Link href="/play">Play</Link>
-      <Link href="/results">Results</Link>
+      <Link href={`${location}/play`}>Play</Link>
+      <Link href={`${location}/results`}>Results</Link>
       {game && (
         <>
           <h2>{game.quiz.title}</h2>
           <p>{game.quiz.description}</p>
-          <Link href="/play" onClick={() => startGame.mutate()}>
+          <Link href={`${location}/play`} onClick={() => startGame.mutate()}>
             {startButtonText[game.status]}
           </Link>
         </>

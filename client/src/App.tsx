@@ -63,28 +63,26 @@ function App() {
               <QuizEditor mode="create" />
             </Route>
             <Route path="/:id">
-              {(params) => (
-                <QuizEditor key={params.id} quizID={params.id} mode="edit" />
-              )}
+              {({ id }) => <QuizEditor key={id} quizID={id} mode="edit" />}
             </Route>
           </Switch>
         </PrivateRoute>
 
         <PrivateRoute
-          path="/host/:id"
+          path="/host"
           nest={true}
           isAllowed={user?.role === UserRoles.Teacher}
           redirectTo="/play"
           replace={true}
         >
           <Switch>
-            <Route path="/">
+            <Route path="/:id">
               {({ id }) => <HostLobby key={id} quizID={id} />}
             </Route>
-            <Route path="/play">
+            <Route path="/:id/play">
               {({ id }) => <HostQuestion key={id} quizID={id} />}
             </Route>
-            <Route path="/results">
+            <Route path="/:id/results">
               {({ id }) => <GameResults key={id} quizID={id} />}
             </Route>
           </Switch>

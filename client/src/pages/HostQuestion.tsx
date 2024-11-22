@@ -33,8 +33,9 @@ export function HostQuestion({ quizID }: { quizID: string }) {
   return (
     <>
       <h1>Current Question</h1>
-      <Link href="/">Host Lobby</Link>
-      <Link href="/results">Results</Link>
+      <Link href={location.replace("/play", "")}>Host Lobby</Link>
+      <Link href={location.replace("play", "results")}>Results</Link>
+
 
       <br />
       <button onClick={() => closeCurrentRound.mutate(question.id)}>
