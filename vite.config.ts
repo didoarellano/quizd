@@ -7,5 +7,8 @@ export default defineConfig((configEnv) => {
   return {
     plugins: [react(), tsconfigPaths()],
     base: env.VITE_BASE_URL,
+    test: {
+      environment: "jsdom",
+    },
   };
 });
