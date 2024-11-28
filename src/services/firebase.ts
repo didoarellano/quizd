@@ -1,4 +1,3 @@
-import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 import { connectAuthEmulator, getAuth } from "firebase/auth";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
@@ -17,7 +16,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const analytics = getAnalytics(app);
 const functions = getFunctions(app);
 
 if (import.meta.env.DEV) {
@@ -27,4 +25,4 @@ if (import.meta.env.DEV) {
   connectFunctionsEmulator(functions, "localhost", emulators.functions.port);
 }
 
-export { analytics, app, auth, db, functions };
+export { app, auth, db, functions };
