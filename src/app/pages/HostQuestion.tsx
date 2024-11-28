@@ -1,10 +1,10 @@
 import { QuestionDisplay } from "@/components/QuestionDisplay";
+import { QuestionResults } from "@/features/games-as-host/components/QuestionResults";
 import {
   useEndGame,
   useGameAsHost,
   useQuestionRoundMutations,
 } from "@/features/games-as-host/queries";
-import { QuestionResults } from "@/features/games/components/QuestionResults";
 import { Link, useLocation, useSearch } from "wouter";
 
 export function HostQuestion({ quizID }: { quizID: string }) {
