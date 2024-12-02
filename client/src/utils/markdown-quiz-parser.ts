@@ -1,3 +1,7 @@
+/**
+ * @vitest-environment node
+ */
+
 import { Answer, Option, Question, Quiz } from "@/types/quiz";
 import type { Parent, Root, RootContent } from "mdast";
 import { fromMarkdown } from "mdast-util-from-markdown";

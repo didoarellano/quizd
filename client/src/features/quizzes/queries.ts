@@ -7,7 +7,7 @@ import {
   updateQuiz,
 } from "@/services/quiz";
 import { Quiz } from "@/types/quiz";
-import { parseQuiz } from "@/utils/markdown-parser";
+import { parseQuiz } from "@/utils/markdown-quiz-parser";
 import {
   UseMutationOptions,
   UseQueryOptions,
