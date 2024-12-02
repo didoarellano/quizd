@@ -6,7 +6,7 @@ import {
   LiveGame,
   Player,
   SavedGame,
-} from "../../../../src/types/game";
+} from "../types/game";
 
 const db = admin.firestore();
 

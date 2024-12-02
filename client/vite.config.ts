@@ -8,6 +8,10 @@ export default defineConfig((configEnv) => {
   return {
     plugins: [react(), tsconfigPaths()],
     base: env.VITE_BASE_URL,
+    server: {
+      host: "0.0.0.0",
+      port: 5173,
+    },
     test: {
       environment: "jsdom",
       globals: true,

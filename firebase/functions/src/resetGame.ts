@@ -1,7 +1,7 @@
 import * as admin from "firebase-admin";
 import { FieldValue } from "firebase-admin/firestore";
 import { onCall } from "firebase-functions/v2/https";
-import { GameStatus } from "../../../src/types/game";
+import { GameStatus } from "./types/game";
 
 const db = admin.firestore();
 

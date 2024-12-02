@@ -11,7 +11,6 @@ export function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <AppRouter />
-
         {import.meta.env.DEV && (
           <>
             <ReactQueryDevtools />

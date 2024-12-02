@@ -1,0 +1,39 @@
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    volumes:
+      - ./client:/app
+      - ./client/node_modules:/app/node_modules
+      - ./shared:/app/shared
+    ports:
+      - "5173:5173"
+    command: ["pnpm", "dev"]
+
+  functions:
+    build:
+      context: ./firebase/functions
+      dockerfile: Dockerfile
+    volumes:
+      - ./firebase/functions:/app
+      - ./shared:/app/shared
+    command: ["npm", "run", "build:watch"]
+
+  firebase-emulator:
+    build:
+      context: ./firebase/emulator
+      dockerfile: Dockerfile
+    volumes:
+      - ./firebase/firebase.json:/app/firebase.json
+      - ./firebase/.firebaserc:/app/.firebaserc
+      - ./firebase/firestore:/app/firestore
+      - ./firebase/functions:/app/functions
+      - ./firebase/emulator/export:/app/emulator/export
+      - ./shared:/app/shared
+    ports:
+      - 4000:4000 # firebase-ui
+      - 8080:8080 # firestore
+      - 9099:9099 # auth
+      - 5001:5001 # functions
+    command: ["firebase", "emulators:start", "--import", "emulator/export", "--export-on-exit", "emulator/export"]

@@ -19,10 +19,13 @@ const db = getFirestore(app);
 const functions = getFunctions(app);
 
 if (import.meta.env.DEV) {
-  const { emulators } = await import("../../firebase/firebase.json");
-  connectAuthEmulator(auth, `http://localhost:${emulators.auth.port}`);
-  connectFirestoreEmulator(db, "localhost", emulators.firestore.port);
-  connectFunctionsEmulator(functions, "localhost", emulators.functions.port);
+  // const { emulators } = await import("../../firebase/firebase.json");
+  // connectAuthEmulator(auth, `http://localhost:${emulators.auth.port}`);
+  // connectFirestoreEmulator(db, "localhost", emulators.firestore.port);
+  // connectFunctionsEmulator(functions, "localhost", emulators.functions.port);
+  connectAuthEmulator(auth, `http://localhost:9099`);
+  connectFirestoreEmulator(db, "localhost", 8080);
+  connectFunctionsEmulator(functions, "localhost", 5001);
 }
 
 export { app, auth, db, functions };

@@ -20,6 +20,7 @@ export const joinGame = httpsCallable<string, JoinGameResponse>(
   functions,
   "joinGame"
 );
+export const resetGame = httpsCallable<string, void>(functions, "resetGame");
 
 export function startGame(gameID: string) {
   const gameRef = doc(db, "games", gameID);

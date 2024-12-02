@@ -7,7 +7,6 @@ import { closeQuestion, startGame, startNewQuestion } from "@/services/game";
 import { GameStatus } from "@/types/game";
 import { doc, updateDoc } from "firebase/firestore";
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from "vitest";
-import { setupTestEnv } from "../../firebase/functions/mock";
 
 vi.mock("firebase/firestore", async (importOriginal) => {
   const actual = await importOriginal<typeof import("firebase/firestore")>();
@@ -26,7 +25,6 @@ describe("startGame", () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    await setupTestEnv();
     (doc as Mock).mockImplementationOnce(() => gameRef);
     (doc as Mock).mockImplementationOnce(() => activeGameChannelRef);
   });
@@ -67,7 +65,6 @@ describe("startNewQuestion", () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    await setupTestEnv();
     (doc as Mock).mockImplementationOnce(() => activeGameChannelRef);
   });
 
@@ -105,7 +102,6 @@ describe("closeQuestion", () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    await setupTestEnv();
     (doc as Mock).mockImplementation(() => activeGameChannelRef);
   });
 

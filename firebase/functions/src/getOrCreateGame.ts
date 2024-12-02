@@ -2,8 +2,8 @@ import * as admin from "firebase-admin";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { generatePIN } from "./utils/generatePIN";
 
-import { GameStatus, LiveGame, SavedGame } from "../../../src/types/game";
-import { Quiz } from "../../../src/types/quiz";
+import { GameStatus, LiveGame, SavedGame } from "./types/game";
+import { Quiz } from "./types/quiz";
 import { splitQuestionsAndAnswerKey } from "./utils/buildAnswerKey";
 import { getActiveGameByQuizID } from "./utils/getActiveGame";
 
@@ -38,8 +38,8 @@ export const getOrCreateGame = onCall<string, Promise<LiveGame>>(
       quizData.questions
     );
     const quiz: SavedGame["quiz"] = {
-      description: quizData.description,
       title: quizData.title,
+      description: quizData.description,
       questions,
     };
 

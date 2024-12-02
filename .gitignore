@@ -25,4 +25,6 @@ dist-ssr
 *.sln
 *.sw?
 
-firebase/emulator-data
+.vite
+firebase/emulator/export
+firebase/functions/lib

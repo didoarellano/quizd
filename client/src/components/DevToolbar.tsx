@@ -1,4 +1,4 @@
-import { ResetGameButton } from "@/features/games-as-host/ResetGameButton";
+import { ResetGameButton } from "@/features/games-as-host/components/ResetGameButton";
 import { useAuth } from "@/utils/AuthContext";
 import { useLocation } from "wouter";
 

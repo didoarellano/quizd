@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import { ActiveGameChannel } from "../../../../src/types/game";
+import { ActiveGameChannel } from "../types/game";
 
 const db = admin.firestore();
 

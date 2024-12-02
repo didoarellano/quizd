@@ -10,38 +10,26 @@ Create interactive quizzes for in-person or remote classrooms using Markdown.
 pnpm install
 ```
 
-_If firebase/functions dependencies aren't installed run:_
-
-```
-pnpm run post-install
-```
-
 ### Environment Variables
 
 ```
-cp .env{.example,}
+cp client/.env{.example,}
 ```
 
-Open `.env` in your editor and fill in the values.
+Open `./client/.env` in your editor and fill in the values.
 
-### Start the Servers
-
-These currently need to be run separately for the Firebase emulator to export data properly on exit.
-
-1. Firebase Emulator
+### Start the Containers
 
 ```
-pnpm run emulators
-```
-
-2. Vite dev server & cloud functions compiler
-
-```
-pnpm run dev
+docker-compose up
 ```
 
 ### Run tests
 
 ```
-pnpm test
+docker-compose exec client pnpm test
+```
+
+```
+docker-compose exec client pnpm test:watch
 ```
