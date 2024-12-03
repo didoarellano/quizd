@@ -17,23 +17,28 @@ vi.mock("wouter", () => ({
 describe("PrivateRoute", () => {
   const mockUseAuth = useAuth as Mock;
   const mockUseRouter = useRouter as Mock;
+  const MockLoadingSpinner = () => <div>MockLoadingSpinner...</div>;
 
   beforeEach(() => {
     mockUseAuth.mockReset();
     mockUseRouter.mockReset();
   });
 
-  it("renders loading state when user is still loading", () => {
+  it("renders LoadingSpinner when user is still loading", () => {
     mockUseAuth.mockReturnValue({ isLoadingUser: true });
     mockUseRouter.mockReturnValue({ base: "" });
 
     render(
-      <PrivateRoute path="/protected" isAllowed={true}>
+      <PrivateRoute
+        path="/protected"
+        isAllowed={true}
+        LoadingSpinner={MockLoadingSpinner}
+      >
         <div>Protected Content</div>
       </PrivateRoute>
     );
 
-    expect(screen.getByText("...")).toBeInTheDocument();
+    expect(screen.getByText("MockLoadingSpinner...")).toBeInTheDocument();
   });
 
   it("renders children when access is allowed", () => {

@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import { ComponentType, PropsWithChildren } from "react";
 import { Redirect, Route, useRouter } from "wouter";
 import { useAuth } from "./AuthContext";
 
@@ -8,6 +8,7 @@ type PrivateRouteProps = {
   isAllowed: boolean;
   redirectTo?: string;
   replace?: boolean;
+  LoadingSpinner?: ComponentType;
 };
 
 export function PrivateRoute({
@@ -17,6 +18,7 @@ export function PrivateRoute({
   redirectTo = "/",
   replace = false,
   children,
+  LoadingSpinner = () => <p>loading...</p>,
 }: PropsWithChildren<PrivateRouteProps>) {
   const { isLoadingUser } = useAuth();
   const { base } = useRouter();
@@ -25,7 +27,7 @@ export function PrivateRoute({
   return (
     <Route path={path} nest={nest}>
       {() => {
-        if (isLoadingUser) return <p>...</p>;
+        if (isLoadingUser) return <LoadingSpinner />;
         return isAllowed ? (
           children
         ) : (
