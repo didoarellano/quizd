@@ -1,7 +1,7 @@
 import * as auth from "@/services/auth";
 import { AuthProvider, useAuth } from "@/utils/AuthContext";
 import { render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
+import { beforeEach, expect, it, Mock, vi } from "vitest";
 
 vi.mock("@/services/auth", () => ({
   signin: vi.fn(),
@@ -24,87 +24,85 @@ const TestComponent = () => {
   );
 };
 
-describe("AuthContext Provider", () => {
-  const mockUser = { id: "asdf", displayName: "rubberdork" };
-  beforeEach(() => {
-    vi.resetAllMocks();
+const mockUser = { id: "asdf", displayName: "rubberdork" };
+beforeEach(() => {
+  vi.resetAllMocks();
+});
+
+it("should render children and provide initial loading state", () => {
+  (auth.onAuthChange as Mock).mockImplementation((_cb: any) => {
+    // don't call callback passed to onAuthChange to simulate
+    // initial/no auth state change
   });
+  render(
+    <AuthProvider>
+      <TestComponent />
+    </AuthProvider>
+  );
 
-  it("should render children and provide initial loading state", () => {
-    (auth.onAuthChange as Mock).mockImplementation((_cb: any) => {
-      // don't call callback passed to onAuthChange to simulate
-      // initial/no auth state change
-    });
-    render(
-      <AuthProvider>
-        <TestComponent />
-      </AuthProvider>
-    );
+  expect(screen.getByTestId("loading")).toHaveTextContent("Loading...");
+  expect(screen.getByTestId("user")).toHaveTextContent("No User");
+});
 
-    expect(screen.getByTestId("loading")).toHaveTextContent("Loading...");
-    expect(screen.getByTestId("user")).toHaveTextContent("No User");
+it("should update user state when auth changes", () => {
+  (auth.onAuthChange as Mock).mockImplementation((callback: any) => {
+    callback(mockUser);
   });
+  render(
+    <AuthProvider>
+      <TestComponent />
+    </AuthProvider>
+  );
 
-  it("should update user state when auth changes", () => {
-    (auth.onAuthChange as Mock).mockImplementation((callback: any) => {
-      callback(mockUser);
-    });
-    render(
-      <AuthProvider>
-        <TestComponent />
-      </AuthProvider>
-    );
+  expect(screen.getByTestId("loading")).toHaveTextContent("Loaded");
+  expect(screen.getByTestId("user")).toHaveTextContent("rubberdork");
+});
 
-    expect(screen.getByTestId("loading")).toHaveTextContent("Loaded");
-    expect(screen.getByTestId("user")).toHaveTextContent("rubberdork");
-  });
+it("should handle signin", async () => {
+  render(
+    <AuthProvider>
+      <TestComponent />
+    </AuthProvider>
+  );
+  screen.getByText("Sign In").click();
 
-  it("should handle signin", async () => {
-    render(
-      <AuthProvider>
-        <TestComponent />
-      </AuthProvider>
-    );
-    screen.getByText("Sign In").click();
+  expect(auth.signin).toHaveBeenCalled();
+});
 
-    expect(auth.signin).toHaveBeenCalled();
-  });
+it("should handle anonymous signin", () => {
+  render(
+    <AuthProvider>
+      <TestComponent />
+    </AuthProvider>
+  );
+  screen.getByText("Sign In Anonymously").click();
 
-  it("should handle anonymous signin", () => {
-    render(
-      <AuthProvider>
-        <TestComponent />
-      </AuthProvider>
-    );
-    screen.getByText("Sign In Anonymously").click();
+  expect(auth.signinAnonymously).toHaveBeenCalled();
+});
 
-    expect(auth.signinAnonymously).toHaveBeenCalled();
-  });
+it("should handle signout", () => {
+  render(
+    <AuthProvider>
+      <TestComponent />
+    </AuthProvider>
+  );
+  screen.getByText("Sign Out").click();
 
-  it("should handle signout", () => {
-    render(
-      <AuthProvider>
-        <TestComponent />
-      </AuthProvider>
-    );
-    screen.getByText("Sign Out").click();
+  expect(auth.signout).toHaveBeenCalled();
+});
 
-    expect(auth.signout).toHaveBeenCalled();
-  });
+it("useAuth should throw if used outside of AuthProvider", () => {
+  const ThrowingComponent = () => {
+    try {
+      useAuth();
+      return <p>Hook didn't throw</p>;
+    } catch (error: any) {
+      return <p data-testid="error">{error.message}</p>;
+    }
+  };
+  render(<ThrowingComponent />);
 
-  it("useAuth should throw if used outside of AuthProvider", () => {
-    const ThrowingComponent = () => {
-      try {
-        useAuth();
-        return <p>Hook didn't throw</p>;
-      } catch (error: any) {
-        return <p data-testid="error">{error.message}</p>;
-      }
-    };
-    render(<ThrowingComponent />);
-
-    expect(screen.getByTestId("error")).toHaveTextContent(
-      "useAuth should be used inside an <AuthProvider>"
-    );
-  });
+  expect(screen.getByTestId("error")).toHaveTextContent(
+    "useAuth should be used inside an <AuthProvider>"
+  );
 });
