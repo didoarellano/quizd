@@ -12,8 +12,10 @@ export function JoinGame() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form aria-label="join game" onSubmit={handleSubmit}>
+      <label htmlFor="pin">Pin Code</label>
       <input
+        id="pin"
         name="pin"
         ref={inputRef}
         type="text"
