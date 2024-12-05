@@ -1,6 +1,5 @@
 import { QuizList } from "@/app/pages/QuizList";
 import { useDeleteQuiz, useQuizzes } from "@/features/quizzes/queries";
-import { useAuth } from "@/utils/AuthContext";
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import { expect, it, Mock, vi } from "vitest";
@@ -11,8 +10,12 @@ vi.mock("@/features/quizzes/queries", () => ({
 }));
 
 vi.mock("@/utils/AuthContext", () => ({
-  useAuth: vi.fn(),
+  useAuth: vi.fn().mockReturnValue({ user: { id: "user123" } }),
 }));
+
+afterEach(() => {
+  vi.clearAllMocks();
+});
 
 it("renders loading state when quizzes are pending", () => {
   (useQuizzes as Mock).mockReturnValue({
@@ -21,9 +24,6 @@ it("renders loading state when quizzes are pending", () => {
     error: null,
     data: null,
   });
-
-  (useAuth as Mock).mockReturnValue({ user: { id: "user123" } });
-
   render(<QuizList />);
 
   expect(screen.getByText(/loading.../i)).toBeInTheDocument();
@@ -36,9 +36,6 @@ it("renders error state when quizzes fail to load", () => {
     error: { message: "Failed to load quizzes" },
     data: null,
   });
-
-  (useAuth as Mock).mockReturnValue({ user: { id: "user123" } });
-
   render(<QuizList />);
 
   expect(
@@ -53,9 +50,6 @@ it("renders message when no quizzes are available", () => {
     error: null,
     data: [],
   });
-
-  (useAuth as Mock).mockReturnValue({ user: { id: "user123" } });
-
   render(<QuizList />);
 
   expect(screen.getByText(/You don't have any quizzes./i)).toBeInTheDocument();
@@ -80,9 +74,6 @@ it("renders quizzes when data is available", () => {
       },
     ],
   });
-
-  (useAuth as Mock).mockReturnValue({ user: { id: "user123" } });
-
   (useDeleteQuiz as Mock).mockReturnValue({
     mutate: vi.fn(),
   });
