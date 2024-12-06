@@ -1,3 +1,4 @@
+import { LeaderboardDisplay } from "@/features/games-as-host/components/Leaderboard";
 import { useGameResults } from "@/features/games-as-host/queries";
 
 export function GameResults({ quizID }: { quizID: string }) {
@@ -12,20 +13,9 @@ export function GameResults({ quizID }: { quizID: string }) {
   return (
     <>
       <h1>Game Results</h1>
-
       <h2>{quiz.title}</h2>
       <h3>{quiz.description}</h3>
-
-      <h1>Leaderboard</h1>
-      {leaderboard && (
-        <ol>
-          {leaderboard.map((player) => (
-            <li key={player.id}>
-              {player.displayName} ({player.score} points)
-            </li>
-          ))}
-        </ol>
-      )}
+      <LeaderboardDisplay leaderboard={leaderboard} />
     </>
   );
 }
