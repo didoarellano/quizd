@@ -1,3 +1,4 @@
+import { PlayerList } from "@/features/games-as-host/components/PlayerList";
 import { useGameAsHost, useStartGame } from "@/features/games-as-host/queries";
 import { GameStatus } from "@/types/game";
 import { Link, useLocation } from "wouter";
@@ -30,15 +31,8 @@ export function HostLobby({ quizID }: { quizID: string }) {
       )}
       <p>Go to: {window.location.href.replace(/host\/.*/i, "play")}</p>
       <p>Enter PIN: {game?.pin}</p>
-      <div>
-        <h3>Players</h3>
-        <ul>
-          {players &&
-            players.map((player) => (
-              <li key={player.id}>{player.displayName}</li>
-            ))}
-        </ul>
-      </div>
+
+      {players && <PlayerList players={players} />}
     </>
   );
 }
