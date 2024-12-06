@@ -1,26 +1,8 @@
+import { CycleLink } from "@/components/CycleLink";
 import { QuizDisplay } from "@/components/QuizDisplay";
 import { Quiz } from "@/types/quiz";
-import type { CSSProperties, PropsWithChildren } from "react";
 import { useMemo } from "react";
 import { Link, useLocation, useSearch } from "wouter";
-
-type CycleLinkProps = {
-  href: string;
-  disabled: boolean;
-};
-
-function CycleLink({
-  href,
-  disabled,
-  children,
-}: PropsWithChildren<CycleLinkProps>) {
-  const style: CSSProperties = disabled ? { pointerEvents: "none" } : {};
-  return (
-    <Link href={href} style={style}>
-      {children}
-    </Link>
-  );
-}
 
 export function QuizPreview({ quiz }: { quiz: Quiz }) {
   const [location] = useLocation();
