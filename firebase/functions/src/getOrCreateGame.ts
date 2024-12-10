@@ -1,6 +1,6 @@
 import * as admin from "firebase-admin";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
-import { generatePIN } from "./utils/generatePIN";
+import { generateUniquePin } from "./utils/generatePIN";
 
 import { GameStatus, LiveGame, SavedGame } from "./types/game";
 import { Quiz } from "./types/quiz";
@@ -43,16 +43,7 @@ export const getOrCreateGame = onCall<string, Promise<LiveGame>>(
       questions,
     };
 
-    let pin = "";
-    let pinExists = true;
-    while (pinExists) {
-      pin = generatePIN();
-      const pinQuery = await db
-        .collection("games")
-        .where("pin", "==", pin)
-        .get();
-      pinExists = !pinQuery.empty;
-    }
+    const pin = await generateUniquePin(db);
 
     const newGame: SavedGame = {
       id: db.collection("dummy").doc().id,
