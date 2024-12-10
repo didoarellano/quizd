@@ -1,9 +1,12 @@
 import { QuizListing } from "@/features/games-as-host/components/QuizListing";
 import { useQuizzes } from "@/features/quizzes/queries";
 import { useAuth } from "@/utils/AuthContext";
+import { useDocumentTitle } from "@/utils/useDocumentTitle";
 import { Link } from "wouter";
 
 export function QuizList() {
+  useDocumentTitle("My Quizzes");
+
   const { user } = useAuth();
   const {
     isPending,

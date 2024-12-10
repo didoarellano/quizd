@@ -11,6 +11,7 @@ import {
 import { UserRoles } from "@/services/auth";
 import { useAuth } from "@/utils/AuthContext";
 import { NotAllowedError, QuizNotFoundError } from "@/utils/errors";
+import { useDocumentTitle } from "@/utils/useDocumentTitle";
 import {
   Redirect,
   useLocation,
@@ -51,6 +52,10 @@ export function QuizEditor({ quizID, mode }: QuizEditorProps) {
     quizID: quizID ?? null,
     quizRef: data?.docSnap.ref ?? null,
   });
+
+  const verb = mode[0].toUpperCase() + mode.slice(1);
+  const subject = mode === "create" ? "New Quiz" : data?.quiz.title ?? "Quiz";
+  useDocumentTitle(`${verb} ${subject}`);
 
   if (mode === "create") {
     return (

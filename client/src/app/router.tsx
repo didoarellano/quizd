@@ -8,10 +8,12 @@ import { QuizList } from "@/app/pages/QuizList";
 import { UserRoles } from "@/services/auth";
 import { useAuth } from "@/utils/AuthContext";
 import { PrivateRoute } from "@/utils/PrivateRoute";
+import { useDocumentTitle } from "@/utils/useDocumentTitle";
 import { Link, Route, Router, Switch } from "wouter";
 
 export function AppRouter() {
   const { user, signin, signout, signinAnonymously } = useAuth();
+  useDocumentTitle("");
 
   return (
     <Router base={import.meta.env.VITE_BASE_URL}>

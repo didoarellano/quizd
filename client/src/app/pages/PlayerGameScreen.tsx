@@ -6,6 +6,7 @@ import {
 } from "@/features/games-as-player/queries";
 import { GameStatus } from "@/types/game";
 import { useAuth } from "@/utils/AuthContext";
+import { useDocumentTitle } from "@/utils/useDocumentTitle";
 import { Redirect, useRouter } from "wouter";
 
 export function PlayerGameScreen({ pin }: { pin: string }) {
@@ -16,6 +17,8 @@ export function PlayerGameScreen({ pin }: { pin: string }) {
     pin,
   });
   const { base } = useRouter();
+
+  useDocumentTitle(`Playing ${data?.quiz.title ?? "Quiz"}`);
 
   if (isPending) {
     return <p>...</p>;

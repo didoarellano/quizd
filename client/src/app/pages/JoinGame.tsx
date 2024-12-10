@@ -1,9 +1,12 @@
+import { useDocumentTitle } from "@/utils/useDocumentTitle";
 import { FormEvent, useRef } from "react";
 import { useLocation } from "wouter";
 
 export function JoinGame() {
   const [, setLocation] = useLocation();
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useDocumentTitle(`Join a Game`);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();

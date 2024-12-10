@@ -1,6 +1,7 @@
 import { PlayerList } from "@/features/games-as-host/components/PlayerList";
 import { useGameAsHost, useStartGame } from "@/features/games-as-host/queries";
 import { GameStatus } from "@/types/game";
+import { useDocumentTitle } from "@/utils/useDocumentTitle";
 import { Link, useLocation } from "wouter";
 
 const startButtonText = {
@@ -14,6 +15,8 @@ export function HostLobby({ quizID }: { quizID: string }) {
   const startGame = useStartGame({ game: game ?? null });
   const players = game?.players;
   const [location] = useLocation();
+
+  useDocumentTitle(`Host ${game?.quiz.title ?? "Quiz"}`);
 
   return (
     <>

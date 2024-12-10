@@ -5,6 +5,7 @@ import {
   useGameAsHost,
   useQuestionRoundMutations,
 } from "@/features/games-as-host/queries";
+import { useDocumentTitle } from "@/utils/useDocumentTitle";
 import { Link, useLocation, useSearch } from "wouter";
 
 export function HostQuestion({ quizID }: { quizID: string }) {
@@ -21,6 +22,8 @@ export function HostQuestion({ quizID }: { quizID: string }) {
     quizID,
     onBeforeEndGame: () => setLocation(`/${quizID}/results`),
   });
+
+  useDocumentTitle(`Playing ${game?.quiz.title ?? "Quiz"}`);
 
   if (!game) return <p>...</p>;
 
