@@ -53,7 +53,7 @@ export function AppRouter() {
         <PrivateRoute
           path="/quiz"
           nest={true}
-          isAllowed={user?.role === UserRoles.Teacher}
+          isAllowed={user?.role === UserRoles.Host}
           redirectTo="/play"
           replace={true}
         >
@@ -71,7 +71,7 @@ export function AppRouter() {
         <PrivateRoute
           path="/host"
           nest={true}
-          isAllowed={user?.role === UserRoles.Teacher}
+          isAllowed={user?.role === UserRoles.Host}
           redirectTo="/play"
           replace={true}
         >

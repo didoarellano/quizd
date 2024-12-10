@@ -1,4 +1,5 @@
 import { ResetGameButton } from "@/features/games-as-host/components/ResetGameButton";
+import { UserRoles } from "@/services/auth";
 import { useAuth } from "@/utils/AuthContext";
 import { useLocation } from "wouter";
 
@@ -35,7 +36,7 @@ export function DevToolbar() {
         </>
       )}
 
-      {user?.role === "teacher" && quizID && (
+      {user?.role === UserRoles.Host && quizID && (
         <ResetGameButton quizID={quizID} />
       )}
     </div>

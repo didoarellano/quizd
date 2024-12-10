@@ -22,7 +22,7 @@ export const endGame = onCall<string, Promise<EndGameResponse>>(
 
     const gameSnapshot = await db
       .collection("games")
-      .where("teacherID", "==", userID)
+      .where("hostID", "==", userID)
       .where("quizID", "==", quizID)
       .get();
 

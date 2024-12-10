@@ -4,6 +4,7 @@ import {
   useSaveNewQuiz,
   useSaveQuiz,
 } from "@/features/quizzes/queries";
+import { UserRoles } from "@/services/auth";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, Mock, vi } from "vitest";
 import { QuizEditor } from "./QuizEditor";
@@ -20,7 +21,9 @@ vi.mock("wouter", async (importOriginal) => {
 });
 
 vi.mock("@/utils/AuthContext", () => ({
-  useAuth: vi.fn().mockReturnValue({ user: { id: "asdf", role: "Teacher" } }),
+  useAuth: vi
+    .fn()
+    .mockReturnValue({ user: { id: "asdf", role: UserRoles.Host } }),
 }));
 
 vi.mock("@/features/quizzes/queries", () => ({

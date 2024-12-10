@@ -18,35 +18,35 @@ export async function isUserWhitelisted(email: string): Promise<boolean> {
 }
 
 export const UserRoles = {
-  Teacher: "teacher",
-  Student: "student",
+  Host: "host",
+  Player: "player",
 } as const;
 
 type UserRoleKeys = (typeof UserRoles)[keyof typeof UserRoles];
 
-export type Teacher = {
+export type Host = {
   id: string;
   displayName: string;
   email: string | null;
-  role: typeof UserRoles.Teacher;
+  role: typeof UserRoles.Host;
 };
 
-export type Student = {
+export type Player = {
   id: string;
   displayName: string;
-  role: typeof UserRoles.Student;
+  role: typeof UserRoles.Player;
 };
 
-export type User = Teacher | Student;
+export type User = Host | Player;
 
 export async function assignRole(
   userId: string,
   role: UserRoleKeys
 ): Promise<void> {
-  const teachersDocRef = doc(db, "teachers", userId);
-  const userDoc = await getDoc(teachersDocRef);
+  const hostsDocRef = doc(db, "hosts", userId);
+  const userDoc = await getDoc(hostsDocRef);
   if (!userDoc.exists()) {
-    await setDoc(teachersDocRef, { role });
+    await setDoc(hostsDocRef, { role });
   }
 }
 
@@ -72,20 +72,20 @@ export function onAuthChange(cb: Function): Unsubscribe {
       return cb({
         id: user.uid,
         displayName: user?.displayName ?? "",
-        role: UserRoles.Student,
+        role: UserRoles.Player,
       });
     }
 
-    const teachersDocRef = doc(db, "teachers", user.uid);
-    const teachersDocSnap = await getDoc(teachersDocRef);
+    const hostsDocRef = doc(db, "hosts", user.uid);
+    const hostsDocSnap = await getDoc(hostsDocRef);
 
-    if (teachersDocSnap.exists()) {
-      const d = teachersDocSnap.data();
+    if (hostsDocSnap.exists()) {
+      const d = hostsDocSnap.data();
       return cb({
         id: d.id,
         email: d.email,
         displayName: d.displayName,
-        role: UserRoles.Teacher,
+        role: UserRoles.Host,
       });
     }
 
@@ -96,8 +96,8 @@ export function onAuthChange(cb: Function): Unsubscribe {
       throw new Error("User is not in the whitelist");
     }
 
-    // User is whitelisted but not yet in teachers collection
-    await setDoc(teachersDocRef, {
+    // User is whitelisted but not yet in hosts collection
+    await setDoc(hostsDocRef, {
       id: user.uid,
       email: user.email,
       displayName: user.displayName,
@@ -108,7 +108,7 @@ export function onAuthChange(cb: Function): Unsubscribe {
       email: user.email,
       // TODO: Create username generator
       displayName: user?.displayName ?? "Tonto",
-      role: UserRoles.Teacher,
+      role: UserRoles.Host,
     });
   });
 }

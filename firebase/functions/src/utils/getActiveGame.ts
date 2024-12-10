@@ -16,7 +16,7 @@ export async function getActiveGameByQuizID(
 ): Promise<LiveGame | null> {
   const gameSnapshot = await db
     .collection("games")
-    .where("teacherID", "==", userID)
+    .where("hostID", "==", userID)
     .where("quizID", "==", quizID)
     .where("status", "!=", GameStatus.COMPLETED)
     .get();

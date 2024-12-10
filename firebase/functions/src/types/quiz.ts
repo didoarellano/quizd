@@ -24,7 +24,7 @@ export type Question = {
 export type Quiz = {
   id: string;
   _rawMD: string;
-  teacherID: string;
+  hostID: string;
   title: string;
   description?: string;
   questions: Question[];

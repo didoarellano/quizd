@@ -32,7 +32,7 @@ export function QuizEditor({ quizID, mode }: QuizEditorProps) {
     quizID: quizID ?? null,
     userID: user?.id ?? null,
     queryOptions: {
-      enabled: !!(mode === "edit" && user?.role === UserRoles.Teacher),
+      enabled: !!(mode === "edit" && user?.role === UserRoles.Host),
       retry: (_, error) => {
         return (
           !(error instanceof QuizNotFoundError) ||

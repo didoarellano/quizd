@@ -4,37 +4,37 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     match /quizzes/{quizID} {
-      // Both teachers and students can read quizzes
+      // Both hosts and players can read quizzes
       allow read: if request.auth != null;
 
-      // Only teachers can create quizzes
-      allow create: if request.auth != null && exists(/databases/$(database)/documents/teachers/$(request.auth.uid));
+      // Only hosts can create quizzes
+      allow create: if request.auth != null && exists(/databases/$(database)/documents/hosts/$(request.auth.uid));
 
-      // Only the teacher who created the quiz can update or delete it
+      // Only the host who created the quiz can update or delete it
       allow update, delete: if request.auth != null &&
-      exists(/databases/$(database)/documents/teachers/$(request.auth.uid)) &&
-      resource.data.teacherID == request.auth.uid;
+      exists(/databases/$(database)/documents/hosts/$(request.auth.uid)) &&
+      resource.data.hostID == request.auth.uid;
     }
 
     match /answers/{answerID} {
-      // Both teachers and students can read answers
+      // Both hosts and players can read answers
       allow read: if request.auth != null;
 
-      // Allow students to submit answers
+      // Allow players to submit answers
       allow create: if request.auth != null && request.auth.token.firebase.sign_in_provider == 'anonymous';
     }
 
-    match /teachers/{userID} {
-      // Only allow teachers to read their own data
-      // Authed users can check if they're in the "teachers" collection but not read data
+    match /hosts/{userID} {
+      // Only allow hosts to read their own data
+      // Authed users can check if they're in the "hosts" collection but not read data
       allow read: if request.auth != null && request.auth.uid == userID;
 
-      // Allow creating a new teacher if not yet in "teachers" and email is whitelisted
+      // Allow creating a new host if not yet in "hosts" and email is whitelisted
       allow create: if request.auth != null &&
-      !exists(/databases/$(database)/documents/teachers/$(request.auth.uid)) &&
+      !exists(/databases/$(database)/documents/hosts/$(request.auth.uid)) &&
       exists(/databases/$(database)/documents/whitelist/$(request.auth.token.email));
 
-      // Allow teachers to update their own data
+      // Allow hosts to update their own data
       allow update: if request.auth != null &&
       request.auth.uid == userID &&
       exists(/databases/$(database)/documents/whitelist/$(request.auth.token.email));
@@ -50,14 +50,14 @@ service cloud.firestore {
 
       // creator can update status field
       allow update: if request.auth != null &&
-      resource.data.teacherID == request.auth.uid &&
+      resource.data.hostID == request.auth.uid &&
       request.resource.data.diff(resource.data).affectedKeys().hasOnly(["status"]);
 
       match /players/{playerID} {
         allow create, delete: if false;
 
         // game creator and player can read
-        allow read: if get(/databases/$(database)/documents/games/$(gameID)).data.teacherID == request.auth.uid || playerID == request.auth.uid;
+        allow read: if get(/databases/$(database)/documents/games/$(gameID)).data.hostID == request.auth.uid || playerID == request.auth.uid;
 
         // player can update their answers
         allow update: if playerID == request.auth.uid &&
@@ -73,7 +73,7 @@ service cloud.firestore {
 
       // creator can update fields
       allow update: if request.auth != null &&
-      get(/databases/$(database)/documents/games/$(gameID)).data.teacherID == request.auth.uid &&
+      get(/databases/$(database)/documents/games/$(gameID)).data.hostID == request.auth.uid &&
       request.resource.data.diff(resource.data).affectedKeys().hasOnly(["status", "currentQuestionIndex", "currentQuestionTimer", "currentQuestionAnswer"]);
     }
   }

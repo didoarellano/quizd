@@ -27,7 +27,7 @@ export const getOrCreateGame = onCall<string, Promise<LiveGame>>(
     }
     const quizData = quizDoc.data() as Quiz;
 
-    if (quizData.teacherID !== userID) {
+    if (quizData.hostID !== userID) {
       throw new HttpsError(
         "permission-denied",
         `User ${userID} tried to access Quiz ${quizID}.`
@@ -56,7 +56,7 @@ export const getOrCreateGame = onCall<string, Promise<LiveGame>>(
 
     const newGame: SavedGame = {
       id: db.collection("dummy").doc().id,
-      teacherID: userID,
+      hostID: userID,
       quizID,
       pin,
       status: GameStatus.PENDING,

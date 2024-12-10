@@ -25,26 +25,26 @@ type Quiz = _Quiz & {
 
 export async function getQuiz(
   quizID: string,
-  teacherID: string
+  hostID: string
 ): Promise<{ docSnap: DocumentSnapshot<Quiz>; quiz: Quiz }> {
   const docRef = doc(db, "quizzes", quizID) as DocumentReference<Quiz>;
   const docSnap = await getDoc(docRef);
   const quiz = docSnap?.data();
 
   if (!docSnap.exists()) throw new QuizNotFoundError();
-  if (quiz?.teacherID !== teacherID) throw new NotAllowedError();
+  if (quiz?.hostID !== hostID) throw new NotAllowedError();
 
   return { docSnap, quiz: quiz as Quiz };
 }
 
 export async function getQuizzes(
-  teacherID: string,
+  hostID: string,
   sort: "asc" | "desc" = "desc"
 ): Promise<Quiz[]> {
   const q = query(
     collection(db, "quizzes"),
     orderBy("createdAt", sort),
-    where("teacherID", "==", teacherID)
+    where("hostID", "==", hostID)
   );
   const querySnapshot = await getDocs(q);
   const quizzes: Quiz[] = querySnapshot.docs.map((doc) => {
@@ -58,10 +58,10 @@ export async function getQuizzes(
 }
 
 export function saveNewQuiz(
-  teacherID: string,
+  hostID: string,
   quiz: Partial<Quiz>
 ): Promise<DocumentReference<Quiz>> {
-  quiz.teacherID = teacherID;
+  quiz.hostID = hostID;
   quiz.createdAt = serverTimestamp();
   const quizzesCollection = collection(
     db,

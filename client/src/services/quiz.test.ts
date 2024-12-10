@@ -47,12 +47,12 @@ vi.mock("firebase/firestore", async (importOriginal) => {
 
 describe("getQuiz", () => {
   const quizID = "testQuizID";
-  const teacherID = "testTeacherID";
+  const hostID = "testHostID";
   const mockQuiz = {
     id: quizID,
     title: "Sample Quiz",
     description: "A test quiz",
-    teacherID,
+    hostID: hostID,
     _rawMD: "",
     questions: [],
     createdAt: {} as any, // Mocked FieldValue
@@ -71,7 +71,7 @@ describe("getQuiz", () => {
   it("should return the quiz snapshot and data", async () => {
     (getDoc as Mock).mockResolvedValue(mockDocSnap);
 
-    const result = await getQuiz(quizID, teacherID);
+    const result = await getQuiz(quizID, hostID);
 
     expect(doc).toHaveBeenCalledWith(db, "quizzes", quizID);
     expect(getDoc).toHaveBeenCalledWith({});
@@ -89,15 +89,15 @@ describe("getQuiz", () => {
 
     (getDoc as Mock).mockResolvedValue(mockNonExistentDocSnap);
 
-    await expect(getQuiz(quizID, teacherID)).rejects.toThrow(QuizNotFoundError);
+    await expect(getQuiz(quizID, hostID)).rejects.toThrow(QuizNotFoundError);
     expect(doc).toHaveBeenCalledWith(db, "quizzes", quizID);
     expect(getDoc).toHaveBeenCalledWith({});
   });
 
-  it("should throw NotAllowedError if teacherID doesn't match", async () => {
+  it("should throw NotAllowedError if hostID doesn't match", async () => {
     const mockMismatchedQuiz = {
       ...mockQuiz,
-      teacherID: "wrongID",
+      hostID: "wrongID",
     };
 
     const mockMismatchedDocSnap = {
@@ -107,25 +107,25 @@ describe("getQuiz", () => {
 
     (getDoc as Mock).mockResolvedValue(mockMismatchedDocSnap);
 
-    await expect(getQuiz(quizID, teacherID)).rejects.toThrow(NotAllowedError);
+    await expect(getQuiz(quizID, hostID)).rejects.toThrow(NotAllowedError);
     expect(doc).toHaveBeenCalledWith(db, "quizzes", quizID);
     expect(getDoc).toHaveBeenCalledWith({});
   });
 });
 
 describe("getQuizzes", () => {
-  const mockTeacherID = "teacher123";
+  const mockHostID = "host123";
   const mockQuizzes = [
     {
       id: "quiz1",
       title: "Quiz 1",
-      teacherID: mockTeacherID,
+      hostID: mockHostID,
       createdAt: "2024-01-01",
     },
     {
       id: "quiz2",
       title: "Quiz 2",
-      teacherID: mockTeacherID,
+      hostID: mockHostID,
       createdAt: "2024-01-02",
     },
   ];
@@ -148,11 +148,11 @@ describe("getQuizzes", () => {
     (where as Mock).mockReturnValue("mockWhere");
     (getDocs as Mock).mockResolvedValue(mockQuerySnapshot);
 
-    const quizzes = await getQuizzes(mockTeacherID);
+    const quizzes = await getQuizzes(mockHostID);
 
     expect(collection).toHaveBeenCalledWith(db, "quizzes");
     expect(orderBy).toHaveBeenCalledWith("createdAt", "desc");
-    expect(where).toHaveBeenCalledWith("teacherID", "==", mockTeacherID);
+    expect(where).toHaveBeenCalledWith("hostID", "==", mockHostID);
     expect(query).toHaveBeenCalledWith(
       "mockCollectionRef",
       "mockOrderBy",
@@ -176,7 +176,7 @@ describe("getQuizzes", () => {
     (where as Mock).mockReturnValue("mockWhere");
     (getDocs as Mock).mockResolvedValue(mockQuerySnapshot);
 
-    const quizzes = await getQuizzes(mockTeacherID, "asc");
+    const quizzes = await getQuizzes(mockHostID, "asc");
 
     expect(orderBy).toHaveBeenCalledWith("createdAt", "asc");
     expect(quizzes).toEqual(mockQuizzes);
@@ -191,13 +191,13 @@ describe("getQuizzes", () => {
     (where as Mock).mockReturnValue("mockWhere");
     (getDocs as Mock).mockResolvedValue(mockQuerySnapshot);
 
-    const quizzes = await getQuizzes(mockTeacherID);
+    const quizzes = await getQuizzes(mockHostID);
     expect(quizzes).toEqual([]);
   });
 });
 
 describe("saveNewQuiz", () => {
-  const mockTeacherID = "teacher123";
+  const mockHostID = "host123";
   const mockQuiz = {
     title: "Test Quiz",
     description: "A test quiz description",
@@ -212,12 +212,12 @@ describe("saveNewQuiz", () => {
   });
 
   it("should add a new quiz with the correct data", async () => {
-    const result = await saveNewQuiz(mockTeacherID, mockQuiz);
+    const result = await saveNewQuiz(mockHostID, mockQuiz);
 
     expect(collection).toHaveBeenCalledWith(db, "quizzes");
     expect(addDoc).toHaveBeenCalledWith("mockCollectionRef", {
       ...mockQuiz,
-      teacherID: mockTeacherID,
+      hostID: mockHostID,
       createdAt: "mockTimestamp",
     });
     expect(result).toBe(mockQuizRef);
@@ -226,7 +226,7 @@ describe("saveNewQuiz", () => {
   it("should throw an error if adding the document fails", async () => {
     (addDoc as Mock).mockRejectedValueOnce(new Error("Firestore Error"));
 
-    await expect(saveNewQuiz(mockTeacherID, mockQuiz)).rejects.toThrow(
+    await expect(saveNewQuiz(mockHostID, mockQuiz)).rejects.toThrow(
       "Firestore Error"
     );
 
