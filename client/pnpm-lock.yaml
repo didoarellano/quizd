@@ -36,8 +36,8 @@ importers:
         specifier: ^10.13.1
         version: 10.13.1
       lucide-react:
-        specifier: ^0.473.0
-        version: 0.473.0(react@18.3.1)
+        specifier: ^0.474.0
+        version: 0.474.0(react@18.3.1)
       mdast-util-from-markdown:
         specifier: ^2.0.1
         version: 2.0.1
@@ -806,8 +806,8 @@ packages:
       '@types/react':
         optional: true
 
-  '@rollup/wasm-node@4.30.1':
-    resolution: {integrity: sha512-xiaHQoTkjKS60ouuSzJGPgjMp5R6TGGShLFQIhsmD8w06z7pfmJDiZPF0G953P2ruU5LSSsVI+UWmvtlzSFInA==}
+  '@rollup/wasm-node@4.31.0':
+    resolution: {integrity: sha512-4N3ttsYqUIjCVHXRZ/AMJoaEONWhXFop8h6tOkX+n+PyuYAZFp+QRNRfD+VAn5NmUnLzwwmT4GaKFu5RAQSEvg==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
 
@@ -2631,8 +2631,8 @@ packages:
   lsofi@1.0.0:
     resolution: {integrity: sha512-MKr9vM1MSm+TSKfI05IYxpKV1NCxpJaBLnELyIf784zYJ5KV9lGCE1EvpA2DtXDNM3fCuFeCwXUzim/fyQRi+A==}
 
-  lucide-react@0.473.0:
-    resolution: {integrity: sha512-KW6u5AKeIjkvrxXZ6WuCu9zHE/gEYSXCay+Gre2ZoInD0Je/e3RBtP4OHpJVJ40nDklSvjVKjgH7VU8/e2dzRw==}
+  lucide-react@0.474.0:
+    resolution: {integrity: sha512-CmghgHkh0OJNmxGKWc0qfPJCYHASPMVSyGY8fj3xgk4v84ItqDg64JNKFZn5hC6E0vHi6gxnbCgwhyVB09wQtA==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -5086,7 +5086,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.3.5
 
-  '@rollup/wasm-node@4.30.1':
+  '@rollup/wasm-node@4.31.0':
     dependencies:
       '@types/estree': 1.0.6
     optionalDependencies:
@@ -7252,7 +7252,7 @@ snapshots:
       is-number: 2.1.0
       through2: 2.0.5
 
-  lucide-react@0.473.0(react@18.3.1):
+  lucide-react@0.474.0(react@18.3.1):
     dependencies:
       react: 18.3.1
 
@@ -9113,7 +9113,7 @@ snapshots:
     dependencies:
       esbuild: 0.21.5
       postcss: 8.5.1
-      rollup: '@rollup/wasm-node@4.30.1'
+      rollup: '@rollup/wasm-node@4.31.0'
     optionalDependencies:
       '@types/node': 22.10.7
       fsevents: 2.3.3

@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/BackButton";
 import { Markdown } from "@/components/Markdown";
 import { MarkdownEditor } from "@/components/MarkdownEditor";
 import { QuestionText } from "@/components/QuestionText";
@@ -84,9 +85,10 @@ export function QuizEditor({ quizID, mode }: QuizEditorProps) {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="h-[4rem] p-4 border-b">
-        <div className="h-full container mx-auto flex items-center justify-between">
-          <h1 className="text-2xl font-bold">{headerTitle}</h1>
-          <div className="flex gap-2">
+        <div className="h-full container mx-auto grid grid-cols-3 justify-between">
+          <BackButton />
+          <h1 className="text-center text-2xl font-bold">{headerTitle}</h1>
+          <div className="flex gap-2 justify-end">
             {!createMode && (
               <>
                 <QuizDeleteButton
