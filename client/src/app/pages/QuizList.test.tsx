@@ -19,8 +19,7 @@ afterEach(() => {
 
 it("renders loading state when quizzes are pending", () => {
   (useQuizzes as Mock).mockReturnValue({
-    isPending: true,
-    isError: false,
+    status: "pending",
     error: null,
     data: null,
   });
@@ -31,8 +30,7 @@ it("renders loading state when quizzes are pending", () => {
 
 it("renders error state when quizzes fail to load", () => {
   (useQuizzes as Mock).mockReturnValue({
-    isPending: false,
-    isError: true,
+    status: "error",
     error: { message: "Failed to load quizzes" },
     data: null,
   });
@@ -45,8 +43,7 @@ it("renders error state when quizzes fail to load", () => {
 
 it("renders message when no quizzes are available", () => {
   (useQuizzes as Mock).mockReturnValue({
-    isPending: false,
-    isError: false,
+    status: "success",
     error: null,
     data: [],
   });
@@ -62,8 +59,7 @@ it("renders quizzes when data is available", () => {
   const mockQuizID = "quiz1";
 
   (useQuizzes as Mock).mockReturnValue({
-    isPending: false,
-    isError: false,
+    status: "success",
     error: null,
     data: [
       {

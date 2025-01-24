@@ -5,51 +5,16 @@ import { JoinGame } from "@/app/pages/JoinGame";
 import { PlayerGameScreen } from "@/app/pages/PlayerGameScreen";
 import { QuizEditor } from "@/app/pages/QuizEditor";
 import { QuizList } from "@/app/pages/QuizList";
-import { Button } from "@/components/ui/button";
 import { UserRoles } from "@/services/auth";
 import { useAuth } from "@/utils/AuthContext";
 import { PrivateRoute } from "@/utils/PrivateRoute";
-import { useDocumentTitle } from "@/utils/useDocumentTitle";
-import { Link, Route, Router, Switch } from "wouter";
+import { Route, Router, Switch } from "wouter";
 
 export function AppRouter() {
-  const { user, signin, signout, signinAnonymously } = useAuth();
-  useDocumentTitle("");
+  const { user } = useAuth();
 
   return (
     <Router base={import.meta.env.VITE_BASE_URL}>
-      <header>
-        <nav>
-          <ul>
-            <li>
-              <Link href="/">Home</Link>
-            </li>
-            <li>
-              <Link href="/quiz/">My Quizzes</Link>
-            </li>
-            <li>
-              <Link href="/quiz/new">Create a Quiz</Link>
-            </li>
-            {!user ? (
-              <>
-                <li>
-                  <Button onClick={signin}>Sign In</Button>
-                </li>
-                <li>
-                  <button onClick={signinAnonymously}>
-                    Sign In Anonymously
-                  </button>
-                </li>
-              </>
-            ) : (
-              <li>
-                <Button onClick={signout}>Sign Out</Button>
-              </li>
-            )}
-          </ul>
-        </nav>
-      </header>
-
       <Switch>
         <PrivateRoute
           path="/quiz"
