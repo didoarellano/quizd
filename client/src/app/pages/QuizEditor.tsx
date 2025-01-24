@@ -1,6 +1,7 @@
 import { Markdown } from "@/components/Markdown";
 import { MarkdownEditor } from "@/components/MarkdownEditor";
 import { QuestionText } from "@/components/QuestionText";
+import { Button } from "@/components/ui/button";
 import { HostGameButton } from "@/features/quizzes/components/HostGameButton";
 import { QuizDeleteButton } from "@/features/quizzes/components/QuizDeleteButton";
 import {
@@ -70,6 +71,8 @@ export function QuizEditor({ quizID, mode }: QuizEditorProps) {
     ? "---\ntitle: Untitled Quiz\n---"
     : data?.quiz._rawMD;
 
+  const markdownEditorID = "markdown-editor-id";
+
   function handleMarkdownSave(mdText: string) {
     if (mode === "create" && user?.id) {
       saveNewQuiz.mutate({ userID: user.id, mdText });
@@ -92,6 +95,9 @@ export function QuizEditor({ quizID, mode }: QuizEditorProps) {
                 <HostGameButton quizID={quizID as string} />
               </>
             )}
+            <Button size="sm" form={markdownEditorID}>
+              Save
+            </Button>
           </div>
         </div>
       </header>
@@ -103,7 +109,9 @@ export function QuizEditor({ quizID, mode }: QuizEditorProps) {
           <>
             <section className="h-full p-2 bg-slate-50">
               <MarkdownEditor
+                formID={markdownEditorID}
                 handleSave={handleMarkdownSave}
+                hideSaveButton={true}
                 initialMDText={initialMDText ?? ""}
               />
             </section>
