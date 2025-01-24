@@ -6,7 +6,7 @@ export function HostGameButton({ quizID }: { quizID: string }) {
   const href = `~${base.replace("quiz", "host")}/${quizID}`;
   return (
     <Button asChild={true} size="sm">
-      <Link href={href}>Host Game</Link>
+      <Link href={href}>Host</Link>
     </Button>
   );
 }
