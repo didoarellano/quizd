@@ -1,7 +1,8 @@
+import { Markdown } from "@/components/Markdown";
 import { MarkdownEditor } from "@/components/MarkdownEditor";
+import { QuestionText } from "@/components/QuestionText";
 import { HostGameButton } from "@/features/quizzes/components/HostGameButton";
 import { QuizDeleteButton } from "@/features/quizzes/components/QuizDeleteButton";
-import { QuizPreview } from "@/features/quizzes/components/QuizPreview";
 import {
   useDeleteQuiz,
   useQuiz,
@@ -57,44 +58,83 @@ export function QuizEditor({ quizID, mode }: QuizEditorProps) {
   const subject = mode === "create" ? "New Quiz" : data?.quiz.title ?? "Quiz";
   useDocumentTitle(`${verb} ${subject}`);
 
-  if (mode === "create") {
-    return (
-      <>
-        <h1>Create Quiz</h1>
-        <MarkdownEditor
-          initialMDText=""
-          handleSave={(mdText) =>
-            user?.id && saveNewQuiz.mutate({ userID: user.id, mdText })
-          }
-        />
-      </>
-    );
-  }
-
   if (isError) {
     // TODO: Flash message
     return <Redirect to={`~${base}`} />;
   }
 
+  const createMode = mode === "create";
+  const headerTitle =
+    mode === "create" ? "Untitled Quiz" : data?.quiz?.title ?? "";
+  const initialMDText = createMode
+    ? "---\ntitle: Untitled Quiz\n---"
+    : data?.quiz._rawMD;
+
+  function handleMarkdownSave(mdText: string) {
+    if (mode === "create" && user?.id) {
+      saveNewQuiz.mutate({ userID: user.id, mdText });
+    } else {
+      saveQuiz.mutate(mdText);
+    }
+  }
+
   return (
-    <>
-      <h1>Editing Quiz: {data?.quiz?.title ?? ""}</h1>
-      <HostGameButton quizID={quizID as string} />
-      {isPending ? (
-        <p>loading...</p>
-      ) : (
-        <>
-          <QuizDeleteButton
-            onDeleteClick={() => quizID && deleteQuiz.mutate(quizID)}
-          />
-          <MarkdownEditor
-            initialMDText={data.quiz._rawMD}
-            handleSave={(mdText) => saveQuiz.mutate(mdText)}
-          />
-          <hr />
-          <QuizPreview quiz={data.quiz} />
-        </>
-      )}
-    </>
+    <div className="min-h-screen flex flex-col">
+      <header className="h-[4rem] p-4 border-b">
+        <div className="h-full container mx-auto flex items-center justify-between">
+          <h1 className="text-2xl font-bold">{headerTitle}</h1>
+          <div className="flex gap-2">
+            {!createMode && (
+              <>
+                <QuizDeleteButton
+                  onDeleteClick={() => quizID && deleteQuiz.mutate(quizID)}
+                />
+                <HostGameButton quizID={quizID as string} />
+              </>
+            )}
+          </div>
+        </div>
+      </header>
+
+      <main className="h-[calc(100vh-4rem)] container mx-auto grid grid-cols-2 gap-4">
+        {!createMode && isPending ? (
+          <p>loading...</p>
+        ) : (
+          <>
+            <section className="h-full p-2 bg-slate-50">
+              <MarkdownEditor
+                handleSave={handleMarkdownSave}
+                initialMDText={initialMDText ?? ""}
+              />
+            </section>
+            <section className="h-full py-4 px-2">
+              {!createMode && (
+                <ol className="grid gap-8">
+                  {data?.quiz.questions.map((q) => (
+                    <li key={q.id}>
+                      <QuestionText heading={q.heading} body={q.body} />
+                      <ul className="grid gap-2 mt-4">
+                        {q.options.map((option) => (
+                          <li key={option.id} className="p-4 border">
+                            <label>
+                              <Markdown>{option.text}</Markdown>
+                              <input
+                                type="radio"
+                                name={q.id}
+                                className="hidden"
+                              />
+                            </label>
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </section>
+          </>
+        )}
+      </main>
+    </div>
   );
 }

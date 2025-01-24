@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import CodeEditor from "@uiw/react-textarea-code-editor";
 import { useState, type FormEvent } from "react";
 
@@ -23,13 +24,9 @@ export function MarkdownEditor({
         value={mdText}
         onChange={(e) => setMDText(e.target.value)}
         language="md"
-        minHeight={480}
-        style={{
-          backgroundColor: "#f5f5f5",
-          fontFamily: "ui-monospace, monospace",
-        }}
+        className="font-mono text-[length:inherit]"
       />
-      <button type="submit">Save</button>
+      <Button type="submit">Save</Button>
     </form>
   );
 }
