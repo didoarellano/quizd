@@ -45,7 +45,7 @@ export function QuizManagerLayout({ children, title }: QuizManagerLayoutProps) {
           </ul>
         </nav>
       </header>
-      <main>{children}</main>
+      <main className="container px-4 mx-auto">{children}</main>
     </>
   );
 }

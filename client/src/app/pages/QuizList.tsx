@@ -1,4 +1,5 @@
 import { QuizManagerLayout } from "@/components/layouts/QuizManagerLayout";
+import { Button } from "@/components/ui/button";
 import { QuizListing } from "@/features/games-as-host/components/QuizListing";
 import { useQuizzes } from "@/features/quizzes/queries";
 import { useAuth } from "@/utils/AuthContext";
@@ -27,12 +28,18 @@ export function QuizList() {
 
     case "success":
       content = quizzes.length ? (
-        quizzes.map((quiz) => <QuizListing key={quiz.id} quiz={quiz} />)
+        <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(min(21rem,100%),1fr))] py-4">
+          {quizzes.map((quiz) => (
+            <QuizListing key={quiz.id} quiz={quiz} />
+          ))}
+        </div>
       ) : (
-        <>
-          <p>You don't have any quizzes.</p>
-          <Link href="/new">Create one!</Link>
-        </>
+        <div className="h-[calc(100svh-4rem)] flex flex-col gap-4 items-center justify-center">
+          <h2 className="text-2xl ">You don't have any quizzes yet</h2>
+          <Button size="lg" asChild={true}>
+            <Link href="/new">Create one!</Link>
+          </Button>
+        </div>
       );
       break;
   }
