@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 type QuizDeleteButtonProps = {
@@ -9,21 +10,35 @@ export function QuizDeleteButton({ onDeleteClick }: QuizDeleteButtonProps) {
 
   if (!showConfirmation) {
     return (
-      <button onClick={() => setShowConfirmation(true)}>Delete Quiz</button>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => setShowConfirmation(true)}
+      >
+        Delete Quiz
+      </Button>
     );
   }
 
   return (
     <>
-      <button onClick={() => setShowConfirmation(false)}>Cancel</button>
-      <button
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setShowConfirmation(false)}
+      >
+        Cancel
+      </Button>
+      <Button
+        variant="destructive"
+        size="sm"
         onClick={() => {
           setShowConfirmation(false);
           onDeleteClick();
         }}
       >
         Confirm Delete
-      </button>
+      </Button>
     </>
   );
 }
