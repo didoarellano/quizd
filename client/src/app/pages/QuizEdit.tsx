@@ -1,4 +1,4 @@
-import { BackButton } from "@/components/BackButton";
+import { QuizEditorLayout } from "@/components/layouts/QuizEditorLayout";
 import { Markdown } from "@/components/Markdown";
 import { MarkdownEditor } from "@/components/MarkdownEditor";
 import { QuestionText } from "@/components/QuestionText";
@@ -13,7 +13,6 @@ import {
 import { UserRoles } from "@/services/auth";
 import { useAuth } from "@/utils/AuthContext";
 import { NotAllowedError, QuizNotFoundError } from "@/utils/errors";
-import { useDocumentTitle } from "@/utils/useDocumentTitle";
 import {
   Redirect,
   useLocation,
@@ -49,11 +48,53 @@ export function QuizEdit({ quizID }: QuizEditProps) {
     quizID,
     quizRef: data?.docSnap.ref ?? null,
   });
-
-  const quizTitle = data?.quiz.title;
+  const quizTitle = data?.quiz.title ?? "Quiz";
   const markdownEditorID = "markdown-editor-id";
 
-  useDocumentTitle(quizTitle ?? "Quiz");
+  const actionBarItems = (
+    <>
+      <QuizDeleteButton
+        className="hidden md:block"
+        onDeleteClick={() => deleteQuiz.mutate(quizID)}
+      />
+      <HostGameButton quizID={quizID} />
+      <Button size="sm" form={markdownEditorID}>
+        Save
+      </Button>
+    </>
+  );
+
+  const editor = (
+    <MarkdownEditor
+      formID={markdownEditorID}
+      handleSave={(mdText) => saveQuiz.mutate(mdText)}
+      hideSaveButton={true}
+      initialMDText={data?.quiz._rawMD ?? ""}
+    />
+  );
+
+  const preview = (
+    <>
+      <h3 className="text-2xl font-bold mb-2 md:hidden">Preview</h3>
+      <ol className="grid gap-8">
+        {data?.quiz.questions.map((q) => (
+          <li key={q.id}>
+            <QuestionText heading={q.heading} body={q.body} />
+            <ul className="grid gap-2 mt-4">
+              {q.options.map((option) => (
+                <li key={option.id} className="p-4 border">
+                  <label>
+                    <Markdown>{option.text}</Markdown>
+                    <input type="radio" name={q.id} className="hidden" />
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ol>
+    </>
+  );
 
   if (isError) {
     // TODO: Flash message
@@ -61,66 +102,12 @@ export function QuizEdit({ quizID }: QuizEditProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="md:h-[4rem] p-4 border-b">
-        <div className="h-full container mx-auto grid grid-cols-[auto_1fr_auto] gap-2 md:grid-cols-[1fr_2fr_1fr] justify-between">
-          <BackButton />
-          <h1 className="text-2xl/normal font-bold text-left md:text-center truncate">
-            {quizTitle}
-          </h1>
-          <div className="flex gap-2 justify-end">
-            <QuizDeleteButton
-              className="hidden md:block"
-              onDeleteClick={() => deleteQuiz.mutate(quizID)}
-            />
-            <HostGameButton quizID={quizID} />
-            <Button size="sm" form={markdownEditorID}>
-              Save
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <main className="md:h-[calc(100vh-4rem)] container mx-auto grid md:grid-cols-2 gap-4">
-        {isPending ? (
-          <p>loading...</p>
-        ) : (
-          <>
-            <section className="h-full p-2 md:overflow-auto bg-slate-50">
-              <MarkdownEditor
-                formID={markdownEditorID}
-                handleSave={(mdText) => saveQuiz.mutate(mdText)}
-                hideSaveButton={true}
-                initialMDText={data?.quiz._rawMD ?? ""}
-              />
-            </section>
-            <section className="h-full py-4 md:overflow-auto px-2">
-              <h3 className="text-2xl font-bold mb-2 md:hidden">Preview</h3>
-              <ol className="grid gap-8">
-                {data?.quiz.questions.map((q) => (
-                  <li key={q.id}>
-                    <QuestionText heading={q.heading} body={q.body} />
-                    <ul className="grid gap-2 mt-4">
-                      {q.options.map((option) => (
-                        <li key={option.id} className="p-4 border">
-                          <label>
-                            <Markdown>{option.text}</Markdown>
-                            <input
-                              type="radio"
-                              name={q.id}
-                              className="hidden"
-                            />
-                          </label>
-                        </li>
-                      ))}
-                    </ul>
-                  </li>
-                ))}
-              </ol>
-            </section>
-          </>
-        )}
-      </main>
-    </div>
+    <QuizEditorLayout
+      title={quizTitle}
+      heading={quizTitle}
+      actionBarItems={actionBarItems}
+      editor={isPending ? <p>loading...</p> : editor}
+      preview={preview}
+    />
   );
 }
