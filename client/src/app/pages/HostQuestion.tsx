@@ -1,10 +1,10 @@
-import { QuestionDisplay } from "@/components/QuestionDisplay";
 import { QuestionResults } from "@/features/games-as-host/components/QuestionResults";
 import {
   useEndGame,
   useGameAsHost,
   useQuestionRoundMutations,
 } from "@/features/games-as-host/queries";
+import { QuestionDisplay } from "@/features/quizzes/components/QuestionDisplay";
 import { useDocumentTitle } from "@/utils/useDocumentTitle";
 import { Link, useLocation, useSearch } from "wouter";
 
@@ -60,7 +60,16 @@ export function HostQuestion({ quizID }: { quizID: string }) {
           playerAnswers={game.players}
         />
       ) : (
-        <QuestionDisplay key={question.id} question={question} />
+        <QuestionDisplay key={question.id} question={question}>
+          <QuestionDisplay.Heading>{question.heading}</QuestionDisplay.Heading>
+          {question.body && (
+            <QuestionDisplay.Body>{question.body}</QuestionDisplay.Body>
+          )}
+          <QuestionDisplay.Options
+            questionID={question.id}
+            options={question.options}
+          />
+        </QuestionDisplay>
       )}
     </>
   );

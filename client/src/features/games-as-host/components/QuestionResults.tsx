@@ -1,5 +1,5 @@
 import { Markdown } from "@/components/Markdown";
-import { QuestionText } from "@/components/QuestionText";
+import { QuestionDisplay } from "@/features/quizzes/components/QuestionDisplay";
 import { LiveGame } from "@/types/game";
 import { Question } from "@/types/quiz";
 
@@ -32,7 +32,10 @@ export function QuestionResults({
 
   return (
     <article>
-      <QuestionText heading={question.heading} body={question.body} />
+      <QuestionDisplay question={question}>
+        <QuestionDisplay.Heading>{question.heading}</QuestionDisplay.Heading>
+        <QuestionDisplay.Body>{question.body}</QuestionDisplay.Body>
+      </QuestionDisplay>
 
       {question.options.map((option) => {
         const isCorrect = correctAnswerIDs.includes(option.id);

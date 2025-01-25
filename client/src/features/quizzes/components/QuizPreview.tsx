@@ -1,5 +1,4 @@
-import { Markdown } from "@/components/Markdown";
-import { QuestionText } from "@/components/QuestionText";
+import { QuestionDisplay } from "@/features/quizzes/components/QuestionDisplay";
 import { Quiz } from "@/types/quiz";
 
 export function QuizPreview({ quiz }: { quiz: Quiz }) {
@@ -9,17 +8,11 @@ export function QuizPreview({ quiz }: { quiz: Quiz }) {
       <ol className="grid gap-8">
         {quiz.questions.map((q) => (
           <li key={q.id}>
-            <QuestionText heading={q.heading} body={q.body} />
-            <ul className="grid gap-2 mt-4">
-              {q.options.map((option) => (
-                <li key={option.id} className="p-4 border">
-                  <label>
-                    <Markdown>{option.text}</Markdown>
-                    <input type="radio" name={q.id} className="hidden" />
-                  </label>
-                </li>
-              ))}
-            </ul>
+            <QuestionDisplay question={q}>
+              <QuestionDisplay.Heading>{q.heading}</QuestionDisplay.Heading>
+              {q.body && <QuestionDisplay.Body>{q.body}</QuestionDisplay.Body>}
+              <QuestionDisplay.Options questionID={q.id} options={q.options} />
+            </QuestionDisplay>
           </li>
         ))}
       </ol>

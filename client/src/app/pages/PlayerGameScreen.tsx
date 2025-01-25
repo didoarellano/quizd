@@ -1,9 +1,9 @@
 import { Markdown } from "@/components/Markdown";
-import { QuestionDisplay } from "@/components/QuestionDisplay";
 import {
   useGameAsPlayer,
   useSaveAnswerMutation,
 } from "@/features/games-as-player/queries";
+import { QuestionDisplay } from "@/features/quizzes/components/QuestionDisplay";
 import { GameStatus } from "@/types/game";
 import { useAuth } from "@/utils/AuthContext";
 import { useDocumentTitle } from "@/utils/useDocumentTitle";
@@ -77,14 +77,20 @@ export function PlayerGameScreen({ pin }: { pin: string }) {
 
   if (data.activeGameChannel.status === GameStatus.ONGOING) {
     return (
-      <QuestionDisplay
-        key={question.id}
-        question={question}
-        onOptionClick={(questionID: string, answerID: string) => {
-          saveAnswer.mutate({ questionID, answerID });
-        }}
-        activeOptionID={currentAnswerID}
-      />
+      <QuestionDisplay key={question.id} question={question}>
+        <QuestionDisplay.Heading>{question.heading}</QuestionDisplay.Heading>
+        {question.body && (
+          <QuestionDisplay.Body>{question.body}</QuestionDisplay.Body>
+        )}
+        <QuestionDisplay.Options
+          questionID={question.id}
+          options={question.options}
+          activeOptionID={currentAnswerID}
+          onOptionChange={(questionID, answerID) => {
+            saveAnswer.mutate({ questionID, answerID });
+          }}
+        />
+      </QuestionDisplay>
     );
   }
 
