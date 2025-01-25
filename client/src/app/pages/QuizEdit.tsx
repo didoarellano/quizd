@@ -2,9 +2,9 @@ import { QuizEditorLayout } from "@/components/layouts/QuizEditorLayout";
 import { Markdown } from "@/components/Markdown";
 import { MarkdownEditor } from "@/components/MarkdownEditor";
 import { QuestionText } from "@/components/QuestionText";
-import { Button } from "@/components/ui/button";
 import { HostGameButton } from "@/features/quizzes/components/HostGameButton";
 import { QuizDeleteButton } from "@/features/quizzes/components/QuizDeleteButton";
+import { QuizSaveButton } from "@/features/quizzes/components/QuizSaveButton";
 import {
   useDeleteQuiz,
   useQuiz,
@@ -58,9 +58,7 @@ export function QuizEdit({ quizID }: QuizEditProps) {
         onDeleteClick={() => deleteQuiz.mutate(quizID)}
       />
       <HostGameButton quizID={quizID} />
-      <Button size="sm" form={markdownEditorID}>
-        Save
-      </Button>
+      <QuizSaveButton formID={markdownEditorID} />
     </>
   );
 

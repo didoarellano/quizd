@@ -1,6 +1,6 @@
 import { QuizEditorLayout } from "@/components/layouts/QuizEditorLayout";
 import { MarkdownEditor } from "@/components/MarkdownEditor";
-import { Button } from "@/components/ui/button";
+import { QuizSaveButton } from "@/features/quizzes/components/QuizSaveButton";
 import { useSaveNewQuiz } from "@/features/quizzes/queries";
 import { useAuth } from "@/utils/AuthContext";
 import { useLocation, useRouter } from "wouter";
@@ -26,11 +26,7 @@ export function QuizCreate() {
     <QuizEditorLayout
       title="Create New Quiz"
       heading="Untitled Quiz"
-      actionBarItems={
-        <Button size="sm" form={markdownEditorID}>
-          Save
-        </Button>
-      }
+      actionBarItems={<QuizSaveButton formID={markdownEditorID} />}
       editor={
         <MarkdownEditor
           formID={markdownEditorID}
