@@ -1,49 +1,28 @@
-import { CycleLink } from "@/components/CycleLink";
-import { QuizDisplay } from "@/components/QuizDisplay";
+import { Markdown } from "@/components/Markdown";
+import { QuestionText } from "@/components/QuestionText";
 import { Quiz } from "@/types/quiz";
-import { useMemo } from "react";
-import { Link, useLocation, useSearch } from "wouter";
 
 export function QuizPreview({ quiz }: { quiz: Quiz }) {
-  const [location] = useLocation();
-  const searchParams = useSearch();
-  const showPreview = !!searchParams;
-
-  const questionIndex = useMemo(() => {
-    const qs = Object.fromEntries(new URLSearchParams(searchParams));
-    return Number(qs.previewQ);
-  }, [searchParams]);
-
-  const atFirst = questionIndex === 0;
-  const atLast = questionIndex === quiz.questions.length - 1;
-
   return (
-    <div>
-      <h3>Preview</h3>
-
-      <Link href={`${location}${showPreview ? "" : "?previewQ=0"}`}>
-        {showPreview ? "Hide" : "Show"} Preview
-      </Link>
-
-      {showPreview && (
-        <>
-          <CycleLink
-            href={atFirst ? "#" : `${location}?previewQ=${questionIndex - 1}`}
-            disabled={atFirst}
-          >
-            Prev
-          </CycleLink>
-
-          <CycleLink
-            href={atLast ? "#" : `${location}?previewQ=${questionIndex + 1}`}
-            disabled={atLast}
-          >
-            Next
-          </CycleLink>
-
-          <QuizDisplay quiz={quiz} questionIndex={questionIndex} />
-        </>
-      )}
-    </div>
+    <>
+      <h3 className="text-2xl font-bold mb-2 md:hidden">Preview</h3>
+      <ol className="grid gap-8">
+        {quiz.questions.map((q) => (
+          <li key={q.id}>
+            <QuestionText heading={q.heading} body={q.body} />
+            <ul className="grid gap-2 mt-4">
+              {q.options.map((option) => (
+                <li key={option.id} className="p-4 border">
+                  <label>
+                    <Markdown>{option.text}</Markdown>
+                    <input type="radio" name={q.id} className="hidden" />
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ol>
+    </>
   );
 }

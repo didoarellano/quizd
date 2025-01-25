@@ -44,7 +44,7 @@ describe("pending and error states", () => {
     });
     render(<QuizEdit quizID="quiz1" />);
 
-    expect(screen.getByText("loading...")).toBeInTheDocument();
+    expect(screen.getAllByText("loading...")[0]).toBeInTheDocument();
   });
 
   it("redirects to base path on error", () => {

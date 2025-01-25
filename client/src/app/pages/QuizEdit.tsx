@@ -1,9 +1,8 @@
 import { QuizEditorLayout } from "@/components/layouts/QuizEditorLayout";
-import { Markdown } from "@/components/Markdown";
 import { MarkdownEditor } from "@/components/MarkdownEditor";
-import { QuestionText } from "@/components/QuestionText";
 import { HostGameButton } from "@/features/quizzes/components/HostGameButton";
 import { QuizDeleteButton } from "@/features/quizzes/components/QuizDeleteButton";
+import { QuizPreview } from "@/features/quizzes/components/QuizPreview";
 import { QuizSaveButton } from "@/features/quizzes/components/QuizSaveButton";
 import {
   useDeleteQuiz,
@@ -62,7 +61,9 @@ export function QuizEdit({ quizID }: QuizEditProps) {
     </>
   );
 
-  const editor = (
+  const editor = isPending ? (
+    <p>loading...</p>
+  ) : (
     <MarkdownEditor
       formID={markdownEditorID}
       handleSave={(mdText) => saveQuiz.mutate(mdText)}
@@ -71,28 +72,8 @@ export function QuizEdit({ quizID }: QuizEditProps) {
     />
   );
 
-  const preview = (
-    <>
-      <h3 className="text-2xl font-bold mb-2 md:hidden">Preview</h3>
-      <ol className="grid gap-8">
-        {data?.quiz.questions.map((q) => (
-          <li key={q.id}>
-            <QuestionText heading={q.heading} body={q.body} />
-            <ul className="grid gap-2 mt-4">
-              {q.options.map((option) => (
-                <li key={option.id} className="p-4 border">
-                  <label>
-                    <Markdown>{option.text}</Markdown>
-                    <input type="radio" name={q.id} className="hidden" />
-                  </label>
-                </li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ol>
-    </>
-  );
+  const preview =
+    isPending || !data ? <p>loading...</p> : <QuizPreview quiz={data.quiz} />;
 
   if (isError) {
     // TODO: Flash message
@@ -104,7 +85,7 @@ export function QuizEdit({ quizID }: QuizEditProps) {
       title={quizTitle}
       heading={quizTitle}
       actionBarItems={actionBarItems}
-      editor={isPending ? <p>loading...</p> : editor}
+      editor={editor}
       preview={preview}
     />
   );
