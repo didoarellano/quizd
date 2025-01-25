@@ -79,9 +79,9 @@ it("renders quizzes when data is available", () => {
   expect(screen.getByRole("heading", { name: /Quiz 1/i })).toBeInTheDocument();
   expect(screen.getByText(/Description of Quiz 1/i)).toBeInTheDocument();
   expect(screen.getByText(/2 questions/i)).toBeInTheDocument();
-  expect(screen.getByText(/Edit Quiz/i)).toBeInTheDocument();
+  expect(screen.getByText(/Edit/i)).toBeInTheDocument();
 
-  const hostGameLink = screen.getByRole("link", { name: /Host Game/i });
+  const hostGameLink = screen.getByRole("link", { name: /Host/i });
   expect(hostGameLink).toBeInTheDocument();
   // TODO: Fix, centralise, and absolutise paths
   // expect(hostGameLink).toHaveAttribute(
@@ -92,6 +92,6 @@ it("renders quizzes when data is available", () => {
   const editQuizLink = screen.getByRole("link", { name: /Edit/i });
   expect(editQuizLink).toBeInTheDocument();
 
-  const deleteQuizButton = screen.getByRole("button", { name: /Delete Quiz/i });
+  const deleteQuizButton = screen.getByRole("button", { name: /Delete/i });
   expect(deleteQuizButton).toBeInTheDocument();
 });
