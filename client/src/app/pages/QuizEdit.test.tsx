@@ -1,13 +1,12 @@
 import {
   useDeleteQuiz,
   useQuiz,
-  useSaveNewQuiz,
   useSaveQuiz,
 } from "@/features/quizzes/queries";
 import { UserRoles } from "@/services/auth";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, Mock, vi } from "vitest";
-import { QuizEditor } from "./QuizEditor";
+import { QuizEdit } from "./QuizEdit";
 
 const mockSetLocation = vi.fn();
 vi.mock("wouter", async (importOriginal) => {
@@ -28,7 +27,6 @@ vi.mock("@/utils/AuthContext", () => ({
 
 vi.mock("@/features/quizzes/queries", () => ({
   useQuiz: vi.fn(),
-  useSaveNewQuiz: vi.fn(),
   useSaveQuiz: vi.fn(),
   useDeleteQuiz: vi.fn(),
 }));
@@ -44,7 +42,7 @@ describe("pending and error states", () => {
       isError: false,
       data: null,
     });
-    render(<QuizEditor mode="edit" quizID="quiz1" />);
+    render(<QuizEdit quizID="quiz1" />);
 
     expect(screen.getByText("loading...")).toBeInTheDocument();
   });
@@ -55,64 +53,13 @@ describe("pending and error states", () => {
       isError: true,
       data: null,
     });
-    render(<QuizEditor mode="edit" quizID="quiz1" />);
+    render(<QuizEdit quizID="quiz1" />);
 
     expect(screen.getByText("Redirected to: ~")).toBeInTheDocument();
   });
 });
 
-describe("create mode", () => {
-  const mockSaveNewQuiz = vi.fn();
-
-  beforeEach(() => {
-    (useSaveNewQuiz as Mock).mockImplementation(({ onSuccess }) => ({
-      mutate: mockSaveNewQuiz.mockImplementation(() => {
-        const mockQuizRef = { id: "randomid" };
-        onSuccess(mockQuizRef);
-      }),
-    }));
-  });
-
-  it("renders in create mode", () => {
-    render(<QuizEditor mode="create" />);
-
-    expect(screen.getByText("Create Quiz")).toBeInTheDocument();
-    expect(screen.getByRole("textbox")).toBeInTheDocument();
-  });
-
-  it("calls saveNewQuiz when user saves the quiz", async () => {
-    render(<QuizEditor mode="create" />);
-
-    const editor = screen.getByRole("textbox");
-    fireEvent.change(editor, { target: { value: "# New Quiz" } });
-
-    const saveButton = screen.getByText("Save");
-    fireEvent.click(saveButton);
-
-    await waitFor(() => {
-      expect(mockSaveNewQuiz).toHaveBeenCalledWith({
-        userID: "asdf",
-        mdText: "# New Quiz",
-      });
-    });
-  });
-
-  it("redirects on saveNewQuiz success", () => {
-    render(<QuizEditor mode="create" />);
-
-    const editor = screen.getByRole("textbox");
-    fireEvent.change(editor, { target: { value: "# New Quiz" } });
-
-    const saveButton = screen.getByText("Save");
-    fireEvent.click(saveButton);
-
-    expect(mockSetLocation).toHaveBeenCalledWith("~/randomid", {
-      replace: true,
-    });
-  });
-});
-
-describe("edit mode", () => {
+describe("editing", () => {
   // Mock the 2-stage delete button which is tested on its own.
   // QuizEditor test only cares that it renders a delete button
   // with a delete callback.
@@ -142,20 +89,24 @@ describe("edit mode", () => {
     });
   });
 
-  it("renders in edit mode with quiz data", () => {
-    render(<QuizEditor mode="edit" quizID="quiz1" />);
-    expect(screen.getByText("Editing Quiz: Test Quiz")).toBeInTheDocument();
-    expect(screen.getByText("Host Game")).toBeInTheDocument();
-    expect(screen.getByText("Mock Delete Quiz")).toBeInTheDocument();
+  it("renders with quiz data", () => {
+    render(<QuizEdit quizID="quiz1" />);
+    expect(
+      screen.getByRole("heading", { name: "Test Quiz" })
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Host/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Mock Delete Quiz/i })
+    ).toBeInTheDocument();
   });
 
   it("calls saveQuiz when user saves the quiz", async () => {
-    render(<QuizEditor mode="edit" quizID="quiz1" />);
+    render(<QuizEdit quizID="quiz1" />);
 
     const editor = screen.getByRole("textbox");
     fireEvent.change(editor, { target: { value: "# New Quiz Title" } });
 
-    const saveButton = screen.getByText("Save");
+    const saveButton = screen.getAllByText("Save")[0];
     fireEvent.click(saveButton);
 
     await waitFor(() => {
@@ -164,7 +115,7 @@ describe("edit mode", () => {
   });
 
   it("calls deleteQuiz when user deletes the quiz", () => {
-    render(<QuizEditor mode="edit" quizID="quiz1" />);
+    render(<QuizEdit quizID="quiz1" />);
     const deleteButton = screen.getByText("Mock Delete Quiz");
     fireEvent.click(deleteButton);
 

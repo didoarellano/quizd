@@ -3,7 +3,8 @@ import { HostLobby } from "@/app/pages/HostLobby";
 import { HostQuestion } from "@/app/pages/HostQuestion";
 import { JoinGame } from "@/app/pages/JoinGame";
 import { PlayerGameScreen } from "@/app/pages/PlayerGameScreen";
-import { QuizEditor } from "@/app/pages/QuizEditor";
+import { QuizCreate } from "@/app/pages/QuizCreate";
+import { QuizEdit } from "@/app/pages/QuizEdit";
 import { QuizList } from "@/app/pages/QuizList";
 import { UserRoles } from "@/services/auth";
 import { useAuth } from "@/utils/AuthContext";
@@ -25,11 +26,9 @@ export function AppRouter() {
         >
           <Switch>
             <Route path="/" component={QuizList} />
-            <Route path="/new">
-              <QuizEditor mode="create" />
-            </Route>
+            <Route path="/new" component={QuizCreate} />
             <Route path="/:id">
-              {({ id }) => <QuizEditor key={id} quizID={id} mode="edit" />}
+              {({ id }) => <QuizEdit key={id} quizID={id} />}
             </Route>
           </Switch>
         </PrivateRoute>
