@@ -14,22 +14,25 @@ export function QuizManagerLayout({ children, title }: QuizManagerLayoutProps) {
   useDocumentTitle(title);
   return (
     <>
-      <header>
-        <nav>
-          <ul>
+      <header className="h-[4rem] p-4 border-b">
+        <nav className="container mx-auto flex justify-end">
+          <ul className="flex items-center md:gap-4">
             <li>
-              <Link href="/">Home</Link>
+              <Button variant="ghost" size="sm" asChild={true}>
+                <Link href="/">My Quizzes</Link>
+              </Button>
             </li>
             <li>
-              <Link href="/quiz/">My Quizzes</Link>
-            </li>
-            <li>
-              <Link href="/quiz/new">Create a Quiz</Link>
+              <Button variant="ghost" size="sm" asChild={true}>
+                <Link href="/new">Create a Quiz</Link>
+              </Button>
             </li>
             {!user ? (
               <>
                 <li>
-                  <Button onClick={signin}>Sign In</Button>
+                  <Button size="sm" onClick={signin}>
+                    Sign In
+                  </Button>
                 </li>
                 <li>
                   <button onClick={signinAnonymously}>
@@ -39,7 +42,9 @@ export function QuizManagerLayout({ children, title }: QuizManagerLayoutProps) {
               </>
             ) : (
               <li>
-                <Button onClick={signout}>Sign Out</Button>
+                <Button variant="ghost" size="sm" onClick={signout}>
+                  Sign Out
+                </Button>
               </li>
             )}
           </ul>
