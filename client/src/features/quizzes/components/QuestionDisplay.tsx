@@ -1,16 +1,10 @@
 import { Markdown } from "@/components/Markdown";
 import { cn } from "@/lib/utils";
 import { Option, Question } from "@/types/quiz";
-import {
-  createContext,
-  PropsWithChildren,
-  RefObject,
-  useContext,
-  useRef,
-} from "react";
+import { createContext, PropsWithChildren, useContext } from "react";
 
 type QuestionDisplayContextType = {
-  bodyID: RefObject<string>;
+  bodyID: string;
 };
 
 const QuestionDisplayContext = createContext<QuestionDisplayContextType | null>(
@@ -27,11 +21,10 @@ export function QuestionDisplay({
   question,
   ...props
 }: PropsWithChildren<QuestionDisplayProps>) {
-  const bodyID = useRef<string>(`question-body-${question.id}`);
-
+  const bodyID = `question-body-${question.id}`;
   return (
     <QuestionDisplayContext.Provider value={{ bodyID }}>
-      <fieldset {...(question.body && { "aria-describedby": bodyID.current })}>
+      <fieldset {...(question.body && { "aria-describedby": bodyID })}>
         {/* grid/flex on fieldset still wonky */}
         <div className={cn("grid gap-4", className)} {...props} />
       </fieldset>
@@ -61,13 +54,9 @@ function Body({ children, className = "" }: CommonTextProps) {
     throw new Error("QuestionDisplay.Body must be a child of QuestionDisplay");
   }
 
-  // useRef initialises .current to null
-  // HTML attribute values can't be null but can be undefined
-  const bodyID = context.bodyID.current || undefined;
-
   return (
     <div
-      id={bodyID}
+      id={context.bodyID}
       className={cn(
         "grid gap-2 [&_pre]:bg-slate-50 [&_pre]:p-4 [&_pre]:border [&_pre]:rounded-sm",
         className
