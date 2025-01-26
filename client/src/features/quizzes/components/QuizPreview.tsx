@@ -11,7 +11,11 @@ export function QuizPreview({ quiz }: { quiz: Quiz }) {
             <QuestionDisplay question={q}>
               <QuestionDisplay.Heading>{q.heading}</QuestionDisplay.Heading>
               {q.body && <QuestionDisplay.Body>{q.body}</QuestionDisplay.Body>}
-              <QuestionDisplay.Options questionID={q.id} options={q.options} />
+              <QuestionDisplay.Options
+                questionID={q.id}
+                options={q.options}
+                answerKey={q.answers}
+              />
             </QuestionDisplay>
           </li>
         ))}

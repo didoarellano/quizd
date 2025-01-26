@@ -1,6 +1,6 @@
 import { Markdown } from "@/components/Markdown";
 import { cn } from "@/lib/utils";
-import { Option, Question } from "@/types/quiz";
+import { Answer, Option, Question } from "@/types/quiz";
 import { createContext, PropsWithChildren, useContext } from "react";
 
 type QuestionDisplayContextType = {
@@ -73,6 +73,7 @@ type OptionsProps = {
   options: Option[];
   onOptionChange?: (questionID: string, answerID: string) => void;
   activeOptionID?: string;
+  answerKey?: Answer[];
 };
 
 function Options({
@@ -81,6 +82,7 @@ function Options({
   options,
   onOptionChange,
   activeOptionID,
+  answerKey,
 }: OptionsProps) {
   function handleChange(optionID: string) {
     onOptionChange && onOptionChange(questionID, optionID);
@@ -93,7 +95,8 @@ function Options({
           <label
             className={cn(
               "block py-4 px-6 cursor-pointer",
-              activeOptionID === option.id && "bg-amber-50"
+              activeOptionID === option.id && "bg-amber-50",
+              answerKey && answerKey.includes(option.id) && "bg-green-50"
             )}
           >
             <Markdown disallowedElements={["p"]} unwrapDisallowed={true}>

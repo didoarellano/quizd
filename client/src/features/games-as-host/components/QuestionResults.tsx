@@ -35,6 +35,11 @@ export function QuestionResults({
       <QuestionDisplay question={question}>
         <QuestionDisplay.Heading>{question.heading}</QuestionDisplay.Heading>
         <QuestionDisplay.Body>{question.body}</QuestionDisplay.Body>
+        <QuestionDisplay.Options
+          questionID={question.id}
+          options={question.options}
+          answerKey={correctAnswerIDs}
+        />
       </QuestionDisplay>
 
       {question.options.map((option) => {
