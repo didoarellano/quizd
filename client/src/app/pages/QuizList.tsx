@@ -1,6 +1,6 @@
 import { QuizManagerLayout } from "@/components/layouts/QuizManagerLayout";
 import { Button } from "@/components/ui/button";
-import { QuizListing } from "@/features/games-as-host/components/QuizListing";
+import { QuizListing } from "@/features/quizzes/components/QuizListing";
 import { useQuizzes } from "@/features/quizzes/queries";
 import { useAuth } from "@/utils/AuthContext";
 import { ReactNode } from "react";
