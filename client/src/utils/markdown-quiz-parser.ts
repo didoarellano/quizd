@@ -69,7 +69,7 @@ function parseQuestion(
 
   let options: Option[] = [];
   let answers: Answer[] = [];
-  if (nextNode.type === "list") {
+  if (nextNode?.type === "list") {
     ({ options, answers } = parseOptions(nextNode.children, generateID));
   }
 

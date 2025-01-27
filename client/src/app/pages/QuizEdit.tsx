@@ -9,6 +9,7 @@ import {
   useQuiz,
   useSaveQuiz,
 } from "@/features/quizzes/queries";
+import { validateAndParseQuiz } from "@/features/quizzes/utils";
 import { UserRoles } from "@/services/auth";
 import { useAuth } from "@/utils/AuthContext";
 import { NotAllowedError, QuizNotFoundError } from "@/utils/errors";
@@ -61,12 +62,21 @@ export function QuizEdit({ quizID }: QuizEditProps) {
     </>
   );
 
+  function handleSave(mdText: string) {
+    try {
+      const quiz = validateAndParseQuiz(mdText);
+      saveQuiz.mutate({ mdText, quiz });
+    } catch (e) {
+      alert((e as Error).message);
+    }
+  }
+
   const editor = isPending ? (
     <p>loading...</p>
   ) : (
     <MarkdownEditor
       formID={markdownEditorID}
-      handleSave={(mdText) => saveQuiz.mutate(mdText)}
+      handleSave={handleSave}
       hideSaveButton={true}
       initialMDText={data?.quiz._rawMD ?? ""}
     />

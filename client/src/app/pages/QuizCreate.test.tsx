@@ -51,20 +51,31 @@ it("renders with placeholder content", () => {
   expect(screen.getByDisplayValue(/title: Untitled Quiz/)).toBeInTheDocument();
 });
 
+it("should not save with empty or starter content", () => {
+  render(<QuizCreate />);
+
+  const editor = screen.getByRole("textbox");
+  const saveButton = screen.getAllByText("Save")[0];
+  fireEvent.click(saveButton);
+});
+
 it("calls saveNewQuiz when user saves the quiz", async () => {
   render(<QuizCreate />);
 
   const editor = screen.getByRole("textbox");
-  fireEvent.change(editor, { target: { value: "# New Quiz" } });
+  fireEvent.change(editor, { target: { value: "## New Quiz" } });
 
   const saveButton = screen.getAllByText("Save")[0];
   fireEvent.click(saveButton);
 
   await waitFor(() => {
-    expect(mockSaveNewQuiz).toHaveBeenCalledWith({
-      userID: "asdf",
-      mdText: "# New Quiz",
-    });
+    expect(mockSaveNewQuiz).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userID: "asdf",
+        mdText: "## New Quiz",
+        quiz: expect.any(Object),
+      })
+    );
   });
 });
 
@@ -72,7 +83,7 @@ it("redirects on saveNewQuiz success", () => {
   render(<QuizCreate />);
 
   const editor = screen.getByRole("textbox");
-  fireEvent.change(editor, { target: { value: "# New Quiz" } });
+  fireEvent.change(editor, { target: { value: "## New Quiz" } });
 
   const saveButton = screen.getAllByText("Save")[0];
   fireEvent.click(saveButton);

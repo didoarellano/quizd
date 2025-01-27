@@ -2,6 +2,7 @@ import { QuizEditorLayout } from "@/components/layouts/QuizEditorLayout";
 import { MarkdownEditor } from "@/components/MarkdownEditor";
 import { QuizSaveButton } from "@/features/quizzes/components/QuizSaveButton";
 import { useSaveNewQuiz } from "@/features/quizzes/queries";
+import { validateAndParseQuiz } from "@/features/quizzes/utils";
 import { useAuth } from "@/utils/AuthContext";
 import { useLocation, useRouter } from "wouter";
 
@@ -22,6 +23,16 @@ export function QuizCreate() {
   });
   const markdownEditorID = "markdown-editor-id";
 
+  function handleSave(mdText: string) {
+    if (!user?.id) return;
+    try {
+      const quiz = validateAndParseQuiz(mdText);
+      saveNewQuiz.mutate({ userID: user.id, mdText, quiz });
+    } catch (e) {
+      alert((e as Error).message);
+    }
+  }
+
   return (
     <QuizEditorLayout
       title="Create New Quiz"
@@ -30,9 +41,7 @@ export function QuizCreate() {
       editor={
         <MarkdownEditor
           formID={markdownEditorID}
-          handleSave={(mdText) =>
-            user?.id && saveNewQuiz.mutate({ userID: user.id, mdText })
-          }
+          handleSave={handleSave}
           hideSaveButton={true}
           initialMDText={INITIAL_MD_TEXT}
         />

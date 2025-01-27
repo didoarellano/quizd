@@ -1,13 +1,11 @@
 import {
   deleteQuizByID,
-  generateID,
   getQuiz,
   getQuizzes,
   saveNewQuiz,
   updateQuiz,
 } from "@/services/quiz";
 import { Quiz } from "@/types/quiz";
-import { parseQuiz } from "@/utils/markdown-quiz-parser";
 import {
   UseMutationOptions,
   UseQueryOptions,
@@ -63,12 +61,18 @@ export function useQuiz({ quizID, userID, queryOptions }: UseQuizOptions) {
   });
 }
 
+type UseSaveNewQuizMutationParams = {
+  userID: string;
+  mdText: string;
+  quiz: Quiz;
+};
+
 type UseSaveNewQuizMutationConfig = Omit<
   // Don't show mutationFn as an option
   UseMutationOptions<
     DocumentReference<Quiz>,
     Error,
-    { userID: string; mdText: string }
+    UseSaveNewQuizMutationParams
   >,
   "mutationFn"
 >;
@@ -78,8 +82,7 @@ export function useSaveNewQuiz(mutationConfig?: UseSaveNewQuizMutationConfig) {
   const queryKey = ["quizzes"];
   return useMutation({
     ...mutationConfig,
-    mutationFn: ({ userID, mdText }: { userID: string; mdText: string }) => {
-      let quiz = parseQuiz(generateID, mdText);
+    mutationFn: ({ userID, mdText, quiz }: UseSaveNewQuizMutationParams) => {
       quiz._rawMD = mdText;
       return saveNewQuiz(userID, quiz);
     },
@@ -90,12 +93,17 @@ export function useSaveNewQuiz(mutationConfig?: UseSaveNewQuizMutationConfig) {
   });
 }
 
+type UseSaveQuizMutationParams = {
+  mdText: string;
+  quiz: Quiz;
+};
+
 type UseSaveQuizOptions = {
   quizID: string | null;
   quizRef: DocumentReference | null;
   mutationConfig?: Omit<
     // Don't show mutationFn as an option
-    UseMutationOptions<void, Error, string>,
+    UseMutationOptions<void, Error, UseSaveQuizMutationParams>,
     "mutationFn"
   >;
 };
@@ -109,9 +117,8 @@ export function useSaveQuiz({
   const queryKey = ["quizzes", quizID];
   return useMutation({
     ...mutationConfig,
-    mutationFn: async (mdText: string) => {
+    mutationFn: async ({ mdText, quiz }: UseSaveQuizMutationParams) => {
       if (!quizID || !quizRef) return;
-      let quiz = parseQuiz(generateID, mdText);
       quiz._rawMD = mdText;
       return updateQuiz(quizRef, quiz);
     },

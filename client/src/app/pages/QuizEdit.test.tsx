@@ -104,13 +104,18 @@ describe("editing", () => {
     render(<QuizEdit quizID="quiz1" />);
 
     const editor = screen.getByRole("textbox");
-    fireEvent.change(editor, { target: { value: "# New Quiz Title" } });
+    fireEvent.change(editor, { target: { value: "## New Quiz Title" } });
 
     const saveButton = screen.getAllByText("Save")[0];
     fireEvent.click(saveButton);
 
     await waitFor(() => {
-      expect(mockSaveQuiz).toHaveBeenCalledWith("# New Quiz Title");
+      expect(mockSaveQuiz).toHaveBeenCalledWith(
+        expect.objectContaining({
+          mdText: "## New Quiz Title",
+          quiz: expect.any(Object),
+        })
+      );
     });
   });
 
