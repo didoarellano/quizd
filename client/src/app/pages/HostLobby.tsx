@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { PlayerList } from "@/features/games-as-host/components/PlayerList";
 import { useGameAsHost, useStartGame } from "@/features/games-as-host/queries";
 import { GameStatus } from "@/types/game";
@@ -19,23 +20,56 @@ export function HostLobby({ quizID }: { quizID: string }) {
   useDocumentTitle(`Host ${game?.quiz.title ?? "Quiz"}`);
 
   return (
-    <>
-      <h1>Host Lobby</h1>
-      <Link href={`${location}/play`}>Play</Link>
-      <Link href={`${location}/results`}>Results</Link>
-      {game && (
-        <>
-          <h2>{game.quiz.title}</h2>
-          <p>{game.quiz.description}</p>
-          <Link href={`${location}/play`} onClick={() => startGame.mutate()}>
-            {startButtonText[game.status]}
-          </Link>
-        </>
-      )}
-      <p>Go to: {window.location.href.replace(/host\/.*/i, "play")}</p>
-      <p>Enter PIN: {game?.pin}</p>
+    <main className="container mx-auto p-4 grid gap-4 md:grid-cols-2 items-start text-3xl/normal">
+      <div className="md:order-2 grid gap-4 p-4 border bg-teal-600 text-slate-100 shadow rounded-sm">
+        <h2 className="font-bold">Join the game</h2>
+        <p>
+          Go to:
+          <div className="w-fit py-2 px-4 font-semibold bg-slate-100 text-teal-600 rounded-sm md:text-nowrap">
+            {window.location.href
+              .replace(/https?:\/\//g, "")
+              .replace(/host\/.*/i, "play")}
+          </div>
+        </p>
+        <p>
+          Enter PIN code:
+          <div className="w-fit py-2 px-4 font-semibold font-mono bg-slate-100 text-teal-600 rounded-sm">
+            {game?.pin}
+          </div>
+        </p>
+      </div>
 
-      {players && <PlayerList players={players} />}
-    </>
+      <div className="md:order-1">
+        {game && (
+          <>
+            <h2 className="p-4 text-6xl/none font-black bg-slate-600 text-slate-100 shadow rounded-sm">
+              {game.quiz.title}
+            </h2>
+            <div className="p-4">
+              <p>{game.quiz.description}</p>
+              <Button size="lg" asChild={true}>
+                <Link
+                  href={`${location}/play`}
+                  onClick={() => startGame.mutate()}
+                >
+                  {startButtonText[game.status]}
+                </Link>
+              </Button>
+            </div>
+          </>
+        )}
+      </div>
+
+      <div className="md:order-last md:col-span-2">
+        <h2 className="font-black mb-4">
+          {players && players.length > 0
+            ? `${players.length} Players`
+            : "Waiting for players…"}
+        </h2>
+        {players && (
+          <PlayerList players={players} className="grid gap-2 md:grid-cols-3" />
+        )}
+      </div>
+    </main>
   );
 }
