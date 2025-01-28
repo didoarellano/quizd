@@ -3,10 +3,12 @@ import { HostGameButton } from "@/features/quizzes/components/HostGameButton";
 import { QuizDeleteButton } from "@/features/quizzes/components/QuizDeleteButton";
 import { useDeleteQuiz } from "@/features/quizzes/queries";
 import { Quiz } from "@/types/quiz";
+import { pluralise } from "@/utils/pluralise";
 import { Link } from "wouter";
 
 export function QuizListing({ quiz }: { quiz: Quiz }) {
   const deleteQuiz = useDeleteQuiz();
+  const questionCount = quiz.questions?.length ?? 0;
   return (
     <div
       key={quiz.id}
@@ -15,7 +17,9 @@ export function QuizListing({ quiz }: { quiz: Quiz }) {
       <div>
         <h2 className="text-xl font-bold">{quiz.title}</h2>
         <p>{quiz.description}</p>
-        <p className="text-slate-600">{quiz.questions?.length} questions</p>
+        <p className="text-slate-600">
+          {questionCount} {pluralise("question", questionCount)}
+        </p>
       </div>
       <div className="flex gap-2 justify-end pt-2 border-t-2">
         <QuizDeleteButton onDeleteClick={() => deleteQuiz.mutate(quiz.id)} />

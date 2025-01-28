@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { PlayerList } from "@/features/games-as-host/components/PlayerList";
 import { useGameAsHost, useStartGame } from "@/features/games-as-host/queries";
 import { GameStatus } from "@/types/game";
+import { pluralise } from "@/utils/pluralise";
 import { useDocumentTitle } from "@/utils/useDocumentTitle";
 import { Link, useLocation } from "wouter";
 
@@ -63,7 +64,7 @@ export function HostLobby({ quizID }: { quizID: string }) {
       <div className="md:order-last md:col-span-2">
         <h2 className="font-black mb-4">
           {players && players.length > 0
-            ? `${players.length} Players`
+            ? `${players.length} ${pluralise("Player", players.length)}`
             : "Waiting for players…"}
         </h2>
         {players && (
