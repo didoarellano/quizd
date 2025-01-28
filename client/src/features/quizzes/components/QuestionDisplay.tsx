@@ -1,6 +1,7 @@
 import { Markdown } from "@/components/Markdown";
 import { cn } from "@/lib/utils";
 import { Answer, Option, Question } from "@/types/quiz";
+import { Check } from "lucide-react";
 import { createContext, PropsWithChildren, useContext } from "react";
 
 type QuestionDisplayContextType = {
@@ -95,27 +96,35 @@ function Options({
 
   return (
     <ol className={cn("grid gap-[0.5em]", className)}>
-      {options.map((option) => (
-        <li key={option.id} className="border">
-          <label
-            className={cn(
-              "block p-[1em] cursor-pointer",
-              activeOptionID === option.id && "bg-amber-50",
-              answerKey && answerKey.includes(option.id) && "bg-green-50"
-            )}
-          >
-            <Markdown disallowedElements={["p"]} unwrapDisallowed={true}>
-              {option.text}
-            </Markdown>
-            <input
-              type="radio"
-              name={questionID}
-              className="hidden"
-              onChange={() => handleChange(option.id)}
-            />
-          </label>
-        </li>
-      ))}
+      {options.map((option) => {
+        const isCorrect = answerKey && answerKey.includes(option.id);
+        return (
+          <li key={option.id} className="border">
+            <label
+              className={cn(
+                "grid grid-cols-[1fr,auto] items-center p-[1em] cursor-pointer",
+                activeOptionID === option.id && "bg-amber-50",
+                isCorrect && "bg-green-50"
+              )}
+            >
+              <span>
+                <Markdown disallowedElements={["p"]} unwrapDisallowed={true}>
+                  {option.text}
+                </Markdown>
+              </span>
+
+              {isCorrect && <Check strokeWidth={4} size="1.125em" />}
+
+              <input
+                type="radio"
+                name={questionID}
+                className="hidden"
+                onChange={() => handleChange(option.id)}
+              />
+            </label>
+          </li>
+        );
+      })}
     </ol>
   );
 }
