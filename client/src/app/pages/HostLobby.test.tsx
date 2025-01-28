@@ -62,7 +62,15 @@ it("renders the host lobby with game details", () => {
 
   expect(screen.getByText("Test Quiz")).toBeInTheDocument();
   expect(screen.getByText("This is a test quiz.")).toBeInTheDocument();
-  expect(screen.getByText("Enter PIN: 1234")).toBeInTheDocument();
+  expect(
+    screen.getByText(
+      (content, element) =>
+        !!(
+          /Enter PIN code:/i.test(content) &&
+          element?.textContent?.includes("1234")
+        )
+    )
+  ).toBeInTheDocument();
   expect(screen.getByText("Rubber")).toBeInTheDocument();
   expect(screen.getByText("Dork")).toBeInTheDocument();
   expect(screen.getByRole("link", { name: "Start Game" })).toBeInTheDocument();
