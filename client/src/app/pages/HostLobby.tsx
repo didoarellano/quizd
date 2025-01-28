@@ -26,17 +26,17 @@ export function HostLobby({ quizID }: { quizID: string }) {
         <h2 className="font-bold">Join the game</h2>
         <p>
           Go to:
-          <div className="w-fit py-2 px-4 font-semibold bg-slate-100 text-teal-600 rounded-sm md:text-nowrap">
+          <span className="w-fit py-2 px-4 block font-semibold bg-slate-100 text-teal-600 rounded-sm md:text-nowrap">
             {window.location.href
               .replace(/https?:\/\//g, "")
               .replace(/host\/.*/i, "play")}
-          </div>
+          </span>
         </p>
         <p>
           Enter PIN code:
-          <div className="w-fit py-2 px-4 font-semibold font-mono bg-slate-100 text-teal-600 rounded-sm">
+          <span className="w-fit py-2 px-4 block font-semibold font-mono bg-slate-100 text-teal-600 rounded-sm">
             {game?.pin}
-          </div>
+          </span>
         </p>
       </div>
 
