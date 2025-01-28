@@ -1,11 +1,12 @@
 import { BackButton } from "@/components/BackButton";
 import { Button } from "@/components/ui/button";
-import { QuestionResults } from "@/features/games-as-host/components/QuestionResults";
 import {
+  useEndGame,
   useGameAsHost,
   useQuestionRoundMutations,
 } from "@/features/games-as-host/queries";
 import { QuestionDisplay } from "@/features/quizzes/components/QuestionDisplay";
+import { Answer } from "@/types/quiz";
 import { useDocumentTitle } from "@/utils/useDocumentTitle";
 import { useLocation, useSearch } from "wouter";
 
@@ -14,9 +15,14 @@ export function HostQuestion({ quizID }: { quizID: string }) {
   const searchParams = useSearch();
   const view = new URLSearchParams(searchParams).get("view");
   const [location, setLocation] = useLocation();
-  const { closeCurrentRound } = useQuestionRoundMutations({
+  const { startNewRound, closeCurrentRound } = useQuestionRoundMutations({
     quizID,
+    onStartNewRound: () => setLocation(`${location}`),
     onCloseRound: () => setLocation(`${location}?view=results`),
+  });
+  const endGame = useEndGame({
+    quizID,
+    onBeforeEndGame: () => setLocation(`/${quizID}/results`),
   });
 
   useDocumentTitle(`Playing ${game?.quiz.title ?? "Quiz"}`);
@@ -26,6 +32,9 @@ export function HostQuestion({ quizID }: { quizID: string }) {
   const currentIndex = game.activeGameChannel.currentQuestionIndex;
   const questions = game.quiz.questions;
   const question = questions[currentIndex];
+  const nextIndex = currentIndex + 1 < questions.length && currentIndex + 1;
+  let answerKey: Answer[] | undefined;
+  if (view === "results") answerKey = game.answerKey[question.id];
 
   return (
     <div className="min-h-screen flex flex-col gap-8">
@@ -40,44 +49,45 @@ export function HostQuestion({ quizID }: { quizID: string }) {
               {currentIndex + 1}/{questions.length}
             </div>
 
-            <Button
-              size="sm"
-              onClick={() => closeCurrentRound.mutate(question.id)}
-            >
-              Close Question
-            </Button>
+            {view !== "results" ? (
+              <Button
+                size="sm"
+                onClick={() => closeCurrentRound.mutate(question.id)}
+              >
+                Close Question
+              </Button>
+            ) : nextIndex ? (
+              <Button size="sm" onClick={() => startNewRound.mutate(nextIndex)}>
+                Next Question
+              </Button>
+            ) : (
+              <Button size="sm" onClick={() => endGame.mutate(quizID)}>
+                End Game
+              </Button>
+            )}
           </div>
         </div>
       </header>
 
       <main className="container mx-auto p-4">
-        {view === "results" ? (
-          <QuestionResults
-            key={question.id}
-            question={question}
-            answerKey={game.answerKey}
-            playerAnswers={game.players}
-          />
-        ) : (
-          <QuestionDisplay
-            key={question.id}
-            question={question}
-            size="xl"
-            className="pointer-events-none"
-          >
-            <QuestionDisplay.Heading>
-              {question.heading}
-            </QuestionDisplay.Heading>
+        <QuestionDisplay
+          key={question.id}
+          question={question}
+          size="xl"
+          className="pointer-events-none"
+        >
+          <QuestionDisplay.Heading>{question.heading}</QuestionDisplay.Heading>
 
-            {question.body && (
-              <QuestionDisplay.Body>{question.body}</QuestionDisplay.Body>
-            )}
-            <QuestionDisplay.Options
-              questionID={question.id}
-              options={question.options}
-            />
-          </QuestionDisplay>
-        )}
+          {question.body && (
+            <QuestionDisplay.Body>{question.body}</QuestionDisplay.Body>
+          )}
+
+          <QuestionDisplay.Options
+            questionID={question.id}
+            options={question.options}
+            answerKey={answerKey}
+          />
+        </QuestionDisplay>
       </main>
     </div>
   );
