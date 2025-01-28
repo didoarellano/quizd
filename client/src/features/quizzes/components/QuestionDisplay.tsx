@@ -11,22 +11,27 @@ const QuestionDisplayContext = createContext<QuestionDisplayContextType | null>(
   null
 );
 
+type Size = "normal" | "xl";
+
 type QuestionDisplayProps = {
+  size?: Size;
   className?: string;
   question: Question;
 };
 
 export function QuestionDisplay({
+  size = "normal",
   className,
   question,
   ...props
 }: PropsWithChildren<QuestionDisplayProps>) {
   const bodyID = `question-body-${question.id}`;
+  const textSize = size === "normal" ? "text-base" : "text-4xl";
   return (
     <QuestionDisplayContext.Provider value={{ bodyID }}>
       <fieldset {...(question.body && { "aria-describedby": bodyID })}>
         {/* grid/flex on fieldset still wonky */}
-        <div className={cn("grid gap-4", className)} {...props} />
+        <div className={cn("grid gap-[1em]", textSize, className)} {...props} />
       </fieldset>
     </QuestionDisplayContext.Provider>
   );
@@ -39,7 +44,7 @@ type CommonTextProps = {
 
 function Heading({ children, className = "" }: CommonTextProps) {
   return (
-    <legend className={cn("text-xl font-bold", className)}>
+    <legend className={cn("text-[1.5em] leading-none font-black", className)}>
       <Markdown disallowedElements={["p"]} unwrapDisallowed={true}>
         {children}
       </Markdown>
@@ -58,7 +63,7 @@ function Body({ children, className = "" }: CommonTextProps) {
     <div
       id={context.bodyID}
       className={cn(
-        "grid gap-2 [&_pre]:bg-slate-50 [&_pre]:p-4 [&_pre]:border [&_pre]:rounded-sm",
+        "grid gap-[0.5em] [&_pre]:bg-slate-50 [&_pre]:p-[1em] [&_pre]:border [&_pre]:rounded-sm",
         className
       )}
     >
@@ -89,12 +94,12 @@ function Options({
   }
 
   return (
-    <ol className={cn("grid gap-2", className)}>
+    <ol className={cn("grid gap-[0.5em]", className)}>
       {options.map((option) => (
         <li key={option.id} className="border">
           <label
             className={cn(
-              "block py-4 px-6 cursor-pointer",
+              "block p-[1em] cursor-pointer",
               activeOptionID === option.id && "bg-amber-50",
               answerKey && answerKey.includes(option.id) && "bg-green-50"
             )}
