@@ -82,6 +82,16 @@ it("renders loading state when data is pending", () => {
   expect(screen.getByText("...")).toBeInTheDocument();
 });
 
+it("redirects if game is not found", () => {
+  (useGameAsPlayer as Mock).mockReturnValue({
+    data: null,
+    isPending: false,
+  });
+  render(<PlayerGameScreen pin="123456" />);
+
+  expect(screen.getByText("Redirected to: ~")).toBeInTheDocument();
+});
+
 it("redirects if user is not authenticated", () => {
   (useAuth as Mock).mockReturnValue({ user: null });
   (useGameAsPlayer as Mock).mockReturnValue({

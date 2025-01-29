@@ -25,8 +25,8 @@ export function PlayerGameScreen({ pin }: { pin: string }) {
   }
 
   if (!data) {
-    // TODO redirect?
-    return <p>Game not found.</p>;
+    // TODO flash message
+    return <Redirect to={`~${base}`} />;
   }
 
   if (!user) {
