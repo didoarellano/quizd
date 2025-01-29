@@ -11,12 +11,11 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-it("redirects to /PIN on form submit", () => {
+it("redirects to /{PIN} on entering 6-digit PIN", () => {
   render(<JoinGame />);
-  const input = screen.getByLabelText(/pin code/i);
-  const form = screen.getByRole("form", { name: /join game/i });
-  fireEvent.change(input, { target: { value: "123456" } });
-  fireEvent.submit(form);
-
+  const inputs = screen.getAllByLabelText(/digit \d/i);
+  inputs.forEach((input, i) => {
+    fireEvent.change(input, { target: { value: i + 1 } });
+  });
   expect(mockSetLocation).toHaveBeenCalledWith("/123456");
 });

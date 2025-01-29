@@ -1,33 +1,26 @@
+import { PinCodeInput } from "@/components/PinCodeInput";
 import { useDocumentTitle } from "@/utils/useDocumentTitle";
-import { FormEvent, useRef } from "react";
 import { useLocation } from "wouter";
 
 export function JoinGame() {
   const [, setLocation] = useLocation();
-  const inputRef = useRef<HTMLInputElement>(null);
 
   useDocumentTitle(`Join a Game`);
 
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    const pin = inputRef?.current?.value;
+  function handlePinComplete(pin: string) {
     if (pin) setLocation(`/${pin}`);
   }
 
   return (
-    <form aria-label="join game" onSubmit={handleSubmit}>
-      <label htmlFor="pin">Pin Code</label>
-      <input
-        id="pin"
-        name="pin"
-        ref={inputRef}
-        type="text"
-        minLength={6}
-        maxLength={6}
-        placeholder="Enter PIN code"
-        required
-      />
-      <button>Join Game</button>
-    </form>
+    <main className="h-screen p-2 flex items-center justify-center bg-teal-600 ">
+      <form aria-label="Join a Game">
+        <h1 className="w-full mb-2 uppercase text-5xl font-black text-white [text-shadow:_2px_2px_0_rgb(0_0_0_/_30%)] text-left">
+          Join a Game
+        </h1>
+        <div className="p-8 border flex flex-col gap-4 items-center bg-white shadow-lg rounded-sm">
+          <PinCodeInput digits={6} onComplete={handlePinComplete} />
+        </div>
+      </form>
+    </main>
   );
 }
