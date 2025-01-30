@@ -1,4 +1,5 @@
 import { Markdown } from "@/components/Markdown";
+import { GameResults } from "@/features/games-as-player/components/GameResults";
 import { WaitingForHost } from "@/features/games-as-player/components/WaitingForHost";
 import {
   useGameAsPlayer,
@@ -99,10 +100,12 @@ export function PlayerGameScreen({ pin }: { pin: string }) {
     );
 
     return (
-      <>
-        <h1>Results</h1>
-        {thisPlayer && <p>You scored {thisPlayer.score} points</p>}
-      </>
+      thisPlayer && (
+        <GameResults
+          player={thisPlayer}
+          questionCount={data.quiz.questions.length}
+        />
+      )
     );
   }
 
