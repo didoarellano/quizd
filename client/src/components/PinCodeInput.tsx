@@ -38,7 +38,7 @@ export function PinCodeInput({ digits = 6, onComplete }: PinCodeInputProps) {
     <>
       <label
         htmlFor="digit-0"
-        className="w-full cursor-pointer text-xl font-bold"
+        className="w-full block mb-2 cursor-pointer text-xl font-bold"
       >
         Enter 6-digit PIN Code
       </label>
