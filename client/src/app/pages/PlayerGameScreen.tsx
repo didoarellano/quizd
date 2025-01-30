@@ -1,4 +1,5 @@
 import { Markdown } from "@/components/Markdown";
+import { WaitingForHost } from "@/features/games-as-player/components/WaitingForHost";
 import {
   useGameAsPlayer,
   useSaveAnswerMutation,
@@ -34,12 +35,7 @@ export function PlayerGameScreen({ pin }: { pin: string }) {
   }
 
   if (data.activeGameChannel.status === GameStatus.PENDING) {
-    return (
-      <>
-        <p>Welcome {user?.displayName}!</p>
-        <p>Waiting for host to start the game.</p>
-      </>
-    );
+    return <WaitingForHost username={user.displayName} />;
   }
 
   const answerKey = data.activeGameChannel?.currentQuestionAnswer;
