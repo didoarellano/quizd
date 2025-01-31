@@ -1,5 +1,9 @@
 import { ActiveQuestion } from "@/features/games-as-player/components/ActiveQuestion";
 import { GameResults } from "@/features/games-as-player/components/GameResults";
+import {
+  GameRouter,
+  Route,
+} from "@/features/games-as-player/components/GameRouter";
 import { LoadingGame } from "@/features/games-as-player/components/LoadingGame";
 import { WaitingForHost } from "@/features/games-as-player/components/WaitingForHost";
 import { useGameAsPlayer } from "@/features/games-as-player/queries";
@@ -25,29 +29,29 @@ export function PlayerGameScreen({ pin }: { pin: string }) {
     return <Redirect to={`~${base}`} />;
   }
 
-  if (data.activeGameChannel.status === GameStatus.PENDING) {
-    return <WaitingForHost username={user.displayName} />;
-  }
-
-  if (data.activeGameChannel.status === GameStatus.ONGOING) {
-    return <ActiveQuestion data={data} gamePIN={pin} />;
-  }
-
-  if (
-    data.activeGameChannel.status === GameStatus.COMPLETED &&
-    data.activeGameChannel.leaderboard
-  ) {
-    const thisPlayer = data.activeGameChannel.leaderboard.find(
-      (player) => player.id === user.id
-    );
-
-    return (
-      thisPlayer && (
-        <GameResults
-          player={thisPlayer}
-          questionCount={data.quiz.questions.length}
-        />
-      )
-    );
-  }
+  return (
+    <GameRouter status={data.activeGameChannel.status}>
+      <Route
+        status={GameStatus.PENDING}
+        component={<WaitingForHost username={user.displayName} />}
+      />
+      <Route
+        status={GameStatus.ONGOING}
+        component={<ActiveQuestion data={data} gamePIN={pin} />}
+      />
+      <Route
+        status={GameStatus.COMPLETED}
+        component={
+          <GameResults
+            player={
+              data?.activeGameChannel?.leaderboard?.find(
+                (player) => player.id === user.id
+              ) ?? null
+            }
+            questionCount={data.quiz.questions.length}
+          />
+        }
+      />
+    </GameRouter>
+  );
 }

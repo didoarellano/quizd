@@ -3,7 +3,7 @@ import { Leaderboard } from "@/types/game";
 import { pluralise } from "@/utils/pluralise";
 
 type GameOverProps = {
-  player: Leaderboard[0];
+  player: Leaderboard[0] | null;
   questionCount: number;
 };
 
@@ -13,7 +13,9 @@ export function GameResults({ player, questionCount }: GameOverProps) {
       title="Thanks for playing"
       heading={<GameLayout.Heading>Thanks for playing</GameLayout.Heading>}
       mainContent={
-        player && (
+        !player ? (
+          <p className="text-gray-500 animate-pulse">Fetching results...</p>
+        ) : (
           <p>
             You got {player.score} of {questionCount}{" "}
             {pluralise("question", questionCount)} correct for a total score of{" "}
