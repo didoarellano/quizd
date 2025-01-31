@@ -1,5 +1,6 @@
 import { ActiveQuestion } from "@/features/games-as-player/components/ActiveQuestion";
 import { GameResults } from "@/features/games-as-player/components/GameResults";
+import { LoadingGame } from "@/features/games-as-player/components/LoadingGame";
 import { WaitingForHost } from "@/features/games-as-player/components/WaitingForHost";
 import { useGameAsPlayer } from "@/features/games-as-player/queries";
 import { GameStatus } from "@/types/game";
@@ -12,7 +13,7 @@ export function PlayerGameScreen({ pin }: { pin: string }) {
   const { base } = useRouter();
 
   if (isPending) {
-    return <p>...</p>;
+    return <LoadingGame />;
   }
 
   if (!data) {
@@ -49,6 +50,4 @@ export function PlayerGameScreen({ pin }: { pin: string }) {
       )
     );
   }
-
-  return <p>...</p>;
 }
