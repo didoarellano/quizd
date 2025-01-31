@@ -1,26 +1,15 @@
-import { Markdown } from "@/components/Markdown";
+import { ActiveQuestion } from "@/features/games-as-player/components/ActiveQuestion";
 import { GameResults } from "@/features/games-as-player/components/GameResults";
 import { WaitingForHost } from "@/features/games-as-player/components/WaitingForHost";
-import {
-  useGameAsPlayer,
-  useSaveAnswerMutation,
-} from "@/features/games-as-player/queries";
-import { QuestionDisplay } from "@/features/quizzes/components/QuestionDisplay";
+import { useGameAsPlayer } from "@/features/games-as-player/queries";
 import { GameStatus } from "@/types/game";
 import { useAuth } from "@/utils/AuthContext";
-import { useDocumentTitle } from "@/utils/useDocumentTitle";
 import { Redirect, useRouter } from "wouter";
 
 export function PlayerGameScreen({ pin }: { pin: string }) {
   const { user } = useAuth();
   const { data, isPending } = useGameAsPlayer(pin);
-  const saveAnswer = useSaveAnswerMutation({
-    docPath: `games/${data?.gameID}/players/${user?.id}`,
-    pin,
-  });
   const { base } = useRouter();
-
-  useDocumentTitle(`Playing ${data?.quiz.title ?? "Quiz"}`);
 
   if (isPending) {
     return <p>...</p>;
@@ -39,56 +28,8 @@ export function PlayerGameScreen({ pin }: { pin: string }) {
     return <WaitingForHost username={user.displayName} />;
   }
 
-  const answerKey = data.activeGameChannel?.currentQuestionAnswer;
-  const questionIsClosed = !!answerKey;
-  const question =
-    data.quiz.questions[data.activeGameChannel.currentQuestionIndex];
-  const currentAnswerID = data.answers[question.id];
-
-  if (
-    data.activeGameChannel.status === GameStatus.ONGOING &&
-    questionIsClosed
-  ) {
-    const correctAnswers = question.options.filter((o) =>
-      answerKey.includes(o.id)
-    );
-    const playerAnswer = question.options.find((o) => o.id === currentAnswerID);
-    const isCorrect = answerKey.includes(currentAnswerID);
-
-    return (
-      <>
-        <h3>Correct answer(s):</h3>
-        {correctAnswers.map((option) => (
-          <Markdown key={option.id}>{option.text}</Markdown>
-        ))}
-        {playerAnswer && (
-          <>
-            <h3>Your answer</h3>
-            <Markdown>{playerAnswer.text}</Markdown>
-            <p>is {isCorrect ? "correct" : "incorrect"}</p>
-          </>
-        )}
-      </>
-    );
-  }
-
   if (data.activeGameChannel.status === GameStatus.ONGOING) {
-    return (
-      <QuestionDisplay key={question.id} question={question}>
-        <QuestionDisplay.Heading>{question.heading}</QuestionDisplay.Heading>
-        {question.body && (
-          <QuestionDisplay.Body>{question.body}</QuestionDisplay.Body>
-        )}
-        <QuestionDisplay.Options
-          questionID={question.id}
-          options={question.options}
-          activeOptionID={currentAnswerID}
-          onOptionChange={(questionID, answerID) => {
-            saveAnswer.mutate({ questionID, answerID });
-          }}
-        />
-      </QuestionDisplay>
-    );
+    return <ActiveQuestion data={data} gamePIN={pin} />;
   }
 
   if (

@@ -97,14 +97,25 @@ function Options({
   return (
     <ol className={cn("grid gap-[0.5em]", className)}>
       {options.map((option) => {
-        const isCorrect = answerKey && answerKey.includes(option.id);
+        const isActive = activeOptionID === option.id;
+        const isCorrect = answerKey?.includes(option.id);
+        let statusClassName = "";
+        if (answerKey) {
+          statusClassName = isCorrect
+            ? "bg-teal-300"
+            : isActive
+            ? "bg-red-300"
+            : "";
+        } else if (isActive) {
+          statusClassName = "bg-amber-50";
+        }
+
         return (
           <li key={option.id} className="border">
             <label
               className={cn(
                 "grid grid-cols-[1fr,auto] items-center p-[1em] cursor-pointer",
-                activeOptionID === option.id && "bg-amber-50",
-                isCorrect && "bg-green-50"
+                statusClassName
               )}
             >
               <span>
