@@ -34,6 +34,20 @@ export function PinCodeInput({ digits = 6, onComplete }: PinCodeInputProps) {
     }
   }
 
+  function handlePaste(e: React.ClipboardEvent<HTMLInputElement>) {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData("text");
+    const newCode = Array.from(
+      { length: digits },
+      (_, i) => pastedData[i] ?? ""
+    );
+    setPinCode(newCode);
+    inputRefs.current[Math.min(pastedData.length, digits - 1)]?.focus();
+    if (newCode.every((digit) => digit !== "")) {
+      onComplete(newCode.join(""));
+    }
+  }
+
   return (
     <>
       <label
@@ -56,6 +70,7 @@ export function PinCodeInput({ digits = 6, onComplete }: PinCodeInputProps) {
             value={digit}
             onChange={(e) => handleChange(i, e.target.value)}
             onKeyDown={(e) => handleKeyDown(i, e)}
+            onPaste={handlePaste}
             ref={(el) => (inputRefs.current[i] = el)}
             className="w-12 h-12 border text-center text-2xl font-bold font-mono bg-slate-100 shadow-sm"
             aria-label={`Digit ${i + 1}`}
