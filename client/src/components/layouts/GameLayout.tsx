@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { useDocumentTitle } from "@/utils/useDocumentTitle";
-import { PropsWithChildren, ReactNode } from "react";
+import { HTMLAttributes, PropsWithChildren, ReactNode } from "react";
 
 type GameLayoutProps = {
   title: string;
@@ -48,9 +48,19 @@ export function GameLayout({
   );
 }
 
-function Heading({ children }: PropsWithChildren) {
+function Heading({
+  children,
+  className,
+  ...props
+}: PropsWithChildren<HTMLAttributes<HTMLHeadingElement>>) {
   return (
-    <h1 className="uppercase font-black text-white [text-shadow:_2px_2px_0_rgb(0_0_0_/_30%)]">
+    <h1
+      className={cn(
+        "uppercase font-black text-white [text-shadow:_2px_2px_0_rgb(0_0_0_/_30%)]",
+        className
+      )}
+      {...props}
+    >
       {children}
     </h1>
   );

@@ -46,7 +46,9 @@ service cloud.firestore {
     }
 
     match /games/{gameID} {
-      allow read, create, delete: if false;
+      allow create, delete: if false;
+
+      allow read: if request.auth != null && resource.data.keys().hasOnly(["status", "pin"])
 
       // creator can update status field
       allow update: if request.auth != null &&

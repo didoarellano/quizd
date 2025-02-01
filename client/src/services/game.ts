@@ -5,7 +5,14 @@ import {
   JoinGameResponse,
   LiveGame,
 } from "@/types/game";
-import { doc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 
 export const getOrCreateGame = httpsCallable<string, LiveGame>(
@@ -44,4 +51,14 @@ export function startNewQuestion(gameID: string, currentQuestionIndex: number) {
 export function closeQuestion(gameID: string, currentQuestionAnswer: string[]) {
   const activeGameChannelRef = doc(db, "activeGamesChannel", gameID);
   return updateDoc(activeGameChannelRef, { currentQuestionAnswer });
+}
+
+export async function gameWithPinExists(pin: string) {
+  const q = query(
+    collection(db, "games"),
+    where("status", "!=", GameStatus.COMPLETED),
+    where("pin", "==", pin)
+  );
+  const querySnapshot = await getDocs(q);
+  return !querySnapshot.empty;
 }
