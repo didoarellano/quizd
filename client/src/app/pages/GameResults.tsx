@@ -1,3 +1,4 @@
+import { GameLayout } from "@/components/layouts/GameLayout";
 import { LeaderboardDisplay } from "@/features/games-as-host/components/Leaderboard";
 import { useGameResults } from "@/features/games-as-host/queries";
 
@@ -11,11 +12,10 @@ export function GameResults({ quizID }: { quizID: string }) {
   const { leaderboard, quiz } = data;
 
   return (
-    <>
-      <h1>Game Results</h1>
-      <h2>{quiz.title}</h2>
-      <h3>{quiz.description}</h3>
-      <LeaderboardDisplay leaderboard={leaderboard} />
-    </>
+    <GameLayout
+      title={`${quiz.title} Results`}
+      heading={<GameLayout.Heading>{quiz.title}</GameLayout.Heading>}
+      mainContent={<LeaderboardDisplay leaderboard={leaderboard} />}
+    ></GameLayout>
   );
 }
