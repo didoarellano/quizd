@@ -32,6 +32,7 @@ export type SavedGame = {
 export type Leaderboard = { id: string; displayName: string; score: number }[];
 
 export type ActiveGameChannel = {
+  pin: string;
   status: GameStatusKeys;
   currentQuestionIndex: number;
   currentQuestionTimer?: number;

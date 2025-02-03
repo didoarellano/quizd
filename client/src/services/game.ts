@@ -55,7 +55,7 @@ export function closeQuestion(gameID: string, currentQuestionAnswer: string[]) {
 
 export async function gameWithPinExists(pin: string) {
   const q = query(
-    collection(db, "games"),
+    collection(db, "activeGamesChannel"),
     where("status", "!=", GameStatus.COMPLETED),
     where("pin", "==", pin)
   );

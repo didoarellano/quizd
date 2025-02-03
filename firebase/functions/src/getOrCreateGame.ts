@@ -58,6 +58,7 @@ export const getOrCreateGame = onCall<string, Promise<LiveGame>>(
       ...newGame,
       players: [],
       activeGameChannel: {
+        pin,
         status: GameStatus.PENDING,
         currentQuestionIndex: 0,
       },
