@@ -1,4 +1,5 @@
 import { BackButton } from "@/components/BackButton";
+import { CountdownTimer } from "@/components/CountdownTimer";
 import { Button } from "@/components/ui/button";
 import {
   useEndGame,
@@ -45,25 +46,24 @@ export function HostQuestion({ quizID }: { quizID: string }) {
             {game.quiz.title}
           </h1>
           <div className="flex gap-2 items-center justify-end">
-            <div className="text-2xl/normal font-mono">
+            <div className="text-lg font-mono font-bold">
               {currentIndex + 1}/{questions.length}
             </div>
 
             {view !== "results" ? (
-              <Button
-                size="sm"
-                onClick={() => closeCurrentRound.mutate(question.id)}
-              >
-                Close Question
-              </Button>
+              <CountdownTimer
+                key={question.id}
+                start={question.duration || 60}
+                onEnd={() => {
+                  closeCurrentRound.mutate(question.id);
+                }}
+              />
             ) : nextIndex ? (
-              <Button size="sm" onClick={() => startNewRound.mutate(nextIndex)}>
+              <Button onClick={() => startNewRound.mutate(nextIndex)}>
                 Next Question
               </Button>
             ) : (
-              <Button size="sm" onClick={() => endGame.mutate(quizID)}>
-                End Game
-              </Button>
+              <Button onClick={() => endGame.mutate(quizID)}>End Game</Button>
             )}
           </div>
         </div>
