@@ -15,7 +15,7 @@ export function AppRouter() {
   const { user } = useAuth();
 
   return (
-    <Router base={import.meta.env.VITE_BASE_URL}>
+    <Router>
       <Switch>
         <PrivateRoute
           path="/quiz"

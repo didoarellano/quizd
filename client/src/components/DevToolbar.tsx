@@ -6,9 +6,9 @@ import { useLocation } from "wouter";
 
 export function DevToolbar() {
   const { user, signin, signout, signinAnonymously } = useAuth();
+  const hostRouteMatch = location.match(/^\/host\/([^/]+)/);
   const [isShowing, setIsShowing] = useState(false);
   const [location] = useLocation();
-  const hostRouteMatch = location.match(/^\/haderach\/host\/([^/]+)/);
   const quizID = hostRouteMatch && hostRouteMatch[1];
 
   return (

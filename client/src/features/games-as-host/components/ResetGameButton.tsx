@@ -9,7 +9,7 @@ export function ResetGameButton({ quizID }: { quizID: string }) {
     mutationFn: () => resetGame(quizID),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["games", quizID] });
-      setLocation(`${import.meta.env.VITE_BASE_URL}/host/${quizID}/play`);
+      setLocation(`~/host/${quizID}/play`);
     },
   });
   return <button onClick={() => resetGameMutation.mutate()}>RESET GAME</button>;
