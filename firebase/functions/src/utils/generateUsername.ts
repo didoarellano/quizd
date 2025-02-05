@@ -1,22 +1,28 @@
 import { randomInt } from "crypto";
 
 // prettier-ignore
-const duckBreeds = [ "AbacotRanger", "African", "Alabio", "Allier",
-  "AmericanPekin", "Ancona", "Appleyard", "AustralianCall", "AustralianSpotted",
-  "Aylesbury", "BacKinh", "Bali", "Bashkir", "Bau", "Blekinge", "Bourbourg",
-  "Crested", "Call", "Cayuga", "Challans", "CharaChamble", "Crested", "Danish",
-  "Dendermond", "DeshiBlack", "DeshiWhite", "Duclair", "EastIndie", "Elizabeth",
-  "Estaires", "Faroese", "Forest", "GermanPekin", "GermanataVeneta",
-  "Gimbsheimer", "GoldenCascade", "Gressingham", "GrimaoErmaôs", "HautVolant",
-  "Havanna", "Herve", "HookBill", "Hungarian", "Huttegem", "IndianRunner",
-  "Idegem", "IndianRunner", "JapaniceCriollo", "Jending", "Kaiya",
-  "KhakiCampbell", "Laplaigne", "Muscovy", "Magpie", "Merchtem", "Mulard",
-  "Muscovy", "NakedNeck", "Orpington", "Overberg", "Pomeranian", "Pond",
-  "RouenClair", "Rouen", "SilverAppleyard", "Saxony", "Semois", "Shetland",
-  "SilverAppleyard", "SilverBantam", "SwedishBlue", "SwedishYellow", "TeaAnkam",
-  "TeaKapa", "Termonde", "Tsaiya", "UkrainianClay", "UkrainianGrey",
-  "UkrainianWhite", "Venetian", "WelshHarlequin", "Watervale", "WelshHarlequin",
-  "WestIndian", "WhiteBreastedBlack", ];
+const dogBreeds = [
+  "Frenchie", "Lab", "Golden", "GSD", "Poodle",
+  "Bullie", "Rottie", "Doxie", "Dobie", "Husky",
+  "Beagle", "Corgi", "Aussie", "Boxer", "Yorkie",
+  "GSP", "Cav", "Schnauzer", "ShihTzu", "Pom",
+  "Chi", "BorderCollie", "Pug", "GreatDane", "Dobie", "MiniSchnauzer",
+  "Cocker", "Rottie", "Sheltie", "Boston", "Havi",
+  "Berner", "EnglishBullie", "StandardPoodle", "CavKingCharles", "Puggie",
+  "Chihuahua", "MiniSchnauzer", "ShihTzu", "PomPom", "BCollie",
+  "Weim", "Springer", "Bichon", "Mastiff", "Newfie",
+  "Dane", "Vizsla", "Basenji", "Akita", "Shiba",
+  "Staffy", "Malinois", "Heeler", "Pitbull", "Maltese",
+  "Peke", "Samoyed", "Papillon", "Chow", "Borzoi",
+  "Whippet", "Lhasa", "Saluki", "Terv", "Pyrenees",
+  "Cockapoo", "Goldendoodle", "Labradoodle", "Schnoodle", "Maltipoo",
+  "Shepadoodle", "Boxador", "Bullmastiff", "CaneCorso", "Dal",
+  "IrishSetter", "Scottie", "Westie", "Norwich", "Norfolk",
+  "Airedale", "Pointer", "Toller", "JRT", "Silky",
+  "BrusselsGriff", "BullieTerrier", "Leonberger", "Anatolian", "Kuvasz",
+  "GreatPyrenees", "Coonhound", "Foxhound", "Otterhound", "Plott",
+  "Redbone", "Bluetick", "Bassador", "Shorkie", "Yorkipoo"
+];
 // prettier-ignore
 const adjectives = [ "Adorable", "Fluffy", "Tiny", "Bubbly", "Cuddly",
   "Cheerful", "Playful", "Perky", "Sweet", "Lovable", "Snuggly", "Friendly",
@@ -29,7 +35,7 @@ const adjectives = [ "Adorable", "Fluffy", "Tiny", "Bubbly", "Cuddly",
 
 export function generateUsername() {
   const adjective = adjectives[randomInt(0, adjectives.length)];
-  const duckBreed = duckBreeds[randomInt(0, duckBreeds.length)];
+  const duckBreed = dogBreeds[randomInt(0, dogBreeds.length)];
   return `${adjective}${duckBreed}`;
 }
 
