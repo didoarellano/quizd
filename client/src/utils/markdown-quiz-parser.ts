@@ -54,7 +54,17 @@ function parseQuestion(
   generateID: idGenerator
 ): Question {
   const questionID = generateID();
-  const heading = toMD(node.children);
+  let heading = toMD(node.children);
+
+  let duration: number | undefined;
+  const durationRegex = /(.*?)\s*\{-\s*(\d+)([sm])\s*\}/;
+  const durationMatch = heading.match(durationRegex);
+  if (durationMatch) {
+    heading = durationMatch[1];
+    duration = parseInt(durationMatch[2], 10);
+    const unit = durationMatch[3];
+    if (unit === "m") duration *= 60;
+  }
 
   let j = i + 1;
   let nextNode: RootContent;
@@ -77,6 +87,7 @@ function parseQuestion(
     id: questionID,
     heading,
     body,
+    duration,
     options,
     answers,
   };

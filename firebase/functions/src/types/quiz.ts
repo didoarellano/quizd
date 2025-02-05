@@ -17,6 +17,7 @@ export type Question = {
   type?: QuestionTypeKeys;
   heading: string;
   body: string;
+  duration?: number;
   options: Option[];
   answers?: Option["id"][];
 };

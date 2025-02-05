@@ -22,12 +22,14 @@ export function QuizEditorLayout({
   return (
     <div className="min-h-screen flex flex-col">
       <header className="md:h-[4rem] p-4 border-b">
-        <div className="h-full container mx-auto grid grid-cols-[auto_1fr_auto] gap-2 md:grid-cols-[1fr_2fr_1fr] justify-between">
+        <div className="h-full container mx-auto grid grid-cols-[auto_1fr_auto] gap-2 md:grid-cols-[1fr_2fr_1fr] items-center justify-between">
           <BackButton />
           <h1 className="text-2xl/normal font-bold text-left md:text-center truncate">
             {heading}
           </h1>
-          <div className="flex gap-2 justify-end">{actionBarItems}</div>
+          <div className="flex gap-2 items-center justify-end">
+            {actionBarItems}
+          </div>
         </div>
       </header>
 

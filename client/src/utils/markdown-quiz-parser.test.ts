@@ -63,3 +63,27 @@ This is the body of question 2.
   // One for each question (2) and answer (5)
   expect(mockGenerateID).toHaveBeenCalledTimes(7);
 });
+
+it("parses duration from question heading", () => {
+  const markdown = `
+## Question 1 {- 30s}
+30 second duration.
+
+- [ ] Option 1
+
+## Question 2 {- 2m}
+120 second duration.
+
+- [ ] Option 1
+
+## Question 3
+No duration.
+
+- [ ] Option 1
+`;
+
+  const { questions } = parseQuiz(mockGenerateID, markdown);
+  expect(questions[0].duration).toEqual(30);
+  expect(questions[1].duration).toEqual(120);
+  expect(questions[2].duration).toBeUndefined;
+});
