@@ -1,15 +1,42 @@
 import { ResetGameButton } from "@/features/games-as-host/components/ResetGameButton";
+import {
+  useEndGame,
+  useGameAsHost,
+  useQuestionRoundMutations,
+} from "@/features/games-as-host/queries";
 import { UserRoles } from "@/services/auth";
 import { useAuth } from "@/utils/AuthContext";
+import { Bug } from "lucide-react";
 import { useState } from "react";
 import { useLocation } from "wouter";
 
 export function DevToolbar() {
   const { user, signin, signout, signinAnonymously } = useAuth();
+  const [location, setLocation] = useLocation();
   const hostRouteMatch = location.match(/^\/host\/([^/]+)/);
+  const quizID = (hostRouteMatch && hostRouteMatch[1]) || "";
+  const { data: game } = useGameAsHost({ quizID });
+  const { startNewRound } = useQuestionRoundMutations({
+    quizID,
+    onStartNewRound: () => setLocation(`${location}`),
+    onCloseRound: () => setLocation(`${location}?view=results`),
+  });
+  const endGame = useEndGame({
+    quizID,
+    onBeforeEndGame: () => setLocation(`/${quizID}/results`),
+  });
   const [isShowing, setIsShowing] = useState(false);
-  const [location] = useLocation();
-  const quizID = hostRouteMatch && hostRouteMatch[1];
+
+  const currentIndex = game?.activeGameChannel.currentQuestionIndex;
+  const questions = game?.quiz.questions;
+  let nextIndex: number | undefined;
+  if (
+    typeof currentIndex === "number" &&
+    questions &&
+    currentIndex + 1 < questions.length
+  ) {
+    nextIndex = currentIndex + 1;
+  }
 
   return (
     <div className="fixed top-1 right-1 flex flex-col gap-1">
@@ -17,16 +44,14 @@ export function DevToolbar() {
         className="self-end h-8 w-8"
         onClick={() => setIsShowing((showing) => !showing)}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-          <path d="M120.1 208.3c-3.9-2.9-7.8-4.4-11.7-4.4H91v104.5h17.5c3.9 0 7.8-1.5 11.7-4.4 3.9-2.9 5.8-7.3 5.8-13.1v-69.7c0-5.8-2-10.2-5.8-13.1zM404.1 32H43.9C19.7 32 .1 51.6 0 75.8v360.4C.1 460.4 19.7 480 43.9 480h360.2c24.2 0 43.8-19.6 43.9-43.8V75.8c-.1-24.2-19.7-43.8-43.9-43.8zM154.2 291.2c0 18.8-11.6 47.3-48.4 47.3h-46.4V173h47.4c35.4 0 47.4 28.5 47.4 47.3l0 70.9zm100.7-88.7H201.6v38.4h32.6v29.6H201.6v38.4h53.3v29.6h-62.2c-11.2 .3-20.4-8.5-20.7-19.7V193.7c-.3-11.2 8.6-20.4 19.7-20.7h63.2l0 29.5zm103.6 115.3c-13.2 30.8-36.9 24.6-47.4 0l-38.5-144.8h32.6l29.7 113.7 29.6-113.7h32.6l-38.5 144.8z" />
-        </svg>
+        <Bug />
       </button>
 
       {isShowing && (
-        <>
+        <div className="p-4 border grid gap-2 bg-muted rounded shadow-xl">
           {user && (
             <>
-              <p>{user.displayName}</p>
+              <h3 className="font-bold">{user.displayName}</h3>
               <p className="text-xs">{user.id}</p>
             </>
           )}
@@ -40,10 +65,19 @@ export function DevToolbar() {
             </>
           )}
 
+          <button
+            onClick={() => {
+              console.log("next", nextIndex);
+              nextIndex && startNewRound.mutate(nextIndex);
+            }}
+          >
+            Next Question
+          </button>
+          <button onClick={() => endGame.mutate(quizID)}>End Game</button>
           {user?.role === UserRoles.Host && quizID && (
             <ResetGameButton quizID={quizID} />
           )}
-        </>
+        </div>
       )}
     </div>
   );
