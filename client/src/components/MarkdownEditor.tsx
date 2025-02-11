@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import CodeEditor from "@uiw/react-textarea-code-editor";
-import { useState, type FormEvent } from "react";
+import { ComponentProps, useState, type FormEvent } from "react";
 
-type MarkdownEditorProps = {
+type MarkdownEditorProps = ComponentProps<typeof CodeEditor> & {
   formID: string;
   handleSave: (mdText: string) => void;
   hideSaveButton?: boolean;
@@ -13,7 +13,9 @@ export function MarkdownEditor({
   formID,
   handleSave,
   hideSaveButton = false,
+  autoFocus = true,
   initialMDText = "",
+  ...props
 }: MarkdownEditorProps) {
   const [mdText, setMDText] = useState(initialMDText);
 
@@ -28,8 +30,9 @@ export function MarkdownEditor({
         value={mdText}
         onChange={(e) => setMDText(e.target.value)}
         language="md"
-        autoFocus={true}
+        autoFocus={autoFocus}
         className="font-mono text-[length:inherit]"
+        {...props}
       />
       <Button className={hideSaveButton ? "sr-only" : ""} type="submit">
         Save

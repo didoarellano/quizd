@@ -1,4 +1,5 @@
 import { GameResults } from "@/app/pages/GameResults";
+import { Home } from "@/app/pages/Home";
 import { HostLobby } from "@/app/pages/HostLobby";
 import { HostQuestion } from "@/app/pages/HostQuestion";
 import { JoinGame } from "@/app/pages/JoinGame";
@@ -17,6 +18,8 @@ export function AppRouter() {
   return (
     <Router>
       <Switch>
+        <Route path="/" component={Home} />
+
         <PrivateRoute
           path="/quiz"
           nest={true}
