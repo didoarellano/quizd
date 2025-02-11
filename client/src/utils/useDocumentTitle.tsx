@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const BASE_TITLE = "Quiz";
+const BASE_TITLE = "QuizD";
 
 export function useDocumentTitle(title: string) {
   useEffect(() => {

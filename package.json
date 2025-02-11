@@ -1,5 +1,5 @@
 {
-  "name": "quiz",
+  "name": "quizd",
   "version": "0.0.1",
   "scripts": {
     "postinstall": "(cd client && pnpm install); (cd firebase/functions && pnpm install)"
